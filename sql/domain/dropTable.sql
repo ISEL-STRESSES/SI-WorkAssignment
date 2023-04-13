@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS mensagem;
 
 DROP TABLE IF EXISTS cracha;
 
-DROP TABLE IF EXISTS jogpartida_multijogador;
+DROP TABLE IF EXISTS partida_multijogador;
 
 DROP TABLE IF EXISTS partida_normal;
 
