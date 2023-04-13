@@ -1,6 +1,14 @@
-TRUNCATE TABLE mensagem;
+TRUNCATE TABLE amigo;
 
-TRUNCATE TABLE conversa;
+TRUNCATE TABLE participa;
+
+TRUNCATE TABLE ganha;
+
+TRUNCATE TABLE joga;
+
+TRUNCATE TABLE compra;
+
+TRUNCATE TABLE mensagem;
 
 TRUNCATE TABLE cracha;
 
@@ -12,11 +20,11 @@ TRUNCATE TABLE partida;
 
 TRUNCATE TABLE jogo_estatistica;
 
-TRUNCATE TABLE jogo;
-
-TRUNCATE TABLE compra;
-
 TRUNCATE TABLE jogador_estatistica;
+
+TRUNCATE TABLE conversa;
+
+TRUNCATE TABLE jogo;
 
 TRUNCATE TABLE jogador;
 
