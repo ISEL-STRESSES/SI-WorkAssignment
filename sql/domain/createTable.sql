@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS cracha(
 
 -- Mensagem
 CREATE TABLE IF NOT EXISTS mensagem(
-    nr_ordem  INT NOT NULL,
+    nr_ordem  SERIAL NOT NULL,
     texto     TEXT NOT NULL,
     data      DATE NOT NULL,
     id_jogador INT NOT NULL,
