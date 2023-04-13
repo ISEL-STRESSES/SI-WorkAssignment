@@ -17,11 +17,30 @@ DROP DOMAIN IF EXISTS ALPHANUMERIC CASCADE;
 DROP DOMAIN IF EXISTS email CASCADE;
 DROP DOMAIN IF EXISTS url CASCADE;
 
+-- Domains
 CREATE DOMAIN ALPHANUMERIC AS VARCHAR(10) CHECK (VALUE ~* '^[A-Z0-9]+$');
 CREATE DOMAIN URL AS VARCHAR(255) CHECK (VALUE ~* '^(http|https)://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\S*)?$');
 CREATE DOMAIN EMAIL AS VARCHAR(254) CHECK (VALUE ~* '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
 
 -- Create table
+DROP TABLE IF EXISTS amigo;
+DROP TABLE IF EXISTS participa;
+DROP TABLE IF EXISTS ganha;
+DROP TABLE IF EXISTS joga;
+DROP TABLE IF EXISTS compra;
+DROP TABLE IF EXISTS mensagem;
+DROP TABLE IF EXISTS cracha;
+DROP TABLE IF EXISTS jogpartida_multijogador;
+DROP TABLE IF EXISTS partida_normal;
+DROP TABLE IF EXISTS partida;
+DROP TABLE IF EXISTS jogo_estatistica;
+DROP TABLE IF EXISTS jogador_estatistica;
+DROP TABLE IF EXISTS conversa;
+DROP TABLE IF EXISTS jogo;
+DROP TABLE IF EXISTS jogador;
+DROP TABLE IF EXISTS regiao;
+
+-- Tables
 -- Região
 CREATE TABLE IF NOT EXISTS regiao(
     nome        VARCHAR(50) NOT NULL,
@@ -156,8 +175,6 @@ CREATE TABLE IF NOT EXISTS compra(
     id_jogador  INT NOT NULL,
     id_jogo     ALPHANUMERIC NOT NULL,
 
-    -- CONSTRAINT pk_compra_jogador PRIMARY KEY (id_jogador) REFERENCES jogador(id),
-    -- CONSTRAINT pk_compra_jogo PRIMARY KEY (id_jogo) REFERENCES jogo(id),
     CONSTRAINT fk_compra_jogador FOREIGN KEY (id_jogador) REFERENCES jogador(id),
     CONSTRAINT fk_compra_jogo FOREIGN KEY (id_jogo) REFERENCES jogo(id)
 );
@@ -167,8 +184,6 @@ CREATE TABLE IF NOT EXISTS joga(
     id_jogador  INT NOT NULL,
     nr_partida  INT NOT NULL,
 
-    -- CONSTRAINT pk_joga_jogador PRIMARY KEY (id_jogador) REFERENCES jogador(id),
-    -- CONSTRAINT pk_joga_partida PRIMARY KEY (nr_partida) REFERENCES partida(nr),
     CONSTRAINT fk_joga_jogador FOREIGN KEY (id_jogador) REFERENCES jogador(id),
     CONSTRAINT fk_joga_partida FOREIGN KEY (nr_partida) REFERENCES partida(nr)
 );
@@ -178,8 +193,6 @@ CREATE TABLE IF NOT EXISTS ganha(
     id_jogador  INT NOT NULL,
     nome_cracha VARCHAR(50) NOT NULL,
 
-    -- CONSTRAINT pk_ganha_jogador PRIMARY KEY (id_jogador) REFERENCES jogador(id),
-    -- CONSTRAINT pk_ganha_cracha PRIMARY KEY (nome_cracha) REFERENCES cracha(nome),
     CONSTRAINT fk_ganha_jogador FOREIGN KEY (id_jogador) REFERENCES jogador(id),
     CONSTRAINT fk_ganha_cracha FOREIGN KEY (nome_cracha) REFERENCES cracha(nome)
 );
@@ -189,8 +202,6 @@ CREATE TABLE IF NOT EXISTS participa(
     id_jogador  INT NOT NULL,
     id_conversa INT NOT NULL,
 
-    -- CONSTRAINT pk_participa_jogador PRIMARY KEY (id_jogador) REFERENCES jogador(id),
-    -- CONSTRAINT pk_participa_conversa PRIMARY KEY (id_conversa) REFERENCES conversa(id),
     CONSTRAINT fk_participa_jogador FOREIGN KEY (id_jogador) REFERENCES jogador(id),
     CONSTRAINT fk_participa_conversa FOREIGN KEY (id_conversa) REFERENCES conversa(id)
 );
@@ -200,8 +211,6 @@ CREATE TABLE IF NOT EXISTS amigo(
     id_jogador1 INT NOT NULL,
     id_jogador2 INT NOT NULL,
 
-    -- CONSTRAINT pk_amigo_jogador1 PRIMARY KEY (id_jogador1) REFERENCES jogador(id),
-    -- CONSTRAINT pk_amigo_jogador2 PRIMARY KEY (id_jogador2) REFERENCES jogador(id),
     CONSTRAINT fk_amigo_jogador1 FOREIGN KEY (id_jogador1) REFERENCES jogador(id),
     CONSTRAINT fk_amigo_jogador2 FOREIGN KEY (id_jogador2) REFERENCES jogador(id)
 );
