@@ -361,7 +361,7 @@ $$
     DECLARE
         jogador_id INT;
     BEGIN
-        SELECT id INTO jogador_id FROM jogador WHERE jogador.username == OLD.username;
+        SELECT jogador.id INTO jogador_id FROM jogador WHERE jogador.username == OLD.username;
         UPDATE jogador SET estado = 'Banido' WHERE jogador.id == jogador_id;
     END;
 $$;
@@ -372,4 +372,4 @@ DROP TRIGGER IF EXISTS banirJogador ON jogadorTotalInfo;
 -- "Banido" state.
 CREATE TRIGGER banirJogador INSTEAD OF DELETE ON jogadorTotalInfo
     FOR EACH ROW
-    EXECUTE PROCEDURE banirJogador();
+    EXECUTE FUNCTION banirJogador();

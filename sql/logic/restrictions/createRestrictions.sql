@@ -9,7 +9,7 @@ DROP FUNCTION IF EXISTS checkJogadorPartidaRegiao() CASCADE;
 -- INSERT INTO partida VALUES ( now(), null, 1000000000, 'Portugal');
 -- INSERT INTO joga (id_jogador, nr_partida) VALUES (1, 1);
 CREATE FUNCTION checkJogadorPartidaRegiao()
-    RETURNS trigger LANGUAGE plpgsql
+    RETURNS TRIGGER LANGUAGE plpgsql
 AS
 $$
     DECLARE
@@ -27,7 +27,7 @@ DROP TRIGGER IF EXISTS checkJogadorPartidaRegiao ON partida;
 -- This trigger calls the function checkJogadorPartidaRegiao() before inserting a new row in the joga table
 CREATE TRIGGER checkJogadorPartidaRegiao BEFORE INSERT ON joga
     FOR EACH ROW
-    EXECUTE PROCEDURE checkJogadorPartidaRegiao();
+    EXECUTE FUNCTION checkJogadorPartidaRegiao();
 
 ------------------------------------------------------------------------------------------------------------------------
 -- 2. The mensagem must be sent by a jogador of the conversa
