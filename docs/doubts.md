@@ -26,6 +26,7 @@ Consequently, some operations on such columns (e.g., `DROP COLUMN`) can cause ca
 - [] Send a messages?
 - [] Play a game (single player or multiplayer)?
 - [] Create conversations?
+- [] Check stats?
 
 # When a trigger is fired do we have access to the transaction level and if so how, should we manipulate it?
 
