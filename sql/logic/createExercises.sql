@@ -1,6 +1,48 @@
 --(d) Criar os mecanismos que permitam criar o jogador, dados os seus email e username, desativar e banir o jogador;
 DROP PROCEDURE IF EXISTS create_jogador(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL);
 
+DROP PROCEDURE IF EXISTS createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL);
+
+-- This procedure creates a new player given their region name, username, and email. It is an abstraction with
+-- transaction control and it performs the following tasks:
+--
+-- Sets the transaction isolation level to SERIALIZABLE.
+-- Calls the create_jogador procedure.
+-- If the create_jogador procedure raises a unique_violation exception, it raises a notice indicating that the player
+-- already exists and rolls back the transaction.
+-- Example usage:
+-- CALL createJogadorTransaction('Regiao A', 'user123', 'user123@gmail.com');
+CREATE PROCEDURE createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
+    LANGUAGE plpgsql
+AS
+$$
+    Declare
+        t1 text;
+        t2 text;
+        t3 text;
+        t4 text;
+        t5 text;
+    BEGIN
+        SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; -- default is READ COMMITTED
+        call create_jogador(regiao_nome, new_username, new_email);
+    EXCEPTION
+        WHEN unique_violation THEN
+            RAISE NOTICE 'Player % already exists', new_username;
+            ROLLBACK;
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
+                t2 = RETURNED_SQLSTATE,
+                t3 = PG_EXCEPTION_DETAIL,
+                t4 = PG_EXCEPTION_HINT,
+                t5 = PG_EXCEPTION_CONTEXT;
+            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
+            RAISE NOTICE 'SQLSTATE: %', t2;
+            RAISE NOTICE 'DETAIL: %', t3;
+            RAISE NOTICE 'HINT: %', t4;
+            RAISE NOTICE 'CONTEXT: %', t5;
+            ROLLBACK;
+END;
+$$;
 -- This procedure creates a new player given their region name, username, and email. It performs the following tasks:
 --
 -- Checks if the given region name exists in the regiao table. If not, it inserts a new row with the given region name.
@@ -38,10 +80,10 @@ $$
         -- Checks
         IF (id_jogador NOT IN (SELECT jogador.id FROM jogador)) THEN
             RAISE NOTICE 'jogador not found';
-        END IF ;
+        END IF;
         IF ((SELECT jogador.estado FROM jogador WHERE jogador.id == id_jogador) == new_estado) THEN
             RAISE NOTICE 'jogador already has this estado';
-        END IF ;
+        END IF;
         -- expected
         UPDATE jogador SET estado = new_estado WHERE jogador.id = id_jogador;
     END ;
@@ -66,11 +108,12 @@ DROP FUNCTION IF EXISTS totalPontosJogador(jogador_id INT) CASCADE;
 -- Example usage:
 -- SELECT totalPontosJogador(1);
 CREATE FUNCTION totalPontosJogador(jogador_id INT)
-    RETURNS INT LANGUAGE plpgsql
+    RETURNS INT
+    LANGUAGE plpgsql
 AS
 $$
     DECLARE
-        partidaNormal INT;
+        partidaNormal       INT;
         partidaMultiJogador INT;
     BEGIN
         -- Checks
@@ -117,11 +160,12 @@ DROP FUNCTION IF EXISTS totalJogosJogador(jogador_id INT);
 -- Example usage:
 -- SELECT totalJogosJogador(1);
 CREATE FUNCTION totalJogosJogador(jogador_id INT)
-    RETURNS INT LANGUAGE plpgsql
+    RETURNS INT
+    LANGUAGE plpgsql
 AS
 $$
     DECLARE
-        jogosNormal INT;
+        jogosNormal       INT;
         jogosMultiJogador INT;
     BEGIN
         -- Checks
@@ -280,7 +324,8 @@ DROP FUNCTION IF EXISTS totalPartidasJogador(jogador_id INT);
 -- Example usage:
 -- SELECT totalPartidasJogador(1);
 CREATE FUNCTION totalPartidasJogador(jogador_id INT)
-    RETURNS INT LANGUAGE plpgsql
+    RETURNS INT
+    LANGUAGE plpgsql
 AS
 $$
     DECLARE
@@ -300,8 +345,13 @@ DROP VIEW IF EXISTS jogadorTotalInfo;
 -- Example usage:
 -- SELECT * FROM jogadorTotalInfo;
 CREATE VIEW jogadorTotalInfo AS
-    SELECT jogador.id, jogador.estado, jogador.email, jogador.username, totalJogosJogador(jogador.id) AS total_jogos,
-    totalPartidasJogador(jogador.id) AS total_partidas, totalPontosJogador(jogador.id) AS total_pontos
+    SELECT  jogador.id,
+            jogador.estado,
+            jogador.email,
+            jogador.username,
+            totalJogosJogador(jogador.id) AS total_jogos,
+            totalPartidasJogador(jogador.id) AS total_partidas,
+            totalPontosJogador(jogador.id) AS total_pontos
     FROM jogador WHERE jogador.estado != 'Banido';
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -314,13 +364,14 @@ DROP FUNCTION IF EXISTS atribuirCrachas() CASCADE;
 -- Example usage:
 --
 CREATE FUNCTION atribuirCrachas()
-    RETURNS trigger LANGUAGE plpgsql
+    RETURNS trigger
+    LANGUAGE plpgsql
 AS
 $$
     DECLARE
-        jogo_id ALPHANUMERIC;
-        jogador_id INT;
-        nome_cracha VARCHAR(50);
+        jogo_id      ALPHANUMERIC;
+        jogador_id   INT;
+        nome_cracha  VARCHAR(50);
         total_pontos INT;
     BEGIN
         SELECT jogo_id INTO jogo_id FROM partida WHERE partida.nr == NEW.nr;
@@ -340,7 +391,8 @@ DROP TRIGGER IF EXISTS atribuirCrachas ON partida;
 
 -- This trigger is called when a match ends and it assigns badges to the players who have played the match if they
 -- have obtained enough points.
-CREATE TRIGGER atribuirCrachas AFTER INSERT ON partida
+CREATE TRIGGER atribuirCrachas
+    AFTER INSERT ON partida
     FOR EACH ROW
     EXECUTE PROCEDURE atribuirCrachas();
 
@@ -355,7 +407,8 @@ DROP FUNCTION IF EXISTS banirJogador();
 -- Example usage:
 --
 CREATE FUNCTION banirJogador()
-    RETURNS trigger LANGUAGE plpgsql
+    RETURNS trigger
+    LANGUAGE plpgsql
 AS
 $$
     DECLARE
@@ -370,6 +423,7 @@ DROP TRIGGER IF EXISTS banirJogador ON jogadorTotalInfo;
 
 -- This trigger is called when a player is deleted from the view jogadorTotalInfo and it puts the player in the
 -- "Banido" state.
-CREATE TRIGGER banirJogador INSTEAD OF DELETE ON jogadorTotalInfo
+CREATE TRIGGER banirJogador
+    INSTEAD OF DELETE ON jogadorTotalInfo
     FOR EACH ROW
     EXECUTE FUNCTION banirJogador();

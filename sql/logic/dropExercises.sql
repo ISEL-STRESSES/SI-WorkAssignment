@@ -1,7 +1,7 @@
 --(d) Criar os mecanismos que permitam criar o jogador, dados os seus email e username, desativar e banir o jogador;
 DROP PROCEDURE IF EXISTS create_jogador(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL);
 
-DROP PROCEDURE IF EXISTS update_status_jogador(id_jogador INT, new_status VARCHAR(10));
+DROP PROCEDURE IF EXISTS update_estado_jogador(id_jogador INT, new_estado VARCHAR(10));
 
 -- (e) Criar a função totalPontosJogador que recebe como parâmetro o identificador de um jogador e devolve o número
 -- total de pontos obtidos pelo jogador.

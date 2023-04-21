@@ -1,4 +1,3 @@
-
 -- Partida & Jogador restriction on Regiao
 DROP FUNCTION IF EXISTS checkJogadorPartidaRegiao() CASCADE;
 
