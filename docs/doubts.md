@@ -20,3 +20,13 @@ Adding a PRIMARY KEY constraint will automatically create a unique btree index o
 The optional `INCLUDE` clause adds to that index one or more columns that are simply “payload”: uniqueness is not enforced on them, and the index cannot be searched on the basis of those columns. However they can be retrieved by an index-only scan. 
 Note that although the constraint is not enforced on included columns, it still depends on them. 
 Consequently, some operations on such columns (e.g., `DROP COLUMN`) can cause cascaded constraint and index deletion.
+
+# What can a banned player do?
+
+- [] Send a messages?
+- [] Play a game (single player or multiplayer)?
+- [] Create conversations?
+
+# When a trigger is fired do we have access to the transaction level and if so how, should we manipulate it?
+
+# How to generate the columns of the stats tables? Generate them with a trigger or with a function? Tried the `Generated Always As` and didn't work.

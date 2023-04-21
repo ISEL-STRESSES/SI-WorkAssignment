@@ -1,4 +1,5 @@
---(d) Criar os mecanismos que permitam criar o jogador, dados os seus email e username, desativar e banir o jogador;
+--(d) Criar os mecanismos que permitam criar o jogador, dados os seus email e username e regiao, desativar e banir o
+-- jogador;
 DROP PROCEDURE IF EXISTS create_jogador(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL);
 
 DROP PROCEDURE IF EXISTS createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL);
@@ -54,11 +55,6 @@ CREATE PROCEDURE create_jogador(regiao_nome VARCHAR(50), new_username VARCHAR(10
 AS
 $$
     BEGIN
-        -- Checks
-        IF (regiao_nome NOT IN (SELECT regiao.nome FROM regiao)) THEN
-            INSERT INTO regiao VALUES (regiao_nome);
-        END IF;
-        -- expected
         INSERT INTO jogador(username, email, nome_regiao) VALUES (new_username, new_email, regiao_nome);
     END;
 $$;
@@ -87,6 +83,46 @@ $$
         -- expected
         UPDATE jogador SET estado = new_estado WHERE jogador.id = id_jogador;
     END ;
+$$;
+
+DROP PROCEDURE IF EXISTS updateEstadoJogadorTransaction(id_jogador INT, new_estado VARCHAR(10));
+
+-- This procedure updates the state of a player given their player ID and new state. It is an abstraction with
+-- transaction control and it performs the following tasks:
+--
+-- Sets the transaction isolation level to SERIALIZABLE.
+-- Calls the update_estado_jogador procedure.
+-- If the update_estado_jogador procedure raises a unique_violation exception, it raises a notice indicating that the
+-- player already has this state and rolls back the transaction.
+-- Example usage:
+-- CALL updateEstadoJogadorTransaction(1, 'ativo');
+CREATE PROCEDURE updateEstadoJogadorTransaction(id_jogador INT, new_estado VARCHAR(10))
+    LANGUAGE plpgsql
+AS
+$$
+    Declare
+        t1 text;
+        t2 text;
+        t3 text;
+        t4 text;
+        t5 text;
+    BEGIN
+        SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; -- default is READ COMMITTED
+        call update_estado_jogador(id_jogador, new_estado);
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
+                t2 = RETURNED_SQLSTATE,
+                t3 = PG_EXCEPTION_DETAIL,
+                t4 = PG_EXCEPTION_HINT,
+                t5 = PG_EXCEPTION_CONTEXT;
+            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
+            RAISE NOTICE 'SQLSTATE: %', t2;
+            RAISE NOTICE 'DETAIL: %', t3;
+            RAISE NOTICE 'HINT: %', t4;
+            RAISE NOTICE 'CONTEXT: %', t5;
+            ROLLBACK;
+END;
 $$;
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -141,6 +177,47 @@ $$
     end;
 $$;
 
+DROP PROCEDURE IF EXISTS totalPontosJogadorTransaction(jogador_id INT);
+
+-- This procedure calculates and returns the total points obtained by a player given their player ID. It is an
+-- abstraction with transaction control and it performs the following tasks:
+--
+-- Sets the transaction isolation level to READ COMMITED because the functionality is read only.
+-- Calls the totalPontosJogador function.
+-- If the totalPontosJogador function raises a unique_violation exception, it raises a notice indicating that the
+-- player is banned or inactive and rolls back the transaction.
+-- Example usage:
+-- CALL totalPontosJogadorTransaction(1);
+CREATE PROCEDURE totalPontosJogadorTransaction(jogador_id INT)
+    LANGUAGE plpgsql
+AS
+$$
+    Declare
+        t1 text;
+        t2 text;
+        t3 text;
+        t4 text;
+        t5 text;
+    BEGIN
+        SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+        call totalPontosJogador(jogador_id);
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
+                t2 = RETURNED_SQLSTATE,
+                t3 = PG_EXCEPTION_DETAIL,
+                t4 = PG_EXCEPTION_HINT,
+                t5 = PG_EXCEPTION_CONTEXT;
+            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
+            RAISE NOTICE 'SQLSTATE: %', t2;
+            RAISE NOTICE 'DETAIL: %', t3;
+            RAISE NOTICE 'HINT: %', t4;
+            RAISE NOTICE 'CONTEXT: %', t5;
+            ROLLBACK;
+    END;
+$$;
+
+
 ------------------------------------------------------------------------------------------------------------------------
 -- (f) Criar a função totalJogosJogador que recebe como parâmetro o identificador de um jogador e devolve o número total
 -- de jogos diferentes nos quais o jogador participou.
@@ -193,6 +270,47 @@ $$
     END;
 $$;
 
+DROP PROCEDURE IF EXISTS totalJogosJogadorTransaction(jogador_id INT);
+
+-- This procedure calculates and returns the total number of games a player has participated in given their player ID.
+-- It is an abstraction with transaction control and it performs the following tasks:
+--
+-- Sets the transaction isolation level to READ COMMITED because the functionality is read only.
+-- Calls the totalJogosJogador function.
+-- If the totalJogosJogador function raises a unique_violation exception, it raises a notice indicating that the
+-- player is banned or inactive and rolls back the transaction.
+--
+-- Example usage:
+-- CALL totalJogosJogadorTransaction(1);
+CREATE PROCEDURE totalJogosJogadorTransaction(jogador_id INT)
+    LANGUAGE plpgsql
+AS
+$$
+    Declare
+        t1 text;
+        t2 text;
+        t3 text;
+        t4 text;
+        t5 text;
+    BEGIN
+        SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+        call totalJogosJogador(jogador_id);
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
+                t2 = RETURNED_SQLSTATE,
+                t3 = PG_EXCEPTION_DETAIL,
+                t4 = PG_EXCEPTION_HINT,
+                t5 = PG_EXCEPTION_CONTEXT;
+            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
+            RAISE NOTICE 'SQLSTATE: %', t2;
+            RAISE NOTICE 'DETAIL: %', t3;
+            RAISE NOTICE 'HINT: %', t4;
+            RAISE NOTICE 'CONTEXT: %', t5;
+            ROLLBACK;
+    END;
+$$;
+
 ------------------------------------------------------------------------------------------------------------------------
 -- (g) Criar a função PontosJogoPorJogador que recebe como parâmetro a referência de um jogo e devolve uma tabela com
 -- duas colunas (identificador de jogador, total de pontos) em que cada linha contém o identificador de um jogador e o
@@ -215,122 +333,44 @@ $$
     END;
 $$;
 
-------------------------------------------------------------------------------------------------------------------------
--- (h) Criar o procedimento armazenado associarCrachá que recebe como parâmetros o identificador de um jogador, a
--- referência de um jogo e o nome de um crachá desse jogo e atribui o crachá a esse jogador se ele reunir as condições
--- para o obter.
-DROP PROCEDURE IF EXISTS associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50));
+DROP PROCEDURE IF EXISTS PontosJogoPorJogadorTransaction(jogo_id ALPHANUMERIC);
 
--- This procedure associates a crachá with a player if they meet the conditions to obtain it.
+-- This procedure calculates and returns the total points obtained by each player in a game given the game ID. It
+-- performs the following tasks:
+--
+-- Sets the transaction isolation level to READ COMMITED because the functionality is read only.
+-- Calls the PontosJogoPorJogador function.
+-- If the PontosJogoPorJogador function raises a unique_violation exception, it raises a notice indicating that the
+-- game does not exist and rolls back the transaction.
 --
 -- Example usage:
--- CALL associarCracha(1, '1', 'Crachá de Ouro');
-CREATE PROCEDURE associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50))
+-- CALL PontosJogoPorJogadorTransaction('1');
+CREATE PROCEDURE PontosJogoPorJogadorTransaction(jogo_id ALPHANUMERIC)
     LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        nome_cracha VARCHAR(50);
-        total_pontos INT;
+    Declare
+        t1 text;
+        t2 text;
+        t3 text;
+        t4 text;
+        t5 text;
     BEGIN
-        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.nome == cracha_nome;
-        SELECT total_pontos FROM PontosJogoPorJogador(jogo_id) AS pontos_jogo WHERE pontos_jogo.id_jogador = jogador_id INTO total_pontos;
-        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome == cracha_nome)) THEN
-            INSERT INTO ganha VALUES (jogador_id, cracha_nome, jogo_id);
-        END IF;
-    END;
-$$;
-
-------------------------------------------------------------------------------------------------------------------------
--- (i) Criar o procedimento armazenado iniciarConversa que permite iniciar uma conversa (chat) dados o identificador de
--- um jogador e o nome da conversa. O jogador deve ficar automaticamente associado à conversa e deve ser criada uma
--- mensagem a informar que o jogador criou a conversa. O procedimento deve devolver num parâmetro de saída o
--- identificador da conversa criada.
-DROP PROCEDURE IF EXISTS iniciarConversa(jogador_id INT, nome_conversa VARCHAR(50), conversa_id OUT INT);
-
--- This procedure starts a chat given the player ID and the name of the chat. The player is automatically associated
--- with the chat and a message is created informing that the player created the chat. The procedure returns the chat
--- ID in an output parameter.
---
--- Example usage:
--- CALL iniciarConversa(1, 'Chat 1', conversa_id);
-CREATE PROCEDURE iniciarConversa(jogador_id INT, nome_conversa VARCHAR(50), conversa_id OUT INT)
-    LANGUAGE plpgsql
-AS
-$$
-    DECLARE
-        default_conversa_nr_ordem INT := 1;
-        nome_conversa VARCHAR(50);
-    BEGIN
-        SELECT nome INTO nome_conversa FROM conversa WHERE conversa.nome == nome_conversa;
-        IF (nome_conversa == NULL) THEN
-            INSERT INTO conversa VALUES (nome_conversa);
-            SELECT id INTO conversa_id FROM conversa WHERE conversa.nome == nome_conversa;
-            INSERT INTO participa VALUES (jogador_id, conversa_id);
-            INSERT INTO mensagem VALUES (default_conversa_nr_ordem, 'O jogador criou a conversa', now(),
-                                         jogador_id, conversa_id);
-        END IF;
-    END;
-$$;
-
-------------------------------------------------------------------------------------------------------------------------
--- (j) Criar o procedimento armazenado juntarConversa que recebe como parâmetros os identificadores de um jogador e de
--- uma conversa e junta esse jogador a essa conversa. Deve ser criada uma mensagem a informar que o jogador entrou na
--- conversa.
-DROP PROCEDURE IF EXISTS juntarConversa(jogador_id INT, conversa_id INT);
-
--- This procedure joins a player to a chat given the player ID and the chat ID. A message is created informing that
--- the player joined the chat.
---
--- Example usage:
--- CALL juntarConversa(1, 1);
-CREATE PROCEDURE juntarConversa(jogador_id INT, conversa_id INT)
-    LANGUAGE plpgsql
-AS
-$$
-    DECLARE
-        nr INT;
-    BEGIN
-        SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador == jogador_id AND mensagem.id_conversa == conversa_id;
-        INSERT INTO participa VALUES (jogador_id, conversa_id);
-        INSERT INTO mensagem VALUES (nr, 'O jogador entrou na conversa', now(), jogador_id, conversa_id);
-    END;
-$$;
-
-------------------------------------------------------------------------------------------------------------------------
--- (k) Criar o procedimento armazenado enviarMensagem que recebe como parâmetros os identificadores de um jogador e de
--- uma conversa e o texto de uma mensagem e procede ao envio dessa mensagem para a conversa indicada, associando-a ao
--- jogador também indicado.
-DROP PROCEDURE IF EXISTS enviarMensagem(jogador_id INT, conversa_id INT, mensagem_texto VARCHAR(50));
-
--- This procedure sends a message to a chat given the player ID, the chat ID and the message text. The message is
--- associated with the player and the chat.
---
--- Example usage:
--- CALL enviarMensagem(1, 1, 'Mensagem 1');
-CREATE PROCEDURE enviarMensagem(jogador_id INT, conversa_id INT, mensagem_texto VARCHAR(50))
-    LANGUAGE plpgsql
-AS
-$$
-    DECLARE
-        nr INT;
-    BEGIN
-        --checks
-        IF (jogador_id NOT IN (SELECT jogador.id FROM jogador)) THEN
-            RAISE EXCEPTION 'O jogador com o id (%) não existe', jogador_id;
-        END IF;
-        IF (conversa_id NOT IN (SELECT conversa.id FROM conversa)) THEN
-            RAISE EXCEPTION 'A conversa com o id (%) não existe', conversa_id;
-        END IF;
-        IF (mensagem_texto == NULL) THEN
-            RAISE EXCEPTION 'A mensagem (%) não tem conteúdo', mensagem_texto;
-        END IF;
-        --expected
-        IF (jogador_id NOT IN (SELECT id_jogador FROM participa WHERE participa.id_conversa == conversa_id)) THEN
-            INSERT INTO participa VALUES (jogador_id, conversa_id);
-        END IF;
-        SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador == jogador_id AND mensagem.id_conversa == conversa_id;
-        INSERT INTO mensagem VALUES (nr, mensagem_texto, now(), jogador_id, conversa_id);
+        SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+        call PontosJogoPorJogador(jogo_id);
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
+                t2 = RETURNED_SQLSTATE,
+                t3 = PG_EXCEPTION_DETAIL,
+                t4 = PG_EXCEPTION_HINT,
+                t5 = PG_EXCEPTION_CONTEXT;
+            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
+            RAISE NOTICE 'SQLSTATE: %', t2;
+            RAISE NOTICE 'DETAIL: %', t3;
+            RAISE NOTICE 'HINT: %', t4;
+            RAISE NOTICE 'CONTEXT: %', t5;
+            ROLLBACK;
     END;
 $$;
 
@@ -358,6 +398,48 @@ $$
     END;
 $$;
 
+DROP PROCEDURE IF EXISTS totalPartidasJogadorTransaction(jogador_id INT);
+
+-- This procedure returns the total number of matches a player has played given the player ID. It performs the
+-- following tasks:
+--
+-- Sets the transaction isolation level to READ COMMITED because the functionality is read only.
+-- Calls the totalPartidasJogador function.
+-- If the totalPartidasJogador function raises a unique_violation exception, it raises a notice indicating that the
+-- player does not exist and rolls back the transaction.
+--
+-- Example usage:
+-- CALL totalPartidasJogadorTransaction(1);
+CREATE PROCEDURE totalPartidasJogadorTransaction(jogador_id INT)
+    LANGUAGE plpgsql
+AS
+$$
+    Declare
+        t1 text;
+        t2 text;
+        t3 text;
+        t4 text;
+        t5 text;
+    BEGIN
+        SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+        call totalPartidasJogador(jogador_id);
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
+                t2 = RETURNED_SQLSTATE,
+                t3 = PG_EXCEPTION_DETAIL,
+                t4 = PG_EXCEPTION_HINT,
+                t5 = PG_EXCEPTION_CONTEXT;
+            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
+            RAISE NOTICE 'SQLSTATE: %', t2;
+            RAISE NOTICE 'DETAIL: %', t3;
+            RAISE NOTICE 'HINT: %', t4;
+            RAISE NOTICE 'CONTEXT: %', t5;
+            ROLLBACK;
+    END;
+$$;
+
+
 DROP VIEW IF EXISTS jogadorTotalInfo;
 
 -- This view returns information about the ID, state, email, username, total number of games the player has played,
@@ -375,48 +457,6 @@ CREATE VIEW jogadorTotalInfo AS
             totalPartidasJogador(jogador.id) AS total_partidas,
             totalPontosJogador(jogador.id) AS total_pontos
     FROM jogador WHERE jogador.estado != 'Banido';
-
-------------------------------------------------------------------------------------------------------------------------
--- (m) Criar os mecanismos necessários para que, de forma automática, quando uma partida termina, se proceda à
--- atribuição de crachás do jogo a que ela pertence.
-DROP FUNCTION IF EXISTS atribuirCrachas() CASCADE;
-
--- This function is called when a match ends and it assigns badges to the players who have played the match.
---
--- Example usage:
---
-CREATE FUNCTION atribuirCrachas()
-    RETURNS trigger
-    LANGUAGE plpgsql
-AS
-$$
-    DECLARE
-        jogo_id      ALPHANUMERIC;
-        jogador_id   INT;
-        nome_cracha  VARCHAR(50);
-        total_pontos INT;
-    BEGIN
-        SELECT jogo_id INTO jogo_id FROM partida WHERE partida.nr == NEW.nr;
-        SELECT id_jogador INTO jogador_id FROM joga WHERE joga.nr_partida == NEW.nr;
-        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.id_jogo == jogo_id;
-        SELECT pontuacao from partida_normal WHERE partida_normal.nr_partida == NEW.nr INTO total_pontos;
-        IF (total_pontos == NULL) THEN
-            SELECT pontuacao from partida_multijogador WHERE partida_multijogador.nr_partida == NEW.nr INTO total_pontos;
-        END IF;
-        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome == nome_cracha)) THEN
-            INSERT INTO ganha VALUES (jogador_id, nome_cracha, id_jogo);
-        END IF;
-    END;
-$$;
-
-DROP TRIGGER IF EXISTS atribuirCrachas ON partida;
-
--- This trigger is called when a match ends and it assigns badges to the players who have played the match if they
--- have obtained enough points.
-CREATE TRIGGER atribuirCrachas
-    AFTER INSERT ON partida
-    FOR EACH ROW
-    EXECUTE PROCEDURE atribuirCrachas();
 
 ------------------------------------------------------------------------------------------------------------------------
 -- (n) Criar os mecanismos necessários para que a execução da instrução DELETE sobre a vista jogadorTotalInfo permita
