@@ -17,7 +17,6 @@ TRUNCATE TABLE partida_multijogador CASCADE;
 TRUNCATE TABLE partida_normal CASCADE;
 
 TRUNCATE TABLE partida CASCADE;
-ALTER SEQUENCE partida_nr_seq RESTART WITH 1;
 
 TRUNCATE TABLE jogo_estatistica CASCADE;
 

@@ -236,7 +236,7 @@ $$
         SELECT nome INTO nome_cracha FROM cracha WHERE cracha.nome == cracha_nome;
         SELECT total_pontos FROM PontosJogoPorJogador(jogo_id) AS pontos_jogo WHERE pontos_jogo.id_jogador = jogador_id INTO total_pontos;
         IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome == cracha_nome)) THEN
-            INSERT INTO ganha VALUES (jogador_id, cracha_nome);
+            INSERT INTO ganha VALUES (jogador_id, cracha_nome, jogo_id);
         END IF;
     END;
 $$;
@@ -259,6 +259,7 @@ CREATE PROCEDURE iniciarConversa(jogador_id INT, nome_conversa VARCHAR(50), conv
 AS
 $$
     DECLARE
+        default_conversa_nr_ordem INT := 1;
         nome_conversa VARCHAR(50);
     BEGIN
         SELECT nome INTO nome_conversa FROM conversa WHERE conversa.nome == nome_conversa;
@@ -266,7 +267,8 @@ $$
             INSERT INTO conversa VALUES (nome_conversa);
             SELECT id INTO conversa_id FROM conversa WHERE conversa.nome == nome_conversa;
             INSERT INTO participa VALUES (jogador_id, conversa_id);
-            INSERT INTO mensagem VALUES ('O jogador criou a conversa', now(), jogador_id, conversa_id);
+            INSERT INTO mensagem VALUES (default_conversa_nr_ordem, 'O jogador criou a conversa', now(),
+                                         jogador_id, conversa_id);
         END IF;
     END;
 $$;
@@ -286,9 +288,12 @@ CREATE PROCEDURE juntarConversa(jogador_id INT, conversa_id INT)
     LANGUAGE plpgsql
 AS
 $$
+    DECLARE
+        nr INT;
     BEGIN
+        SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador == jogador_id AND mensagem.id_conversa == conversa_id;
         INSERT INTO participa VALUES (jogador_id, conversa_id);
-        INSERT INTO mensagem VALUES ('O jogador entrou na conversa', now(), jogador_id, conversa_id);
+        INSERT INTO mensagem VALUES (nr, 'O jogador entrou na conversa', now(), jogador_id, conversa_id);
     END;
 $$;
 
@@ -307,8 +312,11 @@ CREATE PROCEDURE enviarMensagem(jogador_id INT, conversa_id INT, mensagem_texto 
     LANGUAGE plpgsql
 AS
 $$
+    DECLARE
+        nr INT;
     BEGIN
-        INSERT INTO mensagem VALUES (mensagem_texto, now(), jogador_id, conversa_id);
+        SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador == jogador_id AND mensagem.id_conversa == conversa_id;
+        INSERT INTO mensagem VALUES (nr, mensagem_texto, now(), jogador_id, conversa_id);
     END;
 $$;
 
@@ -382,7 +390,7 @@ $$
             SELECT pontuacao from partida_multijogador WHERE partida_multijogador.nr_partida == NEW.nr INTO total_pontos;
         END IF;
         IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome == nome_cracha)) THEN
-            INSERT INTO ganha VALUES (jogador_id, nome_cracha);
+            INSERT INTO ganha VALUES (jogador_id, nome_cracha, id_jogo);
         END IF;
     END;
 $$;
