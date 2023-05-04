@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
--- Constants 
--- Global 
+-- Constants
+-- Global
 -- DECLARE nome_max_size CONSTANT INT := 50;
 -- DECLARE estado_max_size CONSTANT INT := 20;
 
@@ -20,8 +20,7 @@ DROP DOMAIN IF EXISTS url CASCADE;
 -- Domains
 CREATE DOMAIN ALPHANUMERIC AS VARCHAR(10) CHECK (VALUE ~* '^[A-Z0-9]+$');
 CREATE DOMAIN URL AS VARCHAR(255) CHECK (VALUE ~* '^(http|https)://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\S*)?$');
-CREATE DOMAIN EMAIL AS VARCHAR(254) CHECK (VALUE ~* '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
-
+CREATE DOMAIN email AS varchar(254) CHECK (VALUE ~* '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z0-9-]{2,}$');
 -- Create table
 DROP TABLE IF EXISTS amigo;
 DROP TABLE IF EXISTS participa;
@@ -100,7 +99,7 @@ CREATE TABLE IF NOT EXISTS partida(
     nr          INT          NOT NULL,
     id_jogo     ALPHANUMERIC NOT NULL REFERENCES jogo(id) ON DELETE CASCADE,
     data_inicio DATE         NOT NULL,
-    data_fim    DATE         NOT NULL,
+    data_fim    DATE         ,
     nome_regiao VARCHAR(50)  NOT NULL REFERENCES regiao(nome),
 
     UNIQUE (id_jogo, nr),
@@ -116,7 +115,7 @@ CREATE TABLE IF NOT EXISTS partida_normal(
     id_jogo     ALPHANUMERIC NOT NULL,
     nr_partida  INT          NOT NULL,
     dificuldade INT          NOT NULL,
-    pontuacao   INT          NOT NULL,
+    pontuacao   INT          DEFAULT 0,
 
     UNIQUE(id_jogo, nr_partida),
 
@@ -131,7 +130,7 @@ CREATE TABLE IF NOT EXISTS partida_multijogador(
     id_jogo    ALPHANUMERIC NOT NULL,
     nr_partida INT          NOT NULL,
     estado     VARCHAR(20)  DEFAULT 'Por iniciar',
-    pontuacao  INT          NOT NULL,
+    pontuacao  INT          DEFAULT 0,
 
     CONSTRAINT estado_constraint CHECK(estado in ('Por iniciar', 'A aguardar jogadores', 'Em curso', 'Terminada')),
 

@@ -226,7 +226,6 @@ $$
     END;
 $$;
 
-
 ------------------------------------------------------------------------------------------------------------------------
 -- (f) Criar a função totalJogosJogador que recebe como parâmetro o identificador de um jogador e devolve o número total
 -- de jogos diferentes nos quais o jogador participou.
@@ -518,3 +517,80 @@ CREATE TRIGGER banirJogador
     INSTEAD OF DELETE ON jogadorTotalInfo
     FOR EACH ROW
     EXECUTE FUNCTION banirJogador();
+
+------------------------------------------------------------------------------------------------------------------------
+-- Model functionalities
+-- 1. Implementing the automatic update of the total number of games a player has played when a player's statistics are.
+DROP TRIGGER IF EXISTS update_total_partidas_jogador ON joga;
+DROP FUNCTION IF EXISTS updateTotalPartidasJogador();
+
+DROP TRIGGER IF EXISTS update_total_pontos_jogador ON partida_multijogador;
+DROP TRIGGER IF EXISTS update_total_pontos_jogador ON partida_normal;
+DROP FUNCTION IF EXISTS updateTotalPontosJogador();
+
+DROP TRIGGER IF EXISTS update_total_jogos_jogador ON jogador_estatistica;
+DROP FUNCTION IF EXISTS updateTotalJogosJogador();
+
+-- This function is called when a player's statistics are updated and it updates the total number of games the player
+-- has played.
+--
+-- Example usage:
+-- INSERT INTO joga VALUES (1, 1);
+CREATE FUNCTION updateTotalPartidasJogador()
+    RETURNS trigger
+    LANGUAGE plpgsql
+AS
+$$
+    BEGIN
+        UPDATE jogador_estatistica SET nr_jogos = totalPartidasJogador(NEW.id_jogador) WHERE jogador_estatistica.id_jogador == NEW.id_jogador;
+    END;
+$$;
+
+-- This trigger is called when a player's statistics are updated and it updates the total number of games the player
+CREATE TRIGGER update_total_partidas_jogador
+AFTER INSERT OR DELETE ON joga
+EXECUTE FUNCTION updateTotalPartidasJogador();
+
+-- This function is called when a player's statistics are updated and it updates the total number of points the player
+-- has obtained.
+CREATE FUNCTION updateTotalPontosJogador()
+    RETURNS trigger
+    LANGUAGE plpgsql
+AS
+$$
+    DECLARE jogador_id INT;
+    BEGIN
+        SELECT joga.id_jogador INTO id_jogador FROM joga WHERE joga.nr_partida == NEW.nr_partida;
+        UPDATE jogador_estatistica SET total_pontos = totalPontosJogador(jogador_id) WHERE jogador_estatistica.id_jogador == jogador_id;
+    END;
+$$;
+
+-- This trigger is called when a player's statistics are updated and it updates the total number of points the player
+-- has obtained.
+CREATE TRIGGER update_total_pontos_jogador
+AFTER INSERT OR DELETE ON partida_multijogador
+EXECUTE FUNCTION updateTotalPontosJogador();
+
+-- This trigger is called when a player's statistics are updated and it updates the total number of points the player
+-- has obtained.
+CREATE TRIGGER update_total_pontos_jogador
+AFTER INSERT OR DELETE ON partida_normal
+EXECUTE FUNCTION updateTotalPontosJogador();
+
+-- This function is called when a player's statistics are updated and it updates the total number of games the player
+-- has played.
+CREATE FUNCTION updateTotalJogosJogador()
+    RETURNS trigger
+    LANGUAGE plpgsql
+AS
+$$
+    BEGIN
+        UPDATE jogador_estatistica SET nr_jogos = totalJogosJogador(NEW.id_jogador) WHERE jogador_estatistica.id_jogador == NEW.id_jogador;
+    END;
+$$;
+
+-- This trigger is called when a player's statistics are updated and it updates the total number of games the player
+-- has played.
+CREATE TRIGGER update_total_jogos_jogador
+AFTER INSERT OR DELETE ON partida
+EXECUTE FUNCTION updateTotalJogosJogador();

@@ -1,30 +1,3 @@
-
-------------------------------------------------------------------------------------------------------------------------
--- (h) Criar o procedimento armazenado associarCrachá que recebe como parâmetros o identificador de um jogador, a
--- referência de um jogo e o nome de um crachá desse jogo e atribui o crachá a esse jogador se ele reunir as condições
--- para o obter.
-DROP PROCEDURE IF EXISTS associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50));
-
--- This procedure associates a crachá with a player if they meet the conditions to obtain it.
---
--- Example usage:
--- CALL associarCracha(1, '1', 'Crachá de Ouro');
-CREATE PROCEDURE associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50))
-    LANGUAGE plpgsql
-AS
-$$
-    DECLARE
-        nome_cracha VARCHAR(50);
-        total_pontos INT;
-    BEGIN
-        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.nome == cracha_nome;
-        SELECT total_pontos FROM PontosJogoPorJogador(jogo_id) AS pontos_jogo WHERE pontos_jogo.id_jogador = jogador_id INTO total_pontos;
-        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome == cracha_nome)) THEN
-            INSERT INTO ganha VALUES (jogador_id, cracha_nome, jogo_id);
-        END IF;
-    END;
-$$;
-
 ------------------------------------------------------------------------------------------------------------------------
 -- 3. Update the nr_partidas of the jogo_estatistica when a new partida is added or removed
 DROP FUNCTION IF EXISTS updateNrPartidas() CASCADE;
@@ -34,7 +7,6 @@ CREATE OR REPLACE FUNCTION updateNrPartidas()
     LANGUAGE plpgsql
 AS
 $$
-    -- OLD AND NEW is the same id_jogo
     BEGIN
         IF (TG_OP = 'INSERT') THEN
             UPDATE jogo_estatistica
@@ -117,6 +89,32 @@ CREATE TRIGGER update_total_pontos_trigger
     AFTER INSERT OR DELETE ON partida_normal
     FOR EACH ROW
     EXECUTE FUNCTION updatePontuacaoTotal();
+
+------------------------------------------------------------------------------------------------------------------------
+-- (h) Criar o procedimento armazenado associarCrachá que recebe como parâmetros o identificador de um jogador, a
+-- referência de um jogo e o nome de um crachá desse jogo e atribui o crachá a esse jogador se ele reunir as condições
+-- para o obter.
+DROP PROCEDURE IF EXISTS associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50));
+
+-- This procedure associates a crachá with a player if they meet the conditions to obtain it.
+--
+-- Example usage:
+-- CALL associarCracha(1, '1', 'Crachá de Ouro');
+CREATE PROCEDURE associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50))
+    LANGUAGE plpgsql
+AS
+$$
+    DECLARE
+        nome_cracha VARCHAR(50);
+        total_pontos INT;
+    BEGIN
+        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.nome == cracha_nome;
+        SELECT total_pontos FROM PontosJogoPorJogador(jogo_id) AS pontos_jogo WHERE pontos_jogo.id_jogador = jogador_id INTO total_pontos;
+        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome == cracha_nome)) THEN
+            INSERT INTO ganha VALUES (jogador_id, cracha_nome, jogo_id);
+        END IF;
+    END;
+$$;
 
 ------------------------------------------------------------------------------------------------------------------------
 -- (m) Criar os mecanismos necessários para que, de forma automática, quando uma partida termina, se proceda à

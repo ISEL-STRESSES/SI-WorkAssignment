@@ -7,7 +7,7 @@ DROP DOMAIN IF EXISTS url CASCADE;
 
 CREATE DOMAIN ALPHANUMERIC AS VARCHAR(10) CHECK (VALUE ~* '^[A-Z0-9]+$');
 CREATE DOMAIN URL AS VARCHAR(255) CHECK (VALUE ~* '^(http|https)://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\S*)?$');
-CREATE DOMAIN EMAIL AS VARCHAR(254) CHECK (VALUE ~* '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
+CREATE DOMAIN EMAIL AS VARCHAR(254) CHECK (VALUE ~* '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9-.]+$');
 
 -- Create table
 DROP TABLE IF EXISTS amigo;
