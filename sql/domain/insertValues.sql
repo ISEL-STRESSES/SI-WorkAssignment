@@ -19,8 +19,8 @@ INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('Alarm', 'ala
 INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('LongjohnsCorrupt', 'longjohnscorrupt@hotmail.com', 'banido', 'Papua New Guinea');
 INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('Unguarded', 'unguarded@outlook.com', 'inativo', 'Papua New Guinea');
 INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('Infuse', 'infuse@aol.com', 'ativo', 'Canada');
-INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('Unguarded', 'unguarded@outlook.com', 'banido', 'Central African Rep');
-INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('AlarmPiercer', 'alarmpiercer@aol.com', 'inativo', 'Cape Verde');
+INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('Reply', 'reply@outlook.com', 'banido', 'Central African Rep');
+INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('Piercer', 'piercer@aol.com', 'inativo', 'Cape Verde');
 COMMIT;
 BEGIN TRANSACTION;
 INSERT INTO jogo (id, nome, url) VALUES ('dRiuhNLeeu', 'The Snooty Gamer', 'https://TheSnootyGamer.com/?dRiuhNLeeu');

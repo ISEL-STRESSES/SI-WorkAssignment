@@ -20,7 +20,8 @@ DROP DOMAIN IF EXISTS url CASCADE;
 -- Domains
 CREATE DOMAIN ALPHANUMERIC AS VARCHAR(10) CHECK (VALUE ~* '^[A-Z0-9]+$');
 CREATE DOMAIN URL AS VARCHAR(255) CHECK (VALUE ~* '^(http|https)://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\S*)?$');
-CREATE DOMAIN email AS varchar(254) CHECK (VALUE ~* '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z0-9-]{2,}$');
+CREATE DOMAIN email AS varchar(254) CHECK (VALUE ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Z]{2,}$');
+
 -- Create table
 DROP TABLE IF EXISTS amigo;
 DROP TABLE IF EXISTS participa;
@@ -58,7 +59,7 @@ CREATE TABLE IF NOT EXISTS jogador(
     UNIQUE(email),
     UNIQUE(username, email),
 
-    CONSTRAINT estado_jogador CHECK(estado in ('Ativo', 'Inativo', 'Banido'))
+    CONSTRAINT estado_jogador CHECK(estado ~* '^(ativo|banido|inativo)$')
 );
 
 -- Jogo
@@ -99,7 +100,7 @@ CREATE TABLE IF NOT EXISTS partida(
     nr          INT          NOT NULL,
     id_jogo     ALPHANUMERIC NOT NULL REFERENCES jogo(id) ON DELETE CASCADE,
     data_inicio DATE         NOT NULL,
-    data_fim    DATE         ,
+    data_fim    DATE,
     nome_regiao VARCHAR(50)  NOT NULL REFERENCES regiao(nome),
 
     UNIQUE (id_jogo, nr),
