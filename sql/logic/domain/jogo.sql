@@ -136,16 +136,17 @@ $$
         nome_cracha  VARCHAR(50);
         total_pontos INT;
     BEGIN
-        SELECT jogo_id INTO jogo_id FROM partida WHERE partida.nr == NEW.nr;
-        SELECT id_jogador INTO jogador_id FROM joga WHERE joga.nr_partida == NEW.nr;
-        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.id_jogo == jogo_id;
-        SELECT pontuacao from partida_normal WHERE partida_normal.nr_partida == NEW.nr INTO total_pontos;
-        IF (total_pontos == NULL) THEN
-            SELECT pontuacao from partida_multijogador WHERE partida_multijogador.nr_partida == NEW.nr INTO total_pontos;
+        SELECT jogo_id INTO jogo_id FROM partida WHERE partida.nr = NEW.nr;
+        SELECT id_jogador INTO jogador_id FROM joga WHERE joga.nr_partida = NEW.nr;
+        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.id_jogo = jogo_id;
+        SELECT pontuacao from partida_normal WHERE partida_normal.nr_partida = NEW.nr INTO total_pontos;
+        IF ((total_pontos IS NULL) or (total_pontos = 0)) THEN
+            SELECT pontuacao from partida_multijogador WHERE partida_multijogador.nr_partida = NEW.nr INTO total_pontos;
         END IF;
-        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome == nome_cracha)) THEN
+        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome = nome_cracha)) THEN
             INSERT INTO ganha VALUES (jogador_id, nome_cracha, id_jogo);
         END IF;
+        RETURN NEW;
     END;
 $$;
 

@@ -212,24 +212,27 @@ DROP FUNCTION IF EXISTS checkJogadorPartidaRegiao() CASCADE;
 -- regiao as the partida he is playing in.
 --
 -- Example Usage:
--- INSERT INTO partida VALUES ( now(), null, 1000000000, 'Portugal');
+-- INSERT INTO partida VALUES (now(), null, 1000000000, 'Portugal');
 -- INSERT INTO joga (id_jogador, nr_partida) VALUES (1, 1);
-CREATE FUNCTION checkJogadorPartidaRegiao()
+CREATE OR REPLACE FUNCTION checkJogadorPartidaRegiao()
     RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
     DECLARE
         regiao_nome VARCHAR(50);
+        jogador_nome_regiao VARCHAR(50);
     BEGIN
-        SELECT partida.nome_regiao INTO regiao_nome FROM partida WHERE partida.nr == NEW.nr_partida;
-        IF (regiao_nome != (SELECT jogador.nome_regiao FROM jogador WHERE jogador.id == NEW.id_jogador)) THEN
+        SELECT partida.nome_regiao INTO regiao_nome FROM partida WHERE partida.id_jogo = NEW.id_jogo;
+        SELECT jogador.nome_regiao INTO jogador_nome_regiao FROM jogador WHERE jogador.id = NEW.id_jogador;
+        IF (regiao_nome != jogador_nome_regiao) THEN
             RAISE EXCEPTION 'O jogador nao pertence a regiao da partida';
         END IF;
+        RETURN NEW;
     END;
 $$;
 
-DROP TRIGGER IF EXISTS checkJogadorPartidaRegiao ON partida;
+DROP TRIGGER IF EXISTS checkJogadorPartidaRegiao ON joga;
 
 -- This trigger calls the function checkJogadorPartidaRegiao() before inserting a new row in the joga table
 CREATE TRIGGER checkJogadorPartidaRegiao BEFORE INSERT ON joga
@@ -254,10 +257,11 @@ $$
         jogador_id INT;
     BEGIN
         SELECT participa.id_jogador INTO jogador_id FROM participa WHERE(
-            participa.id_jogador == NEW.id_jogador AND participa.id_conversa == NEW.id_conversa);
-        IF(jogador_id == NULL) THEN
+            participa.id_jogador = NEW.id_jogador AND participa.id_conversa = NEW.id_conversa);
+        IF(jogador_id IS NULL) THEN
             RAISE EXCEPTION 'O jogador nao pertence a conversa';
         END IF;
+        RETURN NEW;
     END;
 $$;
 
