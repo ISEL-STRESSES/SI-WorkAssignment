@@ -23,7 +23,7 @@ $$
         t4 text;
         t5 text;
     BEGIN
-        SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; -- default is READ COMMITTED
+        SET TRANSACTION ISOLATION LEVEL REPEATABLE READ ; -- default is READ COMMITTED
         call create_jogador(regiao_nome, new_username, new_email);
     EXCEPTION
         WHEN unique_violation THEN
@@ -56,7 +56,16 @@ $$
     BEGIN
         -- Checks
         IF (regiao_nome NOT IN (SELECT regiao.nome FROM regiao)) THEN
-            INSERT INTO regiao VALUES (regiao_nome);
+            RAISE EXCEPTION 'regiao not found' USING
+                HINT = 'Before creating a new jogador, create a new regiao with the given regiao_nome';
+        END IF;
+        IF (new_username IN (SELECT jogador.username FROM jogador)) THEN
+            RAISE EXCEPTION 'username already in use' USING
+                HINT = 'Change to a different username';
+        END IF;
+        IF (new_email IN (SELECT jogador.email FROM jogador)) THEN
+            RAISE EXCEPTION 'email already in use' USING
+                HINT = 'Change to a different account';
         END IF;
         -- expected
         INSERT INTO jogador(username, email, nome_regiao) VALUES (new_username, new_email, regiao_nome);
@@ -79,14 +88,15 @@ $$
     BEGIN
         -- Checks
         IF (id_jogador NOT IN (SELECT jogador.id FROM jogador)) THEN
-            RAISE NOTICE 'jogador not found';
+            RAISE EXCEPTION 'jogador not found';
         END IF;
-        IF ((SELECT jogador.estado FROM jogador WHERE jogador.id == id_jogador) == new_estado) THEN
+        IF ((SELECT jogador.estado FROM jogador WHERE jogador.id = id_jogador) = new_estado) THEN
             RAISE NOTICE 'jogador already has this estado';
+            RETURN;
         END IF;
         -- expected
         UPDATE jogador SET estado = new_estado WHERE jogador.id = id_jogador;
-    END ;
+    END;
 $$;
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -113,32 +123,38 @@ CREATE FUNCTION totalPontosJogador(jogador_id INT)
 AS
 $$
     DECLARE
-        partidaNormal       INT;
-        partidaMultiJogador INT;
+        jogosNormal       INT;
+        jogosMultiJogador INT;
+        estado_jogador   VARCHAR(10);
     BEGIN
         -- Checks
         IF(jogador_id NOT IN (SELECT jogador.id FROM jogador)) THEN
-            RAISE NOTICE 'jogador not found';
+            RAISE EXCEPTION 'jogador not found';
         END IF;
-        IF ((SELECT jogador.estado FROM jogador WHERE jogador.id == jogador_id) == 'banido' | 'desativado') THEN
-            RAISE NOTICE 'jogador is banned or inactive';
+        SELECT jogador.estado into estado_jogador FROM jogador WHERE jogador.id = jogador_id;
+        IF (estado_jogador ~* '^(banido)$') THEN
+            RAISE EXCEPTION 'jogador is banned';
+        ELSIF (estado_jogador ~* '^(inativo)$') THEN
+            RAISE NOTICE 'jogador is inactive';
         END IF;
-        IF ((SELECT joga.id_jogador FROM joga) <> jogador_id) THEN
-            RAISE NOTICE 'jogador has not played any games';
+        IF (jogador_id not in (SELECT joga.id_jogador FROM joga)) THEN
+            RAISE EXCEPTION 'jogador has not played any games';
         END IF;
         -- expected
-        -- points from partida normal
-        SELECT pontuacao FROM partida_normal WHERE (nr_partida == (
-        SELECT partida.nr FROM partida WHERE (
-        SELECT joga.nr_partida FROM joga WHERE (joga.id_jogador == jogador_id)))) INTO partidaNormal;
+        -- counts the points of partidas normais
+        SELECT COALESCE(SUM(pn.pontuacao),0) INTO jogosNormal FROM joga j
+        JOIN partida_normal pn on j.id_jogo = pn.id_jogo AND j.nr_partida = pn.nr_partida
+        JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
+        WHERE j.id_jogador = jogador_id AND p.data_fim IS NOT NULL;
 
-        -- points from partida multijogador
-        SELECT pontuacao FROM partida_multijogador WHERE (nr_partida == (
-        SELECT partida.nr FROM partida WHERE (
-        SELECT joga.nr_partida FROM joga WHERE (joga.id_jogador == jogador_id)))) INTO partidaMultiJogador;
+        -- counts the points of partidas multijogador
+        SELECT COALESCE(SUM(pm.pontuacao), 0) INTO jogosMultiJogador FROM joga j
+        JOIN partida_multijogador pm ON j.id_jogo = pm.id_jogo AND j.nr_partida = pm.nr_partida
+        JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
+        WHERE j.id_jogador = jogador_id AND pm.estado = 'Terminada' AND p.data_fim IS NOT NULL;
 
-        RETURN partidaNormal + partidaMultiJogador;
-    end;
+        RETURN jogosNormal + jogosMultiJogador;
+    END;
 $$;
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -165,31 +181,41 @@ CREATE FUNCTION totalJogosJogador(jogador_id INT)
 AS
 $$
     DECLARE
-        jogosNormal       INT;
-        jogosMultiJogador INT;
+        jogos INT;
+        estado_jogador VARCHAR(10);
     BEGIN
         -- Checks
         IF(jogador_id NOT IN (SELECT jogador.id FROM jogador)) THEN
-            RAISE NOTICE 'jogador not found';
+            RAISE EXCEPTION 'jogador not found';
         END IF;
-        IF ((SELECT jogador.estado FROM jogador WHERE jogador.id == jogador_id) = 'banido' or 'desativado') THEN
-            RAISE NOTICE 'jogador is banned or inactive';
+        SELECT jogador.estado into estado_jogador FROM jogador WHERE jogador.id = jogador_id;
+                IF (estado_jogador ~* '^(banido)$') THEN
+            RAISE EXCEPTION 'jogador is banned';
+        ELSIF (estado_jogador ~* '^(inativo)$') THEN
+            RAISE NOTICE 'jogador is inactive';
         END IF;
-        IF ((SELECT joga.id_jogador FROM joga) <> jogador_id) THEN
-            RAISE NOTICE 'jogador has not played any games';
+        IF (jogador_id NOT IN (SELECT joga.id_jogador FROM joga)) THEN
+            RAISE EXCEPTION 'jogador has not played any games';
         END IF;
         -- expected
-        -- counts the number of partidas normais
-        SELECT count() INTO jogosNormal FROM partida_normal WHERE partida_normal.nr_partida == (
-        SELECT partida.nr FROM partida WHERE (partida.nr == (
-        SELECT joga.nr_partida FROM joga WHERE (joga.id_jogador == jogador_id))));
+        -- counts the number of partidas
+        WITH multiplayer_games AS (
+        SELECT DISTINCT j.id_jogo
+        FROM joga j
+        JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
+        JOIN partida_multijogador pm ON j.id_jogo = pm.id_jogo AND j.nr_partida = pm.nr_partida
+        WHERE j.id_jogador = jogador_id AND pm.estado = 'Terminada' AND p.data_fim IS NOT NULL
+    ), normal_games AS (
+        SELECT DISTINCT j.id_jogo
+        FROM joga j
+        JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
+        JOIN partida_normal pn ON j.id_jogo = pn.id_jogo AND j.nr_partida = pn.nr_partida
+        WHERE j.id_jogador = jogador_id AND p.data_fim IS NOT NULL AND pn.pontuacao IS NOT NULL
+    )
+    SELECT COUNT(*) INTO jogos
+    FROM (SELECT id_jogo FROM multiplayer_games UNION SELECT id_jogo FROM normal_games) AS all_games;
 
-        -- counts the number of partidas multijogador
-        SELECT count() INTO jogosMultiJogador FROM partida_multijogador WHERE partida_multijogador.nr_partida == (
-        SELECT partida.nr FROM partida WHERE (partida.nr == (
-        SELECT joga.nr_partida FROM joga WHERE (joga.id_jogador == jogador_id))));
-
-        RETURN jogosNormal + jogosMultiJogador;
+        RETURN jogos;
     END;
 $$;
 
@@ -211,7 +237,7 @@ $$
     BEGIN
         RETURN QUERY SELECT joga.id_jogador, totalPontosJogador(joga.id_jogador) FROM joga WHERE joga.id_jogador IN (
         SELECT joga.id_jogador FROM joga WHERE joga.nr_partida IN (
-        SELECT partida.nr FROM partida WHERE partida.id_jogo == jogo_id));
+        SELECT partida.nr FROM partida WHERE partida.id_jogo = jogo_id));
     END;
 $$;
 
@@ -233,9 +259,9 @@ $$
         nome_cracha VARCHAR(50);
         total_pontos INT;
     BEGIN
-        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.nome == cracha_nome;
+        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.nome = cracha_nome;
         SELECT total_pontos FROM PontosJogoPorJogador(jogo_id) AS pontos_jogo WHERE pontos_jogo.id_jogador = jogador_id INTO total_pontos;
-        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome == cracha_nome)) THEN
+        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome = cracha_nome)) THEN
             INSERT INTO ganha VALUES (jogador_id, cracha_nome, jogo_id);
         END IF;
     END;
@@ -262,10 +288,10 @@ $$
         default_conversa_nr_ordem INT := 1;
         nome_conversa VARCHAR(50);
     BEGIN
-        SELECT nome INTO nome_conversa FROM conversa WHERE conversa.nome == nome_conversa;
-        IF (nome_conversa == NULL) THEN
+        SELECT nome INTO nome_conversa FROM conversa WHERE conversa.nome = nome_conversa;
+        IF (nome_conversa IS NULL) THEN
             INSERT INTO conversa VALUES (nome_conversa);
-            SELECT id INTO conversa_id FROM conversa WHERE conversa.nome == nome_conversa;
+            SELECT id INTO conversa_id FROM conversa WHERE conversa.nome = nome_conversa;
             INSERT INTO participa VALUES (jogador_id, conversa_id);
             INSERT INTO mensagem VALUES (default_conversa_nr_ordem, 'O jogador criou a conversa', now(),
                                          jogador_id, conversa_id);
@@ -291,7 +317,7 @@ $$
     DECLARE
         nr INT;
     BEGIN
-        SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador == jogador_id AND mensagem.id_conversa == conversa_id;
+        SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador = jogador_id AND mensagem.id_conversa = conversa_id;
         INSERT INTO participa VALUES (jogador_id, conversa_id);
         INSERT INTO mensagem VALUES (nr, 'O jogador entrou na conversa', now(), jogador_id, conversa_id);
     END;
@@ -322,14 +348,14 @@ $$
         IF (conversa_id NOT IN (SELECT conversa.id FROM conversa)) THEN
             RAISE EXCEPTION 'A conversa com o id (%) não existe', conversa_id;
         END IF;
-        IF (mensagem_texto == NULL) THEN
+        IF (mensagem_texto IS NULL) THEN
             RAISE EXCEPTION 'A mensagem (%) não tem conteúdo', mensagem_texto;
         END IF;
         --expected
-        IF (jogador_id NOT IN (SELECT id_jogador FROM participa WHERE participa.id_conversa == conversa_id)) THEN
+        IF (jogador_id NOT IN (SELECT id_jogador FROM participa WHERE participa.id_conversa = conversa_id)) THEN
             INSERT INTO participa VALUES (jogador_id, conversa_id);
         END IF;
-        SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador == jogador_id AND mensagem.id_conversa == conversa_id;
+        SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador = jogador_id AND mensagem.id_conversa = conversa_id;
         INSERT INTO mensagem VALUES (nr, mensagem_texto, now(), jogador_id, conversa_id);
     END;
 $$;
@@ -353,7 +379,7 @@ $$
     DECLARE
         nr_partidas INT;
     BEGIN
-        SELECT COUNT(nr_partida) INTO nr_partidas FROM joga WHERE joga.id_jogador == jogador_id;
+        SELECT COUNT(nr_partida) INTO nr_partidas FROM joga WHERE joga.id_jogador = jogador_id;
         RETURN nr_partidas;
     END;
 $$;
@@ -396,16 +422,17 @@ $$
         nome_cracha  VARCHAR(50);
         total_pontos INT;
     BEGIN
-        SELECT jogo_id INTO jogo_id FROM partida WHERE partida.nr == NEW.nr;
-        SELECT id_jogador INTO jogador_id FROM joga WHERE joga.nr_partida == NEW.nr;
-        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.id_jogo == jogo_id;
-        SELECT pontuacao from partida_normal WHERE partida_normal.nr_partida == NEW.nr INTO total_pontos;
-        IF (total_pontos == NULL) THEN
-            SELECT pontuacao from partida_multijogador WHERE partida_multijogador.nr_partida == NEW.nr INTO total_pontos;
+        SELECT jogo_id INTO jogo_id FROM partida WHERE partida.nr = NEW.nr;
+        SELECT id_jogador INTO jogador_id FROM joga WHERE joga.nr_partida = NEW.nr;
+        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.id_jogo = jogo_id;
+        SELECT pontuacao from partida_normal WHERE partida_normal.nr_partida = NEW.nr INTO total_pontos;
+        IF (total_pontos IS NULL) THEN
+            SELECT pontuacao from partida_multijogador WHERE partida_multijogador.nr_partida = NEW.nr INTO total_pontos;
         END IF;
-        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome == nome_cracha)) THEN
+        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome = nome_cracha)) THEN
             INSERT INTO ganha VALUES (jogador_id, nome_cracha, id_jogo);
         END IF;
+    RETURN NEW;
     END;
 $$;
 
@@ -436,8 +463,8 @@ $$
     DECLARE
         jogador_id INT;
     BEGIN
-        SELECT jogador.id INTO jogador_id FROM jogador WHERE jogador.username == OLD.username;
-        UPDATE jogador SET estado = 'Banido' WHERE jogador.id == jogador_id;
+        SELECT jogador.id INTO jogador_id FROM jogador WHERE jogador.username = OLD.username;
+        UPDATE jogador SET estado = 'Banido' WHERE jogador.id = jogador_id;
     END;
 $$;
 

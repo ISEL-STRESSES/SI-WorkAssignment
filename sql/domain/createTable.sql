@@ -133,8 +133,7 @@ CREATE TABLE IF NOT EXISTS partida_multijogador(
     estado     VARCHAR(20)  DEFAULT 'Por iniciar',
     pontuacao  INT          DEFAULT 0,
 
-    CONSTRAINT estado_constraint CHECK(estado in ('Por iniciar', 'A aguardar jogadores', 'Em curso', 'Terminada')),
-
+    CONSTRAINT estado_constraint CHECK(estado ~* '^(Por iniciar|A aguardar jogadores|Em curso|Terminada)$'),
     CONSTRAINT fk_partida_multijogador FOREIGN KEY(id_jogo, nr_partida) REFERENCES partida(id_jogo, nr) ON DELETE CASCADE,
     CONSTRAINT pk_partida_multijogador PRIMARY KEY(nr_partida, id_jogo)
 );

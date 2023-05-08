@@ -256,7 +256,6 @@ COMMIT;
 -- 2.4 Test procedure that will call the checkJogadorMensagemConversa_init() and then call the
 --     test_checkJogadorMensagemConversa_Ok() and test_checkJogadorMensagemConversa_NOK() procedures.
 --     This procedure should not throw an exception.
-BEGIN TRANSACTION;
 do $$
     DECLARE
         player3_id int;
@@ -283,8 +282,5 @@ do $$
             RAISE NOTICE 'DETAIL: %', t3;
             RAISE NOTICE 'HINT: %', t4;
             RAISE NOTICE 'CONTEXT: %', t5;
-            ROLLBACK;
     END;
 $$ language plpgsql;
-
-COMMIT;
