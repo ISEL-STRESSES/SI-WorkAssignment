@@ -20,6 +20,7 @@ $$
         t4 text;
         t5 text;
     BEGIN
+        ROLLBACK;
         SET TRANSACTION ISOLATION LEVEL REPEATABLE READ ; -- default is READ COMMITTED
         call create_jogador(regiao_nome, new_username, new_email);
     EXCEPTION
@@ -283,6 +284,36 @@ $$
     END
 $$;
 
+CREATE OR REPLACE PROCEDURE associarChachatransacao(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50))
+    LANGUAGE plpgsql
+    AS
+$$
+    Declare
+        t1 text;
+        t2 text;
+        t3 text;
+        t4 text;
+        t5 text;
+    BEGIN
+        ROLLBACK;
+        SET TRANSACTION ISOLATION LEVEL REPEATABLE READ ; -- default is READ COMMITTED
+        Call associarCracha(jogador_id, jogo_id, cracha_nome);
+        COMMIT;
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
+                t2 = RETURNED_SQLSTATE,
+                t3 = PG_EXCEPTION_DETAIL,
+                t4 = PG_EXCEPTION_HINT,
+                t5 = PG_EXCEPTION_CONTEXT;
+            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
+            RAISE NOTICE 'SQLSTATE: %', t2;
+            RAISE NOTICE 'DETAIL: %', t3;
+            RAISE NOTICE 'HINT: %', t4;
+            RAISE NOTICE 'CONTEXT: %', t5;
+            ROLLBACK;
+    END;
+$$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (i) Criar o procedimento armazenado iniciarConversa que permite iniciar uma conversa (chat) dados o identificador de
 -- um jogador e o nome da conversa. O jogador deve ficar automaticamente associado à conversa e deve ser criada uma
@@ -301,16 +332,50 @@ AS
 $$
     DECLARE
         default_conversa_nr_ordem INT := 1;
-        nome_conversa VARCHAR(50);
     BEGIN
-        SELECT nome INTO nome_conversa FROM conversa WHERE conversa.nome = nome_conversa;
-        IF (nome_conversa IS NULL) THEN
-            INSERT INTO conversa VALUES (nome_conversa);
+        -- Check if a conversation with the same name already exists
+        PERFORM 1 FROM conversa WHERE conversa.nome = nome_conversa;
+        IF NOT FOUND THEN
+            -- Create a new conversation
+            INSERT INTO conversa (nome) VALUES (nome_conversa);
             SELECT id INTO conversa_id FROM conversa WHERE conversa.nome = nome_conversa;
-            INSERT INTO participa VALUES (jogador_id, conversa_id);
-            INSERT INTO mensagem VALUES (default_conversa_nr_ordem, 'O jogador criou a conversa', now(),
-                                         jogador_id, conversa_id);
+            -- Associate the player with the conversation
+            INSERT INTO participa (id_jogador, id_conversa) VALUES (jogador_id, conversa_id);
+            -- Add a message that the player created the conversation
+            INSERT INTO mensagem (nr_ordem, id_jogador, id_conversa, texto, data)
+            VALUES (default_conversa_nr_ordem, jogador_id, conversa_id,'O jogador criou a conversa', now());
         END IF;
+    END;
+$$;
+
+CREATE OR REPLACE PROCEDURE iniciarConversatransacao(jogador_id INT, nome_conversa VARCHAR(50), conversa_id OUT INT)
+    LANGUAGE plpgsql
+    AS
+$$
+    Declare
+        t1 text;
+        t2 text;
+        t3 text;
+        t4 text;
+        t5 text;
+    BEGIN
+        ROLLBACK;
+        SET TRANSACTION ISOLATION LEVEL REPEATABLE READ ; -- default is READ COMMITTED
+        Call iniciarConversa(jogador_id, nome_conversa, conversa_id);
+        COMMIT;
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
+                t2 = RETURNED_SQLSTATE,
+                t3 = PG_EXCEPTION_DETAIL,
+                t4 = PG_EXCEPTION_HINT,
+                t5 = PG_EXCEPTION_CONTEXT;
+            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
+            RAISE NOTICE 'SQLSTATE: %', t2;
+            RAISE NOTICE 'DETAIL: %', t3;
+            RAISE NOTICE 'HINT: %', t4;
+            RAISE NOTICE 'CONTEXT: %', t5;
+            ROLLBACK;
     END;
 $$;
 
@@ -332,8 +397,40 @@ $$
         nr INT;
     BEGIN
         SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador = jogador_id AND mensagem.id_conversa = conversa_id;
+        nr := nr + 1;
         INSERT INTO participa VALUES (jogador_id, conversa_id);
-        INSERT INTO mensagem VALUES (nr, 'O jogador entrou na conversa', now(), jogador_id, conversa_id);
+        INSERT INTO mensagem VALUES (nr, jogador_id, conversa_id, 'O jogador entrou na conversa', now());
+    END;
+$$;
+
+CREATE OR REPLACE PROCEDURE juntarConversatransacao(jogador_id INT, conversa_id INT)
+    LANGUAGE plpgsql
+    AS
+$$
+    Declare
+        t1 text;
+        t2 text;
+        t3 text;
+        t4 text;
+        t5 text;
+    BEGIN
+        ROLLBACK;
+        SET TRANSACTION ISOLATION LEVEL REPEATABLE READ ; -- default is READ COMMITTED
+        Call juntarConversa(jogador_id, conversa_id);
+        COMMIT;
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
+                t2 = RETURNED_SQLSTATE,
+                t3 = PG_EXCEPTION_DETAIL,
+                t4 = PG_EXCEPTION_HINT,
+                t5 = PG_EXCEPTION_CONTEXT;
+            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
+            RAISE NOTICE 'SQLSTATE: %', t2;
+            RAISE NOTICE 'DETAIL: %', t3;
+            RAISE NOTICE 'HINT: %', t4;
+            RAISE NOTICE 'CONTEXT: %', t5;
+            ROLLBACK;
     END;
 $$;
 
@@ -369,10 +466,41 @@ $$
             INSERT INTO participa VALUES (jogador_id, conversa_id);
         END IF;
         SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador = jogador_id AND mensagem.id_conversa = conversa_id;
-        INSERT INTO mensagem VALUES (nr, mensagem_texto, now(), jogador_id, conversa_id);
+        nr := nr + 1;
+        INSERT INTO mensagem VALUES (nr, jogador_id, conversa_id, mensagem_texto, now());
     END;
 $$;
 
+CREATE OR REPLACE PROCEDURE enviarMensagemtransacao(jogador_id INT, conversa_id INT, mensagem_texto VARCHAR(50))
+    LANGUAGE plpgsql
+    AS
+$$
+    Declare
+        t1 text;
+        t2 text;
+        t3 text;
+        t4 text;
+        t5 text;
+    BEGIN
+        ROLLBACK;
+        SET TRANSACTION ISOLATION LEVEL REPEATABLE READ ; -- default is READ COMMITTED
+        Call enviarMensagem(jogador_id, conversa_id, mensagem_texto);
+        COMMIT;
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
+                t2 = RETURNED_SQLSTATE,
+                t3 = PG_EXCEPTION_DETAIL,
+                t4 = PG_EXCEPTION_HINT,
+                t5 = PG_EXCEPTION_CONTEXT;
+            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
+            RAISE NOTICE 'SQLSTATE: %', t2;
+            RAISE NOTICE 'DETAIL: %', t3;
+            RAISE NOTICE 'HINT: %', t4;
+            RAISE NOTICE 'CONTEXT: %', t5;
+            ROLLBACK;
+    END;
+$$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (l) Criar a vista jogadorTotalInfo que permita aceder à informação sobre identificador, estado, email, username,
 -- número total de jogos em que participou, número total de partidas em que participou e número total de pontos que já
@@ -421,36 +549,70 @@ CREATE OR REPLACE VIEW jogadorTotalInfo AS
 -- Example usage:
 --
 CREATE OR REPLACE FUNCTION atribuirCrachas()
-    RETURNS trigger
-    LANGUAGE plpgsql
-AS
-$$
-    DECLARE
-        jogo_id      ALPHANUMERIC;
-        jogador_id   INT;
-        nome_cracha  VARCHAR(50);
-        total_pontos INT;
-    BEGIN
-        SELECT jogo_id INTO jogo_id FROM partida WHERE partida.nr = NEW.nr;
-        SELECT id_jogador INTO jogador_id FROM joga WHERE joga.nr_partida = NEW.nr;
-        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.id_jogo = jogo_id;
-        SELECT pontuacao from partida_normal WHERE partida_normal.nr_partida = NEW.nr INTO total_pontos;
-        IF (total_pontos IS NULL) THEN
-            SELECT pontuacao from partida_multijogador WHERE partida_multijogador.nr_partida = NEW.nr INTO total_pontos;
-        END IF;
-        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome = nome_cracha)) THEN
-            INSERT INTO ganha VALUES (jogador_id, nome_cracha, id_jogo);
-        END IF;
+    RETURNS TRIGGER AS $$
+DECLARE
+    v_jogadores RECORD;
+    v_crachas RECORD;
+    v_estado_partida_multijogador VARCHAR;
+BEGIN
+    SELECT estado INTO v_estado_partida_multijogador
+    FROM partida_multijogador
+    WHERE id_jogo = NEW.id_jogo AND nr_partida = NEW.nr_partida;
+
+    IF v_estado_partida_multijogador = 'Terminada' THEN
+        FOR v_jogadores IN
+            SELECT j.id_jogador, j.id_jogo, SUM(pm.pontuacao) as total_pontos
+            FROM joga j
+                     INNER JOIN partida_multijogador pm ON j.nr_partida = pm.nr_partida AND j.id_jogo = pm.id_jogo
+            WHERE j.nr_partida = NEW.nr_partida AND j.id_jogo = NEW.id_jogo
+            GROUP BY j.id_jogador, j.id_jogo
+            LOOP
+                FOR v_crachas IN
+                    SELECT c.nome, c.id_jogo, c.limite_pontos
+                    FROM cracha c
+                    WHERE c.id_jogo = v_jogadores.id_jogo
+                    LOOP
+                        IF v_jogadores.total_pontos >= v_crachas.limite_pontos THEN
+                            INSERT INTO ganha (id_jogador, nome_cracha, id_jogo)
+                            VALUES (v_jogadores.id_jogador, v_crachas.nome, v_crachas.id_jogo)
+                            ON CONFLICT (id_jogador, nome_cracha, id_jogo) DO NOTHING;
+                        END IF;
+                    END LOOP;
+            END LOOP;
+    END IF;
     RETURN NEW;
-    END;
-$$;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
 
 -- This trigger is called when a match ends and it assigns badges to the players who have played the match if they
 -- have obtained enough points.
-CREATE OR REPLACE TRIGGER atribuirCrachas
-    AFTER INSERT ON partida
+CREATE OR REPLACE TRIGGER atribuirCrachasMultijogadorTrigger
+    AFTER UPDATE OF estado, pontuacao ON partida_multijogador
     FOR EACH ROW
-    EXECUTE PROCEDURE atribuirCrachas();
+    WHEN (NEW.estado = 'Terminada')
+        EXECUTE PROCEDURE atribuirCrachas();
+
+-- This function checks if a player has a badge.
+-- Not a requirement but useful for testing.
+CREATE OR REPLACE FUNCTION has_badge(p_id_jogador INTEGER, p_nome_cracha VARCHAR, p_id_jogo ALPHANUMERIC)
+    RETURNS BOOLEAN
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    badge_exists BOOLEAN;
+BEGIN
+    SELECT EXISTS (SELECT 1 FROM ganha WHERE id_jogador = p_id_jogador AND nome_cracha = p_nome_cracha AND id_jogo = p_id_jogo)
+    INTO badge_exists;
+
+    RETURN badge_exists;
+END;
+$$;
+
 
 ------------------------------------------------------------------------------------------------------------------------
 -- (n) Criar os mecanismos necessários para que a execução da instrução DELETE sobre a vista jogadorTotalInfo permita
@@ -477,7 +639,7 @@ $$;
 
 -- This trigger is called when a player is deleted from the view jogadorTotalInfo and it puts the player in the
 -- "Banido" state.
-CREATE OR REPLACE TRIGGER banirJogador
+CREATE OR REPLACE TRIGGER banirJogadorTrigger
     INSTEAD OF DELETE ON jogadorTotalInfo
     FOR EACH ROW
 EXECUTE FUNCTION banirJogador();

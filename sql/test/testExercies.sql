@@ -1,7 +1,10 @@
 -- 2.(o) Criar um script autónomo com os testes das funcionalidades de 2d a 2n para cenários normais e de erro. Este
 -- script, ao ser executado, deve listar, para cada teste, o seu nome e indicação se ele correu ou não com sucesso;
 -- (d.1)
-do $$
+CREATE OR REPLACE PROCEDURE test_d1()
+    LANGUAGE plpgsql
+AS
+$$
     DECLARE
         region_name1 varchar := 'TestRegion11';
         player_name1 varchar := 'TestPlayer11';
@@ -17,7 +20,7 @@ do $$
         DELETE FROM jogador WHERE email = player_email3;
         DELETE FROM regiao WHERE nome = region_name1;
         INSERT INTO regiao (nome) VALUES (region_name1);
-        RAISE NOTICE 'Exercice 2d.1';
+        RAISE NOTICE 'Exercise 2d.1';
         RAISE NOTICE 'Test data created';
         RAISE NOTICE 'Testing the creation of a new user without status, the default status for a new user is "ativo"';
     BEGIN -- Test 1: Creating a new player with valid parameters should succeed
@@ -100,10 +103,13 @@ do $$
         DELETE FROM jogador WHERE email = player_email3;
         DELETE FROM regiao WHERE nome = region_name1;
     END;
-$$ language plpgsql;
+$$;
 
 -- (d.2)
-do $$
+CREATE OR REPLACE PROCEDURE test_d2()
+    LANGUAGE plpgsql
+AS
+$$
     DECLARE
         region_name1 varchar := 'TestRegion12';
         player_name1 varchar := 'TestPlayer14';
@@ -116,7 +122,7 @@ do $$
         INSERT INTO regiao (nome) VALUES (region_name1);
         INSERT INTO jogador (username, email, nome_regiao) VALUES (player_name1, player_email1, region_name1);
         SELECT jogador.id INTO player_id1 FROM jogador WHERE email = player_email1;
-        RAISE NOTICE 'Exercice 2d.2';
+        RAISE NOTICE 'Exercise 2d.2';
         RAISE NOTICE 'Test data created';
         RAISE NOTICE 'Testing the changing of the status of an jogador';
     BEGIN -- Test 1: Changing the status of an existing player to "inativo" should succeed
@@ -156,10 +162,13 @@ do $$
         DELETE FROM regiao WHERE nome = region_name1;
     END;
 
-$$ language plpgsql;
+$$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (e)
-do $$
+CREATE OR REPLACE PROCEDURE test_e()
+    LANGUAGE plpgsql
+AS
+$$
     DECLARE
         region_name1 varchar := 'TestRegion21';
         player_id1 integer;
@@ -212,7 +221,7 @@ do $$
         INSERT INTO joga (id_jogador, nr_partida, id_jogo) VALUES (player_id1, 2, game_id2);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo) VALUES (player_id1, 3, game_id2);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo) VALUES (player_id1, 4, game_id2);
-        RAISE NOTICE 'Exercice 2e';
+        RAISE NOTICE 'Exercise 2e';
         RAISE NOTICE 'Test data created';
         RAISE NOTICE 'Testing sum of points from a specific player across all matches';
     BEGIN -- Test 1: Get player's total score across all matches without valid table content
@@ -277,10 +286,13 @@ do $$
         DELETE FROM jogador WHERE id = player_id2;
         DELETE FROM regiao WHERE nome = region_name1;
     END;
-$$ language plpgsql;
+$$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (f)
-do $$
+CREATE OR REPLACE PROCEDURE test_f()
+    LANGUAGE plpgsql
+AS
+$$
     DECLARE
         region_name1 varchar := 'TestRegion31';
         player_id1 int;
@@ -330,7 +342,7 @@ do $$
         INSERT INTO joga (id_jogador, nr_partida, id_jogo) VALUES (player_id1, 1, game_id2);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo) VALUES (player_id1, 1, game_id3);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo) VALUES (player_id1, 1, game_id4);
-        RAISE NOTICE 'Exercice 2f';
+        RAISE NOTICE 'Exercise 2f';
         RAISE NOTICE 'Test data created';
         RAISE NOTICE 'Testing sum games played by a specific player';
     BEGIN -- Test 1: Gets a player's total games played
@@ -400,10 +412,13 @@ do $$
         DELETE FROM jogador WHERE id = player_id2;
         DELETE FROM regiao WHERE nome = region_name1;
     END;
-$$ language plpgsql;
+$$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (g)
-DO $$
+CREATE OR REPLACE PROCEDURE test_g()
+    LANGUAGE plpgsql
+AS
+$$
     DECLARE
         tabela REFCURSOR;
         region_name1 varchar := 'TestRegion41';
@@ -455,7 +470,7 @@ DO $$
         insert into joga(id_jogador, nr_partida, id_jogo) values(player_id2, 2,game_id1);
         insert into joga(id_jogador, nr_partida, id_jogo) values(player_id2, 4,game_id1);
         insert into joga(id_jogador, nr_partida, id_jogo) values(player_id2, 6,game_id1);
-        RAISE NOTICE 'Exercice 2g';
+        RAISE NOTICE 'Exercise 2g';
         RAISE NOTICE 'Test data created';
         RAISE NOTICE 'Testing the sum of points of a player in a game';
     BEGIN -- Test 1: Obtaining the total points of 2 player in a game
@@ -472,8 +487,12 @@ DO $$
     END;
     BEGIN -- Test 2: Obtaining the point of an nonexistent game
         OPEN tabela FOR SELECT * FROM pontosJogoPorJogador(game_id2);
-        FETCH NEXT FROM tabela INTO player, pontos;
-        RAISE EXCEPTION 'Test 2 failed';
+            FETCH NEXT FROM tabela INTO player, pontos;
+            IF (player IS NULL AND pontos IS NULL) THEN
+                RAISE NOTICE 'Test 2 succeeded';
+            ELSE
+            RAISE EXCEPTION 'Test 2 failed';
+            END IF;
         CLOSE tabela;
     EXCEPTION
         WHEN raise_exception THEN
@@ -510,9 +529,12 @@ DO $$
         DELETE FROM jogador WHERE id = player_id2;
         DELETE FROM regiao WHERE nome = region_name1;
     END;
-$$ LANGUAGE plpgsql;
+$$;
 -- (h)
-do $$
+CREATE OR REPLACE PROCEDURE test_h()
+    LANGUAGE plpgsql
+AS
+$$
     DECLARE
         region_name1 varchar := 'TestRegion51';
         player_name1 varchar := 'TestPlayer51';
@@ -557,7 +579,7 @@ do $$
         insert into joga(id_jogador, nr_partida, id_jogo) values(player_id1, 1,game_id1);
         insert into joga(id_jogador, nr_partida, id_jogo) values(player_id1, 2,game_id1);
         insert into joga(id_jogador, nr_partida, id_jogo) values(player_id1, 3,game_id1);
-        RAISE NOTICE 'Exercice 2h';
+        RAISE NOTICE 'Exercise 2h';
         RAISE NOTICE 'Test data created';
         RAISE NOTICE 'Testing the attribution of a badges to a player';
     BEGIN -- Test 1: Giving only a badge to a player
@@ -649,45 +671,46 @@ do $$
         DELETE FROM jogador WHERE id = player_id2;
         DELETE FROM regiao WHERE nome = region_name1;
     END;
-$$ LANGUAGE plpgsql;
+$$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (i)
 --iniciarConversa tests
-do
+CREATE OR REPLACE PROCEDURE test_i()
+    LANGUAGE plpgsql
+AS
 $$
     DECLARE
         region_name1 varchar := 'TestRegion61';
-        region_name2 varchar := 'TestRegion62';
         player_name1 varchar := 'TestPlayer61';
         player_email1 varchar := 'testplayer61@gmail.com';
         player_id1 INT;
-        player_name2 varchar := 'TestPlayer62';
-        player_email2 varchar := 'testplayer62@gmail.com';
-        player_id2 INT;
-        player_name3 varchar := 'TestPlayer63';
-        player_email3 varchar := 'testplayer63@gmail.com';
-        player_id3 INT;
+        chat_name varchar := 'TestChat61';
+        chat_id INT :=0;
     BEGIN
         insert into regiao(nome) values(region_name1);
-        insert into regiao(nome) values(region_name2);
         CALL create_jogador(region_name1, player_name1, player_email1);
         SELECT id INTO player_id1 FROM jogador WHERE email = player_email1;
-        CALL create_jogador(region_name2, player_name2, player_email2);
-        SELECT id INTO player_id2 FROM jogador WHERE email = player_email2;
-        CALL create_jogador(region_name1, player_name3, player_email3);
-        SELECT id INTO player_id3 FROM jogador WHERE email = player_email3;
-        --CALL iniciarconversa(...);
-
-        RAISE NOTICE 'Exercice 2i';
+        RAISE NOTICE 'Exercise 2i';
         RAISE NOTICE 'Test data created';
-        RAISE NOTICE 'Testing the';
-        BEGIN
-        END;
+        RAISE NOTICE 'Testing the creation of a chat';
+    BEGIN
+        CALL iniciarconversa(player_id1, chat_name, chat_id);
+            IF (SELECT COUNT(*) FROM conversa WHERE id = chat_id) = 1 THEN
+                RAISE NOTICE 'Test 1 succeeded';
+            ELSE RAISE EXCEPTION 'Test 1 failed'; END IF;
     END;
-$$ LANGUAGE plpgsql;
+        DELETE FROM mensagem WHERE id_conversa = chat_id;
+        DELETE FROM participa WHERE id_conversa = chat_id;
+        DELETE FROM conversa WHERE id = chat_id;
+        DELETE FROM jogador WHERE id = player_id1;
+        DELETE FROM regiao WHERE nome = region_name1;
+    END;
+$$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (j)
-do
+CREATE OR REPLACE PROCEDURE test_j()
+    LANGUAGE plpgsql
+AS
 $$
     DECLARE
         region_name1 varchar := 'TestRegion71';
@@ -701,6 +724,9 @@ $$
         player_name3 varchar := 'TestPlayer73';
         player_email3 varchar := 'testplayer73@gmail.com';
         player_id3 INT;
+        chat_name varchar := 'TestChat61';
+        chat_id INT :=0;
+        text_message varchar := 'O jogador entrou na conversa';
     BEGIN
         insert into regiao(nome) values(region_name1);
         insert into regiao(nome) values(region_name2);
@@ -710,16 +736,35 @@ $$
         SELECT id INTO player_id2 FROM jogador WHERE email = player_email2;
         CALL create_jogador(region_name1, player_name3, player_email3);
         SELECT id INTO player_id3 FROM jogador WHERE email = player_email3;
-        RAISE NOTICE 'Exercice 2j';
+        CALL iniciarconversa(player_id1, chat_name, chat_id);
+        RAISE NOTICE 'Exercise 2j';
         RAISE NOTICE 'Test data created';
-        RAISE NOTICE 'Testing the';
-        BEGIN
-        END;
+        RAISE NOTICE 'Testing the addition of a player to a chat';
+    BEGIN
+        CALL juntarconversa(player_id2, chat_id);
+            IF (SELECT COUNT(mensagem.nr_ordem) FROM mensagem WHERE id_conversa = chat_id) >= 2 THEN
+                IF (text_message in (Select texto from mensagem where id_conversa = chat_id and id_jogador = player_id2)) THEN
+                    RAISE NOTICE 'Test 1 succeeded';
+                ELSE RAISE EXCEPTION 'Test 1 failed 1';
+                END IF;
+            ELSE RAISE EXCEPTION 'Test 1 failed';
+            END IF;
     END;
-$$ LANGUAGE plpgsql;
+        DELETE FROM mensagem WHERE id_conversa = chat_id;
+        DELETE FROM participa WHERE id_conversa = chat_id;
+        DELETE FROM conversa WHERE id = chat_id;
+        DELETE FROM jogador WHERE id = player_id1;
+        DELETE FROM jogador WHERE id = player_id2;
+        DELETE FROM jogador WHERE id = player_id3;
+        DELETE FROM regiao WHERE nome = region_name1;
+        DELETE FROM regiao WHERE nome = region_name2;
+    END;
+$$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (k)
-do
+CREATE OR REPLACE PROCEDURE test_k()
+    LANGUAGE plpgsql
+AS
 $$
     DECLARE
         region_name1 varchar := 'TestRegion81';
@@ -733,6 +778,9 @@ $$
         player_name3 varchar := 'TestPlayer83';
         player_email3 varchar := 'testplayer83@gmail.com';
         player_id3 INT;
+        chat_name varchar := 'TestChat81';
+        chat_id INT :=0;
+        text_message varchar := 'TestMessage81';
     BEGIN
         insert into regiao(nome) values(region_name1);
         insert into regiao(nome) values(region_name2);
@@ -742,16 +790,36 @@ $$
         SELECT id INTO player_id2 FROM jogador WHERE email = player_email2;
         CALL create_jogador(region_name1, player_name3, player_email3);
         SELECT id INTO player_id3 FROM jogador WHERE email = player_email3;
-        RAISE NOTICE 'Exercice 2k';
+        CALL iniciarconversa(player_id1, chat_name, chat_id);
+        CALL juntarconversa(player_id2, chat_id);
+        RAISE NOTICE 'Exercise 2k';
         RAISE NOTICE 'Test data created';
-        RAISE NOTICE 'Testing the';
-        BEGIN
-        END;
+        RAISE NOTICE 'Testing the sending of a message';
+    BEGIN
+        CALL enviarMensagem(player_id1, chat_id, text_message);
+            IF (SELECT COUNT(*) FROM mensagem WHERE id_conversa = chat_id) >= 2 THEN
+                IF (text_message in (Select texto from mensagem where id_conversa = chat_id and id_jogador = player_id1)) THEN
+                    RAISE NOTICE 'Test 1 succeeded';
+                ELSE RAISE EXCEPTION 'Test 1 failed';
+                END IF;
+            ELSE RAISE EXCEPTION 'Test 1 failed';
+            END IF;
     END;
-$$ LANGUAGE plpgsql;
+        DELETE FROM mensagem WHERE id_conversa = chat_id;
+        DELETE FROM participa WHERE id_conversa = chat_id;
+        DELETE FROM conversa WHERE id = chat_id;
+        DELETE FROM jogador WHERE id = player_id1;
+        DELETE FROM jogador WHERE id = player_id2;
+        DELETE FROM jogador WHERE id = player_id3;
+        DELETE FROM regiao WHERE nome = region_name1;
+        DELETE FROM regiao WHERE nome = region_name2;
+    END;
+$$;
 ------------------------------------------------------------------------------------------------------------------------
--- (l)
-do
+-- (l) -- only works on empty db
+CREATE OR REPLACE PROCEDURE test_l()
+    LANGUAGE plpgsql
+AS
 $$
     DECLARE
         region_name1 varchar := 'TestRegion91';
@@ -827,27 +895,27 @@ $$
         INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id3, 3, game_id2); --multi
         INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id3, 3, game_id3); --normal
         INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id3, 2, game_id2); --multi
-        RAISE NOTICE 'Exercice 2l';
+        RAISE NOTICE 'Exercise 2l';
         RAISE NOTICE 'Test data created';
         RAISE NOTICE 'Testing the view jogadorTotalInfo';
-    BEGIN -- Test 1: viewing jogadorTotalInfo raw
+   BEGIN -- Test 1: viewing jogadorTotalInfo raw
         OPEN vista FOR SELECT * FROM jogadortotalinfo;
-        FOR i IN 0..2 LOOP
-            FETCH NEXT FROM vista INTO player_id, player_status, player_email, player_username, player_games, Player_matches, player_points;
-            ASSERT player_id = player_id1 OR player_id = player_id2 OR player_id = player_id3, 'Test 1 failed: player_id not in test data';
-            ASSERT player_status = 'Ativo' OR player_status = 'Ativo' OR player_status = 'Ativo', 'Test 1 failed: player_status not in test data';
-            ASSERT player_email = player_email1 OR player_email = player_email2 OR player_email = player_email3, 'Test 1 failed: player_email not in test data';
-            ASSERT player_username = player_name1 OR player_username = player_name2 OR player_username = player_name3, 'Test 1 failed: player_username not in test data';
-            ASSERT player_games = 3 OR player_games = 3 OR player_games = 3, 'Test 1 failed: player_games not in test data';
-            ASSERT Player_matches = 5 OR Player_matches = 4 OR Player_matches = 5, 'Test 1 failed: Player_matches not in test data';
-            ASSERT player_points = 1101101 OR player_points = 10110110 OR player_points = 100110100, 'Test 1 failed: player_points not in test data';
-       END LOOP;
+            FOR i IN 0..2 LOOP
+                FETCH NEXT FROM vista INTO player_id, player_status, player_email, player_username, player_games, Player_matches, player_points;
+                ASSERT player_id = player_id1 OR player_id = player_id2 OR player_id = player_id3, 'Test 1 failed: player_id not in test data';
+                ASSERT player_status = 'Ativo' OR player_status = 'Ativo' OR player_status = 'Ativo', 'Test 1 failed: player_status not in test data';
+                ASSERT player_email = player_email1 OR player_email = player_email2 OR player_email = player_email3, 'Test 1 failed: player_email not in test data';
+                ASSERT player_username = player_name1 OR player_username = player_name2 OR player_username = player_name3, 'Test 1 failed: player_username not in test data';
+                ASSERT player_games = 3 OR player_games = 3 OR player_games = 3, 'Test 1 failed: player_games not in test data';
+                ASSERT Player_matches = 5 OR Player_matches = 4 OR Player_matches = 5, 'Test 1 failed: Player_matches not in test data';
+                ASSERT player_points = 1101101 OR player_points = 10110110 OR player_points = 100110100, 'Test 1 failed: player_points not in test data';
+            END LOOP;
         CLOSE vista;
         RAISE NOTICE 'Test 1 passed';
     EXCEPTION
         WHEN OTHERS THEN
             RAISE NOTICE 'Test 1 failed: %', SQLERRM;
-    END;
+   END;
         DELETE FROM joga WHERE id_jogador = player_id1;
         DELETE FROM joga WHERE id_jogador = player_id2;
         DELETE FROM joga WHERE id_jogador = player_id3;
@@ -869,38 +937,105 @@ $$
         DELETE FROM regiao WHERE nome = region_name1;
         RAISE NOTICE 'Test data deleted';
     END;
-$$ LANGUAGE plpgsql;
+$$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (m)
-do
+CREATE OR REPLACE PROCEDURE test_m()
+    LANGUAGE plpgsql
+AS
 $$
-    DECLARE
-    BEGIN
-        RAISE NOTICE 'Exercice 2m';
-        RAISE NOTICE 'Test data created';
-        RAISE NOTICE 'Testing the';
-        BEGIN
-        END;
-    END;
-$$ LANGUAGE plpgsql;
+DECLARE
+    region_name1 varchar := 'TestRegion102';
+    player_name1 varchar := 'TestPlayer104';
+    player_id1 integer;
+    player_email1 varchar := 'testplayer104@gmail.com';
+    game_id1 ALPHANUMERIC := 'GAME1234';
+    game_name1 varchar := 'TestGame102';
+    game_url1 varchar := 'http://testgame102.example.com';
+    partida_nr1 INT := 100;
+    cracha_name1 VARCHAR(50) := 'TestCracha1';
+    match_state varchar := 'Em curso';
+    match_ended varchar := 'Terminada';
+BEGIN
+    -- Prepare test data
+    DELETE FROM regiao WHERE nome = region_name1;
+    INSERT INTO regiao (nome) VALUES (region_name1);
+
+    CALL create_jogador(region_name1, player_name1, player_email1);
+    SELECT jogador.id INTO player_id1 FROM jogador WHERE email = player_email1;
+
+    DELETE FROM jogo WHERE id = game_id1;
+    INSERT INTO jogo (id, nome, url) VALUES (game_id1, game_name1, game_url1);
+
+    DELETE FROM partida WHERE nr = partida_nr1;
+    INSERT INTO partida (nr, id_jogo, data_inicio, nome_regiao) VALUES (partida_nr1, game_id1, CURRENT_DATE, region_name1);
+
+    DELETE FROM joga WHERE nr_partida = partida_nr1;
+    INSERT INTO joga (id_jogador, nr_partida, id_jogo) VALUES (player_id1, partida_nr1, game_id1);
+
+    DELETE FROM partida_multijogador WHERE nr_partida = partida_nr1 AND id_jogo = game_id1;
+    INSERT INTO partida_multijogador (nr_partida, id_jogo, estado) VALUES (partida_nr1, game_id1, match_state);
+
+    DELETE FROM cracha WHERE nome = cracha_name1;
+    INSERT INTO cracha (nome, id_jogo, imagem, limite_pontos) VALUES (cracha_name1, game_id1, 'http://test-cracha.example.com', 50);
+
+    -- Tests
+    RAISE NOTICE 'Testing atribuirCrachas function';
+
+    -- Test 1: Award badge when total points >= badge points limit
+    UPDATE partida_multijogador
+    SET estado = match_ended, pontuacao = 60
+    WHERE nr_partida = partida_nr1 AND id_jogo = game_id1;
+
+    IF (has_badge(player_id1, cracha_name1, game_id1)) THEN
+        RAISE NOTICE 'Test 1 succeeded';
+    ELSE
+        RAISE EXCEPTION 'Test 1 failed';
+    END IF;
+
+    -- Test 2: Do not award badge when total points < badge points limit
+    UPDATE partida_multijogador
+    SET estado = match_ended, pontuacao = 40
+    WHERE nr_partida = partida_nr1 AND id_jogo = game_id1;
+
+    IF (NOT has_badge(player_id1, cracha_name1, game_id1)) THEN
+        RAISE NOTICE 'Test 2 succeeded';
+    ELSE
+        RAISE EXCEPTION 'Test 2 failed';
+    END IF;
+    -- Clean up test data
+    DELETE FROM ganha WHERE id_jogador = player_id1;
+    DELETE FROM joga WHERE id_jogador = player_id1;
+    DELETE FROM partida_normal WHERE nr_partida = partida_nr1;
+    DELETE FROM partida WHERE nr = partida_nr1;
+    DELETE FROM cracha WHERE nome = cracha_name1;
+    DELETE FROM jogo WHERE id = game_id1;
+    DELETE FROM jogador WHERE id = player_id1;
+    DELETE FROM regiao WHERE nome = region_name1;
+
+END;
+$$;
+
 ------------------------------------------------------------------------------------------------------------------------
 -- (n)
-do
+CREATE OR REPLACE PROCEDURE test_n()
+    LANGUAGE plpgsql
+AS
 $$
     DECLARE
-        region_name1 varchar := 'TestRegion91';
-        player_name1 varchar := 'TestPlayer91';
-        player_email1 varchar := 'testplayer91@gmail.com';
+        region_name1 varchar := 'TestRegion111';
+        player_name1 varchar := 'TestPlayer111';
+        player_email1 varchar := 'testplayer111@gmail.com';
         player_id1 integer;
-        game_id1 varchar := 'TestGame91';
-        game_name1 varchar := 'TestGame91';
-        game_url1 varchar := 'https://testgame91.com';
-        game_id2 varchar := 'TestGame92';
-        game_name2 varchar := 'TestGame92';
-        game_url2 varchar := 'https://testgame92.com';
-        game_id3 varchar := 'TestGame93';
-        game_name3 varchar := 'TestGame93';
-        game_url3 varchar := 'https://testgame93.com';
+        game_id1 varchar := 'TestGam111';
+        game_name1 varchar := 'TestGam111';
+        game_url1 varchar := 'https://testgame111.com';
+        game_id2 varchar := 'TestGam112';
+        game_name2 varchar := 'TestGam112';
+        game_url2 varchar := 'https://testgame112.com';
+        game_id3 varchar := 'TestGam113';
+        game_name3 varchar := 'TestGam113';
+        game_url3 varchar := 'https://testgame113.com';
         match_start_date date := '2020-01-01';
         match_end_date date := '2020-01-02';
         match_ended varchar := 'Terminada';
@@ -941,10 +1076,10 @@ $$
         INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 1, game_id3); --normal
         INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 3, game_id1); --multi
         INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 3, game_id2); --multi
-        RAISE NOTICE 'Exercice 2n';
+        RAISE NOTICE 'Exercise 2n';
         RAISE NOTICE 'Test data created';
         RAISE NOTICE 'Testing the view jogadorTotalInfo';
-        BEGIN -- Test 1: Deleting over the player 1
+    BEGIN -- Test 1: Deleting over the player 1
         SELECT * FROM jogadortotalinfo into player_id, player_status, player_email, player_username, player_games, Player_matches, player_points;
         RAISE NOTICE 'PLAYER VIEW %, PLAYER TABLE %', player_username, player_name1;
         ASSERT player_id = player_id1, 'Test 1 failed: player_id not in test data';
@@ -964,7 +1099,7 @@ $$
         EXCEPTION
             WHEN OTHERS THEN
                 RAISE NOTICE 'Test 1 failed: %', SQLERRM;
-        END;
+    END;
         DELETE FROM joga WHERE id_jogador = player_id1;
         DELETE FROM partida_normal WHERE id_jogo = game_id1;
         DELETE FROM partida_normal WHERE id_jogo = game_id2;
@@ -982,4 +1117,17 @@ $$
         DELETE FROM regiao WHERE nome = region_name1;
         RAISE NOTICE 'Test data deleted';
     END;
-$$ LANGUAGE plpgsql;
+$$;
+
+CALL test_d1();
+CALL test_d2();
+CALL test_e();
+CALL test_f();
+CALL test_g();
+CALL test_h();
+CALL test_i();
+CALL test_j();
+CALL test_k();
+CALL test_l();
+CALL test_m();
+CALL test_n();
