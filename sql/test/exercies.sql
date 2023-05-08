@@ -406,59 +406,253 @@ $$ language plpgsql;
 DO $$
     DECLARE
         tabela REFCURSOR;
-        jogador1_id INT := 0;
-        jogador2_id INT := 0;
+        region_name1 varchar := 'TestRegion41';
+        player_name1 varchar := 'TestPlayer41';
+        player_name2 varchar := 'TestPlayer42';
+        player_email1 varchar := 'testplayer41@gmial.com';
+        player_email2 varchar := 'testplayer42@gmial.com';
+        player_id1 INT;
+        player_id2 INT;
+        game_id1 alphanumeric := 'testGame41';
+        game_id2 alphanumeric := 'testGame42';
+        game_name1 varchar := 'TestGame41';
+        game_name2 varchar := 'TestGame42';
+        game_url1 varchar := 'https://testgame41.com/index';
+        game_url2 varchar := 'https://testgame42.com/index';
+        match_start_date date := '2020-01-01';
+        match_end_date date := '2020-01-02';
+        match_ended varchar := 'Terminada';
+
         player INT;
         pontos int;
     BEGIN
-        insert into regiao values('NA');
-        CALL create_jogador('NA','John Kurdo', 'johna@gmail.com');
-        SELECT jogador.id INTO jogador1_id FROM jogador WHERE email = 'johna@gmail.com';
+        insert into regiao values(region_name1);
+        CALL create_jogador(region_name1,player_name1, player_email1);
+        SELECT jogador.id INTO player_id1 FROM jogador WHERE email = player_email1;
 
-        CALL create_jogador('NA','Abigail Kurdo', 'abigail@hotmail.com');
-        SELECT jogador.id INTO jogador2_id FROM jogador WHERE email = 'abigail@hotmail.com';
+        CALL create_jogador(region_name1,player_name2, player_email2);
+        SELECT jogador.id INTO player_id2 FROM jogador WHERE email = player_email2;
 
-        IF jogador1_id = 0 OR jogador2_id = 0 THEN
-            RAISE NOTICE 'Teste G: Obter total de pontos num jogo por jogador: Resultado FAIL';
-        END IF;
+        INSERT INTO JOGO VALUES(game_id1, game_name1, game_url1);
+        INSERT INTO PARTIDA VALUES(1, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO PARTIDA VALUES(2, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO PARTIDA VALUES(3, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO PARTIDA VALUES(4, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO PARTIDA VALUES(5, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO PARTIDA VALUES(6, game_id1, match_start_date, match_end_date, region_name1);
 
-        INSERT INTO JOGO VALUES('jdfSFJfdaf', 'Os Cavaleiros', 'https://oscavalos.com/index');
-        INSERT INTO PARTIDA VALUES(1, 'jdfSFJfdaf', '26 April 23', '27 April 23', 'NA');
-        INSERT INTO PARTIDA VALUES(2, 'jdfSFJfdaf',  '26 April 23', '27 April 23', 'NA');
-        INSERT INTO PARTIDA VALUES(3, 'jdfSFJfdaf',  '26 April 23', '27 April 23', 'NA');
-        INSERT INTO PARTIDA VALUES(4, 'jdfSFJfdaf',  '26 April 23', '27 April 23', 'NA');
-        INSERT INTO PARTIDA VALUES(5, 'jdfSFJfdaf',  '26 April 23', '27 April 23', 'NA');
-        INSERT INTO PARTIDA VALUES(6, 'jdfSFJfdaf', '26 April 23', '27 April 23', 'NA');
+        INSERT INTO PARTIDA_NORMAL VALUES(game_id1, 1, 3, 1);
+        INSERT INTO PARTIDA_NORMAL VALUES(game_id1, 3, 3, 10);
+        INSERT INTO PARTIDA_MULTIJOGADOR VALUES (game_id1, 5, match_ended, 100);
 
-        INSERT INTO PARTIDA_NORMAL VALUES('jdfSFJfdaf', 1, 3, 50);
-        INSERT INTO PARTIDA_NORMAL VALUES('jdfSFJfdaf', 3, 3, 125);
-        INSERT INTO PARTIDA_MULTIJOGADOR VALUES ('jdfSFJfdaf',5,'Terminada', 25);
+        INSERT INTO PARTIDA_NORMAL VALUES(game_id1, 2, 3, 1000);
+        INSERT INTO PARTIDA_MULTIJOGADOR VALUES(game_id1, 4, match_ended, 10000);
+        INSERT INTO PARTIDA_MULTIJOGADOR VALUES(game_id1, 6, match_ended, 100000);
 
-        INSERT INTO PARTIDA_NORMAL VALUES('jdfSFJfdaf',2,  3, 50);
-        INSERT INTO PARTIDA_MULTIJOGADOR VALUES('jdfSFJfdaf',4,'Terminada', 10);
-        INSERT INTO PARTIDA_MULTIJOGADOR VALUES('jdfSFJfdaf',6, 'Terminada',25);
-
-        insert into joga(id_jogador, nr_partida, id_jogo) values(jogador1_id, 1,'jdfSFJfdaf');
-        insert into joga(id_jogador, nr_partida, id_jogo) values(jogador1_id, 3,'jdfSFJfdaf');
-        insert into joga(id_jogador, nr_partida, id_jogo) values(jogador1_id, 5,'jdfSFJfdaf');
-        insert into joga(id_jogador, nr_partida, id_jogo) values(jogador2_id, 2,'jdfSFJfdaf');
-        insert into joga(id_jogador, nr_partida, id_jogo) values(jogador2_id, 4,'jdfSFJfdaf');
-        insert into joga(id_jogador, nr_partida, id_jogo) values(jogador2_id, 6,'jdfSFJfdaf');
-        OPEN tabela FOR SELECT * FROM pontosJogoPorJogador('jdfSFJfdaf');
+        insert into joga(id_jogador, nr_partida, id_jogo) values(player_id1, 1,game_id1);
+        insert into joga(id_jogador, nr_partida, id_jogo) values(player_id1, 3,game_id1);
+        insert into joga(id_jogador, nr_partida, id_jogo) values(player_id1, 5,game_id1);
+        insert into joga(id_jogador, nr_partida, id_jogo) values(player_id2, 2,game_id1);
+        insert into joga(id_jogador, nr_partida, id_jogo) values(player_id2, 4,game_id1);
+        insert into joga(id_jogador, nr_partida, id_jogo) values(player_id2, 6,game_id1);
+        RAISE NOTICE 'Exercice 2g';
+        RAISE NOTICE 'Test data created';
+        RAISE NOTICE 'Testing the sum of points of a player in a game';
+    BEGIN -- Test 1: Obtaining the total points of 2 player in a game
+        OPEN tabela FOR SELECT * FROM pontosJogoPorJogador(game_id1);
         FOR i IN 0..1 LOOP
             FETCH NEXT FROM tabela INTO player, pontos;
-            RAISE NOTICE 'JOGADOR: %', player;
-            RAISE NOTICE 'PONTOS: %', pontos ;
 
-            IF jogador1_id = player AND pontos = 200 OR jogador2_id = player AND pontos = 85 THEN
-                RAISE NOTICE 'Teste G: Obter total de pontos num jogo por jogador: Resultado OK';
-            ELSE RAISE NOTICE 'Teste G: Obter total de pontos num jogo por jogador: Resultado FAIL';
+            IF player_id1 = player AND pontos = 111 OR player_id2 = player AND pontos = 111000 THEN
+                RAISE NOTICE 'Test 1 succeeded';
+            ELSE RAISE EXCEPTION 'Test 1 failed';
             END IF;
         END LOOP;
+        CLOSE tabela;
+    END;
+    BEGIN -- Test 2: Obtaining the point of an nonexistent game
+        OPEN tabela FOR SELECT * FROM pontosJogoPorJogador(game_id2);
+        FETCH NEXT FROM tabela INTO player, pontos;
+        RAISE EXCEPTION 'Test 2 failed';
+        CLOSE tabela;
+    EXCEPTION
+        WHEN raise_exception THEN
+            IF (SQLERRM = 'jogo not found') THEN
+                RAISE NOTICE 'Test 2 succeeded';
+            ELSE RAISE EXCEPTION 'Test 2 failed with error %', SQLERRM;
+            END IF;
+        WHEN others THEN
+            RAISE EXCEPTION 'Test 2 failed with error %', SQLERRM;
+        CLOSE tabela;
+    END;
+    BEGIN -- Test 3: Obtaining the points of a not played game
+        INSERT INTO JOGO VALUES(game_id2, game_name2, game_url2);
+        OPEN tabela FOR SELECT * FROM pontosJogoPorJogador(game_id2);
+        FETCH NEXT FROM tabela INTO player, pontos;
+        RAISE EXCEPTION 'Test 3 failed';
+        EXCEPTION
+        WHEN raise_exception THEN
+            IF (SQLERRM = 'jogo has not been played') THEN
+                RAISE NOTICE 'Test 3 succeeded';
+            ELSE RAISE EXCEPTION 'Test 3 failed with error %', SQLERRM;
+            END IF;
+        WHEN others THEN
+            RAISE EXCEPTION 'Test 3 failed with error %', SQLERRM;
+        CLOSE tabela;
+    END;
+        DELETE FROM joga WHERE id_jogador = player_id1;
+        DELETE FROM joga WHERE id_jogador = player_id2;
+        DELETE FROM partida_normal WHERE id_jogo = game_id1;
+        DELETE FROM partida_multijogador WHERE id_jogo = game_id1;
+        DELETE FROM partida WHERE id_jogo = game_id1;
+        DELETE FROM jogo WHERE id = game_id1;
+        DELETE FROM jogador WHERE id = player_id1;
+        DELETE FROM jogador WHERE id = player_id2;
+        DELETE FROM regiao WHERE nome = region_name1;
     END;
 $$ LANGUAGE plpgsql;
 -- (h)
+do $$
+    DECLARE
+        region_name1 varchar := 'TestRegion51';
+        player_name1 varchar := 'TestPlayer51';
+        player_email1 varchar := 'testplayer51@gmial.com';
+        player_id1 INT;
+        player_id2 INT;
+        game_id1 alphanumeric := 'testGame51';
+        game_name1 varchar := 'TestGame51';
+        game_url1 varchar := 'https://testgame51.com/index';
+        game_id2 alphanumeric := 'testGame52';
+        game_name2 varchar := 'TestGame52';
+        game_url2 varchar := 'https://testgame52.com/index';
+        badge_name1 varchar := 'TestBadge51';
+        badge_image1 varchar := 'https://testegame51.com/?badge=testebadge51';
+        badge_points1 int := 1;
+        badge_name2 varchar := 'TestBadge52';
+        badge_image2 varchar := 'https://testegame51.com/?badge=testebadge52';
+        badge_points2 int := 10;
+        badge_name3 varchar := 'TestBadge53';
+        badge_image3 varchar := 'https://testegame52.com/?badge=testebadge53';
+        badge_points3 int := 100;
+        match_start_date date := '2020-01-01';
+        match_end_date date := '2020-01-02';
+        match_ended varchar := 'Terminada';
+
+    BEGIN
+        insert into regiao values(region_name1);
+        CALL create_jogador(region_name1,player_name1, player_email1);
+        SELECT jogador.id INTO player_id1 FROM jogador WHERE email = player_email1;
+
+        INSERT INTO JOGO VALUES(game_id1, game_name1, game_url1);
+        INSERT INTO cracha(nome, id_jogo, imagem, limite_pontos) values (badge_name1,game_id1, badge_image1, badge_points1);
+        INSERT INTO cracha(nome, id_jogo, imagem, limite_pontos) values (badge_name2,game_id1, badge_image2, badge_points2);
+
+        INSERT INTO PARTIDA VALUES(1, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO PARTIDA VALUES(2, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO PARTIDA VALUES(3, game_id1, match_start_date, match_end_date, region_name1);
+
+        INSERT INTO PARTIDA_NORMAL VALUES(game_id1, 1, 3, 1);
+        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado, pontuacao) VALUES(game_id1, 2, match_ended, 5);
+        INSERT INTO PARTIDA_MULTIJOGADOR VALUES (game_id1, 3, match_ended, null);
+
+        insert into joga(id_jogador, nr_partida, id_jogo) values(player_id1, 1,game_id1);
+        insert into joga(id_jogador, nr_partida, id_jogo) values(player_id1, 2,game_id1);
+        insert into joga(id_jogador, nr_partida, id_jogo) values(player_id1, 3,game_id1);
+        RAISE NOTICE 'Exercice 2h';
+        RAISE NOTICE 'Test data created';
+        RAISE NOTICE 'Testing the attribution of a badges to a player';
+    BEGIN -- Test 1: Giving only a badge to a player
+        CALL associarcracha(player_id1, game_id1, badge_name1);
+        CALL associarcracha(player_id1, game_id1, badge_name2);
+        IF ((Select count(*) from ganha where id_jogador = player_id1 and id_jogo = game_id1) = 1) THEN
+            IF ((Select ganha.nome_cracha from ganha where id_jogador = player_id1 and id_jogo = game_id1) = badge_name1) THEN
+                RAISE NOTICE 'Test 1 succeeded';
+            ELSE RAISE EXCEPTION 'Test 1 failed';
+            END IF;
+        END IF;
+    EXCEPTION
+        WHEN others THEN
+            RAISE EXCEPTION 'Test 1 failed with error %', SQLERRM;
+    END;
+    BEGIN -- Test 2: Giving a badge to a player that already has it
+        CALL associarcracha(player_id1, game_id1, badge_name1);
+    EXCEPTION
+        WHEN raise_exception THEN
+            IF (SQLERRM = 'jogador already has this cracha') THEN
+                RAISE NOTICE 'Test 2 succeeded';
+            ELSE RAISE EXCEPTION 'Test 2 failed with error %', SQLERRM;
+            END IF;
+        WHEN others THEN
+            RAISE EXCEPTION 'Test 2 failed with error %', SQLERRM;
+    END;
+    BEGIN -- Test 3: Giving a badge to a player that doesn't exist
+        CALL associarcracha(999999, game_id1, badge_name1);
+    EXCEPTION
+        WHEN raise_exception THEN
+            IF (SQLERRM = 'jogador not found') THEN
+                RAISE NOTICE 'Test 3 succeeded';
+            ELSE RAISE EXCEPTION 'Test 3 failed with error %', SQLERRM;
+            END IF;
+        WHEN others THEN
+            RAISE EXCEPTION 'Test 3 failed with error %', SQLERRM;
+    END;
+    BEGIN -- Test 4: Giving a badge to a player of an nonexistent game
+        CALL associarcracha(player_id1, 'abc123def4', badge_name1);
+    EXCEPTION
+        WHEN raise_exception THEN
+            IF (SQLERRM = 'jogo not found') THEN
+                RAISE NOTICE 'Test 4 succeeded';
+            ELSE RAISE EXCEPTION 'Test 4 failed with error %', SQLERRM;
+            END IF;
+        WHEN others THEN
+            RAISE EXCEPTION 'Test 4 failed with error %', SQLERRM;
+    END;
+    BEGIN -- Test 5: Giving an unexistent badge to a player
+        CALL associarcracha(player_id1, game_id1, 'abc123def4');
+    EXCEPTION
+        WHEN raise_exception THEN
+            IF (SQLERRM = 'cracha not found') THEN
+                RAISE NOTICE 'Test 5 succeeded';
+            ELSE RAISE EXCEPTION 'Test 5 failed with error %', SQLERRM;
+            END IF;
+        WHEN others THEN
+            RAISE EXCEPTION 'Test 5 failed with error %', SQLERRM;
+    END;
+    BEGIN -- Test 6: Giving a badge to a player that doesn't have the required points
+        CALL associarcracha(player_id1, game_id1, badge_name2);
+        IF (SELECT ganha.nome_cracha from ganha where id_jogador = player_id1 and id_jogo = game_id1) = badge_name2 THEN
+            RAISE EXCEPTION 'Test 6 failed';
+        ELSE RAISE NOTICE 'Test 6 succeeded';
+        END IF;
+    END;
+    BEGIN -- Test 7: Giving a badge to a player from an unplayed game
+        insert into jogo(id, nome, url) values(game_id2, game_name2, game_url2);
+        insert into cracha(nome, id_jogo, imagem, limite_pontos) values (badge_name3, game_id2, badge_image3, badge_points3);
+
+        CALL associarcracha(player_id1, game_id2, badge_name3);
+    EXCEPTION
+        WHEN raise_exception THEN
+            IF (SQLERRM = 'jogo has not been played') THEN
+                RAISE NOTICE 'Test 7 succeeded';
+            ELSE RAISE EXCEPTION 'Test 7 failed with error %', SQLERRM;
+            END IF;
+        WHEN others THEN
+            RAISE EXCEPTION 'Test 7 failed with error %', SQLERRM;
+    END;
+        DELETE FROM joga WHERE id_jogador = player_id1;
+        DELETE FROM partida_normal WHERE id_jogo = game_id1;
+        DELETE FROM partida_multijogador WHERE id_jogo = game_id1;
+        DELETE FROM partida WHERE id_jogo = game_id1;
+        DELETE FROM ganha WHERE id_jogo = game_id1;
+        DELETE FROM cracha WHERE id_jogo = game_id1;
+        DELETE FROM jogo WHERE id = game_id1;
+        DELETE FROM jogador WHERE id = player_id1;
+        DELETE FROM jogador WHERE id = player_id2;
+        DELETE FROM regiao WHERE nome = region_name1;
+    END;
+$$ LANGUAGE plpgsql;
 -- (i)
+
 -- (j)
 -- (k)
 -- (l)

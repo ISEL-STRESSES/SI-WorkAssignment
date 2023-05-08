@@ -235,9 +235,19 @@ CREATE FUNCTION PontosJogoPorJogador(jogo_id ALPHANUMERIC)
 AS
 $$
     BEGIN
-        RETURN QUERY SELECT joga.id_jogador, totalPontosJogador(joga.id_jogador) FROM joga WHERE joga.id_jogador IN (
-        SELECT joga.id_jogador FROM joga WHERE joga.nr_partida IN (
-        SELECT partida.nr FROM partida WHERE partida.id_jogo = jogo_id));
+        IF (jogo_id NOT IN (SELECT jogo.id FROM jogo)) THEN
+            RAISE EXCEPTION 'jogo not found';
+        END IF;
+        IF (jogo_id NOT IN (SELECT joga.id_jogo FROM joga)) THEN
+            RAISE EXCEPTION 'jogo has not been played';
+        END IF;
+
+        RETURN QUERY SELECT j.id_jogador, CAST(SUM(COALESCE(pn.pontuacao, pm.pontuacao, 0)) AS INTEGER) AS total_pontos FROM joga j
+        JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
+        LEFT JOIN partida_normal pn ON j.id_jogo = pn.id_jogo AND j.nr_partida = pn.nr_partida
+        LEFT JOIN partida_multijogador pm ON j.id_jogo = pm.id_jogo AND j.nr_partida = pm.nr_partida AND pm.estado = 'Terminada'
+        WHERE j.id_jogo = jogo_id AND p.data_fim IS NOT NULL
+        GROUP BY j.id_jogador;
     END;
 $$;
 
@@ -257,14 +267,29 @@ AS
 $$
     DECLARE
         nome_cracha VARCHAR(50);
-        total_pontos INT;
+        pontos INT;
     BEGIN
+        IF (jogador_id NOT IN (SELECT jogador.id FROM jogador)) THEN
+            RAISE EXCEPTION 'jogador not found';
+        END IF;
+        IF (jogo_id NOT IN (SELECT jogo.id FROM jogo)) THEN
+            RAISE EXCEPTION 'jogo not found';
+        END IF;
+        IF (jogo_id NOT IN (SELECT joga.id_jogo FROM joga)) THEN
+            RAISE EXCEPTION 'jogo has not been played';
+        END IF;
+        IF (NOT EXISTS(SELECT * FROM cracha WHERE cracha.nome = cracha_nome AND cracha.id_jogo = jogo_id)) THEN
+            RAISE EXCEPTION 'cracha not found';
+        END IF;
+        IF (cracha_nome IN (SELECT ganha.nome_cracha FROM ganha WHERE ganha.id_jogador = jogador_id and ganha.id_jogo = jogo_id)) THEN
+            RAISE EXCEPTION 'jogador already has this cracha';
+        END IF;
         SELECT nome INTO nome_cracha FROM cracha WHERE cracha.nome = cracha_nome;
-        SELECT total_pontos FROM PontosJogoPorJogador(jogo_id) AS pontos_jogo WHERE pontos_jogo.id_jogador = jogador_id INTO total_pontos;
-        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome = cracha_nome)) THEN
+        SELECT total_pontos INTO pontos FROM PontosJogoPorJogador(jogo_id) AS pontos_jogo WHERE pontos_jogo.id_jogador = jogador_id;
+        IF (pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome = cracha_nome)) THEN
             INSERT INTO ganha VALUES (jogador_id, cracha_nome, jogo_id);
         END IF;
-    END;
+    END
 $$;
 
 ------------------------------------------------------------------------------------------------------------------------
