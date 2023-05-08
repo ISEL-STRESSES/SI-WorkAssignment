@@ -537,7 +537,6 @@ do $$
         match_start_date date := '2020-01-01';
         match_end_date date := '2020-01-02';
         match_ended varchar := 'Terminada';
-
     BEGIN
         insert into regiao values(region_name1);
         CALL create_jogador(region_name1,player_name1, player_email1);
@@ -651,10 +650,336 @@ do $$
         DELETE FROM regiao WHERE nome = region_name1;
     END;
 $$ LANGUAGE plpgsql;
+------------------------------------------------------------------------------------------------------------------------
 -- (i)
+--iniciarConversa tests
+do
+$$
+    DECLARE
+        region_name1 varchar := 'TestRegion61';
+        region_name2 varchar := 'TestRegion62';
+        player_name1 varchar := 'TestPlayer61';
+        player_email1 varchar := 'testplayer61@gmail.com';
+        player_id1 INT;
+        player_name2 varchar := 'TestPlayer62';
+        player_email2 varchar := 'testplayer62@gmail.com';
+        player_id2 INT;
+        player_name3 varchar := 'TestPlayer63';
+        player_email3 varchar := 'testplayer63@gmail.com';
+        player_id3 INT;
+    BEGIN
+        insert into regiao(nome) values(region_name1);
+        insert into regiao(nome) values(region_name2);
+        CALL create_jogador(region_name1, player_name1, player_email1);
+        SELECT id INTO player_id1 FROM jogador WHERE email = player_email1;
+        CALL create_jogador(region_name2, player_name2, player_email2);
+        SELECT id INTO player_id2 FROM jogador WHERE email = player_email2;
+        CALL create_jogador(region_name1, player_name3, player_email3);
+        SELECT id INTO player_id3 FROM jogador WHERE email = player_email3;
+        --CALL iniciarconversa(...);
 
+        RAISE NOTICE 'Exercice 2i';
+        RAISE NOTICE 'Test data created';
+        RAISE NOTICE 'Testing the';
+        BEGIN
+        END;
+    END;
+$$ LANGUAGE plpgsql;
+------------------------------------------------------------------------------------------------------------------------
 -- (j)
+do
+$$
+    DECLARE
+        region_name1 varchar := 'TestRegion71';
+        region_name2 varchar := 'TestRegion72';
+        player_name1 varchar := 'TestPlayer71';
+        player_email1 varchar := 'testplayer71@gmail.com';
+        player_id1 INT;
+        player_name2 varchar := 'TestPlayer72';
+        player_email2 varchar := 'testplayer72@gmail.com';
+        player_id2 INT;
+        player_name3 varchar := 'TestPlayer73';
+        player_email3 varchar := 'testplayer73@gmail.com';
+        player_id3 INT;
+    BEGIN
+        insert into regiao(nome) values(region_name1);
+        insert into regiao(nome) values(region_name2);
+        CALL create_jogador(region_name1, player_name1, player_email1);
+        SELECT id INTO player_id1 FROM jogador WHERE email = player_email1;
+        CALL create_jogador(region_name2, player_name2, player_email2);
+        SELECT id INTO player_id2 FROM jogador WHERE email = player_email2;
+        CALL create_jogador(region_name1, player_name3, player_email3);
+        SELECT id INTO player_id3 FROM jogador WHERE email = player_email3;
+        RAISE NOTICE 'Exercice 2j';
+        RAISE NOTICE 'Test data created';
+        RAISE NOTICE 'Testing the';
+        BEGIN
+        END;
+    END;
+$$ LANGUAGE plpgsql;
+------------------------------------------------------------------------------------------------------------------------
 -- (k)
+do
+$$
+    DECLARE
+        region_name1 varchar := 'TestRegion81';
+        region_name2 varchar := 'TestRegion82';
+        player_name1 varchar := 'TestPlayer81';
+        player_email1 varchar := 'testplayer81@gmail.com';
+        player_id1 INT;
+        player_name2 varchar := 'TestPlayer82';
+        player_email2 varchar := 'testplayer82@gmail.com';
+        player_id2 INT;
+        player_name3 varchar := 'TestPlayer83';
+        player_email3 varchar := 'testplayer83@gmail.com';
+        player_id3 INT;
+    BEGIN
+        insert into regiao(nome) values(region_name1);
+        insert into regiao(nome) values(region_name2);
+        CALL create_jogador(region_name1, player_name1, player_email1);
+        SELECT id INTO player_id1 FROM jogador WHERE email = player_email1;
+        CALL create_jogador(region_name2, player_name2, player_email2);
+        SELECT id INTO player_id2 FROM jogador WHERE email = player_email2;
+        CALL create_jogador(region_name1, player_name3, player_email3);
+        SELECT id INTO player_id3 FROM jogador WHERE email = player_email3;
+        RAISE NOTICE 'Exercice 2k';
+        RAISE NOTICE 'Test data created';
+        RAISE NOTICE 'Testing the';
+        BEGIN
+        END;
+    END;
+$$ LANGUAGE plpgsql;
+------------------------------------------------------------------------------------------------------------------------
 -- (l)
+do
+$$
+    DECLARE
+        region_name1 varchar := 'TestRegion91';
+        player_name1 varchar := 'TestPlayer91';
+        player_name2 varchar := 'TestPlayer92';
+        player_name3 varchar := 'TestPlayer93';
+        player_email1 varchar := 'testplayer91@gmail.com';
+        player_email2 varchar := 'testplayer92@hotmail.com';
+        player_email3 varchar := 'testplayer93@iol.pt';
+        player_id1 integer;
+        player_id2 integer;
+        player_id3 integer;
+        game_id1 varchar := 'TestGame91';
+        game_name1 varchar := 'TestGame91';
+        game_url1 varchar := 'https://testgame91.com';
+        game_id2 varchar := 'TestGame92';
+        game_name2 varchar := 'TestGame92';
+        game_url2 varchar := 'https://testgame92.com';
+        game_id3 varchar := 'TestGame93';
+        game_name3 varchar := 'TestGame93';
+        game_url3 varchar := 'https://testgame93.com';
+        match_start_date date := '2020-01-01';
+        match_end_date date := '2020-01-02';
+        match_ended varchar := 'Terminada';
+        vista REFCURSOR;
+        player_id Int;
+        player_status varchar;
+        player_email email;
+        player_username varchar;
+        player_games int;
+        player_points Int;
+        Player_matches Int;
+    BEGIN
+        INSERT INTO regiao(nome) VALUES (region_name1);
+        INSERT INTO jogador(username, email, nome_regiao) VALUES (player_name1, player_email1, region_name1);
+        INSERT INTO jogador(username, email, nome_regiao) VALUES (player_name2, player_email2, region_name1);
+        INSERT INTO jogador(username, email, nome_regiao) VALUES (player_name3, player_email3, region_name1);
+        SELECT id INTO player_id1 FROM jogador WHERE username = player_name1;
+        SELECT id INTO player_id2 FROM jogador WHERE username = player_name2;
+        SELECT id INTO player_id3 FROM jogador WHERE username = player_name3;
+        INSERT INTO jogo(id, nome, url) VALUES (game_id1, game_name1, game_url1);
+        INSERT INTO jogo(id, nome, url) VALUES (game_id2, game_name2, game_url2);
+        INSERT INTO jogo(id, nome, url) VALUES (game_id3, game_name3, game_url3);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (2, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (3, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id2, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (2, game_id2, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (3, game_id2, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id3, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (2, game_id3, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (3, game_id3, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade, pontuacao) VALUES (game_id1, 1, 1, 1);
+        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade, pontuacao) VALUES (game_id1, 2, 1, 10);
+        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado, pontuacao) VALUES (game_id1, 3, match_ended, 100);
+        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade, pontuacao) VALUES (game_id2, 1, 1, 1000);
+        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado, pontuacao) VALUES (game_id2, 2, match_ended, 10000);
+        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado, pontuacao) VALUES (game_id2, 3, match_ended, 100000);
+        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade, pontuacao) VALUES (game_id3, 1, 1, 1000000);
+        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade, pontuacao) VALUES (game_id3, 2, 1, 10000000);
+        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade, pontuacao) VALUES (game_id3, 3, 1, 100000000);
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 1, game_id1); --normal
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 1, game_id2); --normal
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 1, game_id3); --normal
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 3, game_id1); --multi
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 3, game_id2); --multi
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id2, 2, game_id1); --normal
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id2, 2, game_id2); --multi
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id2, 2, game_id3); --normal
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id2, 3, game_id1); --multi
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id2, 3, game_id2); --multi
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id3, 3, game_id1); --multi
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id3, 3, game_id2); --multi
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id3, 3, game_id3); --normal
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id3, 2, game_id2); --multi
+        RAISE NOTICE 'Exercice 2l';
+        RAISE NOTICE 'Test data created';
+        RAISE NOTICE 'Testing the view jogadorTotalInfo';
+    BEGIN -- Test 1: viewing jogadorTotalInfo raw
+        OPEN vista FOR SELECT * FROM jogadortotalinfo;
+        FOR i IN 0..2 LOOP
+            FETCH NEXT FROM vista INTO player_id, player_status, player_email, player_username, player_games, Player_matches, player_points;
+            ASSERT player_id = player_id1 OR player_id = player_id2 OR player_id = player_id3, 'Test 1 failed: player_id not in test data';
+            ASSERT player_status = 'Ativo' OR player_status = 'Ativo' OR player_status = 'Ativo', 'Test 1 failed: player_status not in test data';
+            ASSERT player_email = player_email1 OR player_email = player_email2 OR player_email = player_email3, 'Test 1 failed: player_email not in test data';
+            ASSERT player_username = player_name1 OR player_username = player_name2 OR player_username = player_name3, 'Test 1 failed: player_username not in test data';
+            ASSERT player_games = 3 OR player_games = 3 OR player_games = 3, 'Test 1 failed: player_games not in test data';
+            ASSERT Player_matches = 5 OR Player_matches = 4 OR Player_matches = 5, 'Test 1 failed: Player_matches not in test data';
+            ASSERT player_points = 1101101 OR player_points = 10110110 OR player_points = 100110100, 'Test 1 failed: player_points not in test data';
+       END LOOP;
+        CLOSE vista;
+        RAISE NOTICE 'Test 1 passed';
+    EXCEPTION
+        WHEN OTHERS THEN
+            RAISE NOTICE 'Test 1 failed: %', SQLERRM;
+    END;
+        DELETE FROM joga WHERE id_jogador = player_id1;
+        DELETE FROM joga WHERE id_jogador = player_id2;
+        DELETE FROM joga WHERE id_jogador = player_id3;
+        DELETE FROM partida_normal WHERE id_jogo = game_id1;
+        DELETE FROM partida_normal WHERE id_jogo = game_id2;
+        DELETE FROM partida_normal WHERE id_jogo = game_id3;
+        DELETE FROM partida_multijogador WHERE id_jogo = game_id1;
+        DELETE FROM partida_multijogador WHERE id_jogo = game_id2;
+        DELETE FROM partida_multijogador WHERE id_jogo = game_id3;
+        DELETE FROM partida WHERE id_jogo = game_id1;
+        DELETE FROM partida WHERE id_jogo = game_id2;
+        DELETE FROM partida WHERE id_jogo = game_id3;
+        DELETE FROM jogo WHERE id = game_id1;
+        DELETE FROM jogo WHERE id = game_id2;
+        DELETE FROM jogo WHERE id = game_id3;
+        DELETE FROM jogador WHERE id = player_id1;
+        DELETE FROM jogador WHERE id = player_id2;
+        DELETE FROM jogador WHERE id = player_id3;
+        DELETE FROM regiao WHERE nome = region_name1;
+        RAISE NOTICE 'Test data deleted';
+    END;
+$$ LANGUAGE plpgsql;
+------------------------------------------------------------------------------------------------------------------------
 -- (m)
+do
+$$
+    DECLARE
+    BEGIN
+        RAISE NOTICE 'Exercice 2m';
+        RAISE NOTICE 'Test data created';
+        RAISE NOTICE 'Testing the';
+        BEGIN
+        END;
+    END;
+$$ LANGUAGE plpgsql;
+------------------------------------------------------------------------------------------------------------------------
 -- (n)
+do
+$$
+    DECLARE
+        region_name1 varchar := 'TestRegion91';
+        player_name1 varchar := 'TestPlayer91';
+        player_email1 varchar := 'testplayer91@gmail.com';
+        player_id1 integer;
+        game_id1 varchar := 'TestGame91';
+        game_name1 varchar := 'TestGame91';
+        game_url1 varchar := 'https://testgame91.com';
+        game_id2 varchar := 'TestGame92';
+        game_name2 varchar := 'TestGame92';
+        game_url2 varchar := 'https://testgame92.com';
+        game_id3 varchar := 'TestGame93';
+        game_name3 varchar := 'TestGame93';
+        game_url3 varchar := 'https://testgame93.com';
+        match_start_date date := '2020-01-01';
+        match_end_date date := '2020-01-02';
+        match_ended varchar := 'Terminada';
+        player_id Int;
+        player_status varchar;
+        player_email email;
+        player_username varchar;
+        player_games int;
+        player_points Int;
+        Player_matches Int;
+    BEGIN
+        INSERT INTO regiao(nome) VALUES (region_name1);
+        INSERT INTO jogador(username, email, nome_regiao) VALUES (player_name1, player_email1, region_name1);
+        SELECT id INTO player_id1 FROM jogador WHERE username = player_name1;
+        INSERT INTO jogo(id, nome, url) VALUES (game_id1, game_name1, game_url1);
+        INSERT INTO jogo(id, nome, url) VALUES (game_id2, game_name2, game_url2);
+        INSERT INTO jogo(id, nome, url) VALUES (game_id3, game_name3, game_url3);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (2, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (3, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id2, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (2, game_id2, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (3, game_id2, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id3, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (2, game_id3, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (3, game_id3, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade, pontuacao) VALUES (game_id1, 1, 1, 1);
+        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade, pontuacao) VALUES (game_id1, 2, 1, 10);
+        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado, pontuacao) VALUES (game_id1, 3, match_ended, 100);
+        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade, pontuacao) VALUES (game_id2, 1, 1, 1000);
+        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado, pontuacao) VALUES (game_id2, 2, match_ended, 10000);
+        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado, pontuacao) VALUES (game_id2, 3, match_ended, 100000);
+        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade, pontuacao) VALUES (game_id3, 1, 1, 1000000);
+        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade, pontuacao) VALUES (game_id3, 2, 1, 10000000);
+        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade, pontuacao) VALUES (game_id3, 3, 1, 100000000);
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 1, game_id1); --normal
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 1, game_id2); --normal
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 1, game_id3); --normal
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 3, game_id1); --multi
+        INSERT INTO joga(id_jogador, nr_partida, id_jogo) VALUES (player_id1, 3, game_id2); --multi
+        RAISE NOTICE 'Exercice 2n';
+        RAISE NOTICE 'Test data created';
+        RAISE NOTICE 'Testing the view jogadorTotalInfo';
+        BEGIN -- Test 1: Deleting over the player 1
+        SELECT * FROM jogadortotalinfo into player_id, player_status, player_email, player_username, player_games, Player_matches, player_points;
+        RAISE NOTICE 'PLAYER VIEW %, PLAYER TABLE %', player_username, player_name1;
+        ASSERT player_id = player_id1, 'Test 1 failed: player_id not in test data';
+        ASSERT player_status = 'Ativo', 'Test 1 failed: player_status not in test data';
+        ASSERT player_email = player_email1, 'Test 1 failed: player_email not in test data';
+        ASSERT player_username = player_name1 , 'Test 1 failed: player_username not in test data';
+        ASSERT player_games = 3, 'Test 1 failed: player_games not in test data';
+        ASSERT Player_matches = 5, 'Test 1 failed: Player_matches not in test data';
+        ASSERT player_points = 1101101, 'Test 1 failed: player_points not in test data';
+        DELETE FROM jogadorTotalInfo WHERE jogadortotalinfo.username = player_name1;
+        SELECT jogador.estado into player_status from jogador WHERE jogador.username = player_name1;
+        IF (player_status = 'Ativo') THEN
+            RAISE NOTICE 'Test 1 failed: player not deleted';
+        ELSIF (player_status = 'Banido') THEN
+            RAISE NOTICE 'Test 1 succeeded';
+        END IF;
+        EXCEPTION
+            WHEN OTHERS THEN
+                RAISE NOTICE 'Test 1 failed: %', SQLERRM;
+        END;
+        DELETE FROM joga WHERE id_jogador = player_id1;
+        DELETE FROM partida_normal WHERE id_jogo = game_id1;
+        DELETE FROM partida_normal WHERE id_jogo = game_id2;
+        DELETE FROM partida_normal WHERE id_jogo = game_id3;
+        DELETE FROM partida_multijogador WHERE id_jogo = game_id1;
+        DELETE FROM partida_multijogador WHERE id_jogo = game_id2;
+        DELETE FROM partida_multijogador WHERE id_jogo = game_id3;
+        DELETE FROM partida WHERE id_jogo = game_id1;
+        DELETE FROM partida WHERE id_jogo = game_id2;
+        DELETE FROM partida WHERE id_jogo = game_id3;
+        DELETE FROM jogo WHERE id = game_id1;
+        DELETE FROM jogo WHERE id = game_id2;
+        DELETE FROM jogo WHERE id = game_id3;
+        DELETE FROM jogador WHERE id = player_id1;
+        DELETE FROM regiao WHERE nome = region_name1;
+        RAISE NOTICE 'Test data deleted';
+    END;
+$$ LANGUAGE plpgsql;

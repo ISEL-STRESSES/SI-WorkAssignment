@@ -1,16 +1,4 @@
 BEGIN TRANSACTION;
--- Constants
--- Global
--- DECLARE nome_max_size CONSTANT INT := 50;
--- DECLARE estado_max_size CONSTANT INT := 20;
-
--- Jogador
--- DECLARE email_max_size CONSTANT INT := 254;
--- DECLARE username_max_size CONSTANT INT := 50;
--- DECLARE init_estado_value CONSTANT VARCHAR(20) := 'Inativo';
-
--- Partida Multijogador
--- DECLARE init_estado_partida_multijogador CONSTANT VARCHAR(20) := 'Por iniciar';
 
 -- Create domain
 DROP DOMAIN IF EXISTS ALPHANUMERIC CASCADE;

@@ -480,17 +480,18 @@ DROP FUNCTION IF EXISTS banirJogador();
 --
 -- Example usage:
 --
-CREATE FUNCTION banirJogador()
+CREATE OR REPLACE FUNCTION banirJogador()
     RETURNS trigger
     LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        jogador_id INT;
-    BEGIN
-        SELECT jogador.id INTO jogador_id FROM jogador WHERE jogador.username = OLD.username;
-        UPDATE jogador SET estado = 'Banido' WHERE jogador.id = jogador_id;
-    END;
+DECLARE
+    jogador_id INT;
+BEGIN
+    SELECT jogador.id INTO jogador_id FROM jogador WHERE jogador.username = OLD.username;
+    UPDATE jogador SET estado = 'Banido' WHERE jogador.id = jogador_id;
+    RETURN OLD;
+END;
 $$;
 
 DROP TRIGGER IF EXISTS banirJogador ON jogadorTotalInfo;
@@ -500,4 +501,4 @@ DROP TRIGGER IF EXISTS banirJogador ON jogadorTotalInfo;
 CREATE TRIGGER banirJogador
     INSTEAD OF DELETE ON jogadorTotalInfo
     FOR EACH ROW
-    EXECUTE FUNCTION banirJogador();
+EXECUTE FUNCTION banirJogador();
