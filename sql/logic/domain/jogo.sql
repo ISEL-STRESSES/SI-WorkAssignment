@@ -1,6 +1,5 @@
 ------------------------------------------------------------------------------------------------------------------------
 -- 3. Update the nr_partidas of the jogo_estatistica when a new partida is added or removed
-DROP FUNCTION IF EXISTS updateNrPartidas() CASCADE;
 
 CREATE OR REPLACE FUNCTION updateNrPartidas()
     RETURNS TRIGGER
@@ -22,16 +21,13 @@ $$
     END;
 $$;
 
-DROP TRIGGER IF EXISTS updateNrPartidasTrigger ON partida;
-
-CREATE TRIGGER updateNrPartidasTrigger
+CREATE OR REPLACE TRIGGER updateNrPartidasTrigger
     AFTER INSERT OR DELETE ON partida
     FOR EACH ROW
     EXECUTE FUNCTION updateNrPartidas();
 
 ------------------------------------------------------------------------------------------------------------------------
 -- 4. Update the nr_jogadores of the jogo_estatistica when a new jogador is added or removed
-DROP FUNCTION IF EXISTS updateNrJogadores() CASCADE;
 
 CREATE OR REPLACE FUNCTION updateNrJogadores()
     RETURNS TRIGGER
@@ -46,16 +42,13 @@ $$
     END;
 $$;
 
-DROP TRIGGER IF EXISTS updateNrJogadoresTrigger ON jogador;
-
-CREATE TRIGGER updateNrJogadoresTrigger
+CREATE OR REPLACE TRIGGER updateNrJogadoresTrigger
     AFTER INSERT OR DELETE ON joga
     FOR EACH ROW
     EXECUTE FUNCTION updateNrJogadores();
 
 ------------------------------------------------------------------------------------------------------------------------
 -- 5. Update the total_pontos of the jogo_estatistica when a new partida is added or removed
-DROP FUNCTION IF EXISTS updatePontuacaoTotal() CASCADE;
 
 CREATE OR REPLACE FUNCTION updatePontuacaoTotal()
     RETURNS TRIGGER
@@ -76,16 +69,12 @@ $$
     END;
 $$;
 
-DROP TRIGGER IF EXISTS updatePontuacaoTotalTrigger ON partida_multijogador;
-
-CREATE TRIGGER updatePontuacaoTotalTrigger
+CREATE OR REPLACE TRIGGER updatePontuacaoTotalTrigger
     AFTER INSERT OR DELETE ON partida_multijogador
     FOR EACH ROW
     EXECUTE FUNCTION updatePontuacaoTotal();
 
-DROP TRIGGER IF EXISTS updatePontuacaoTotalTrigger ON partida_normal;
-
-CREATE TRIGGER update_total_pontos_trigger
+CREATE OR REPLACE TRIGGER update_total_pontos_trigger
     AFTER INSERT OR DELETE ON partida_normal
     FOR EACH ROW
     EXECUTE FUNCTION updatePontuacaoTotal();
@@ -94,13 +83,12 @@ CREATE TRIGGER update_total_pontos_trigger
 -- (h) Criar o procedimento armazenado associarCrachá que recebe como parâmetros o identificador de um jogador, a
 -- referência de um jogo e o nome de um crachá desse jogo e atribui o crachá a esse jogador se ele reunir as condições
 -- para o obter.
-DROP PROCEDURE IF EXISTS associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50));
 
 -- This procedure associates a crachá with a player if they meet the conditions to obtain it.
 --
 -- Example usage:
 -- CALL associarCracha(1, '1', 'Crachá de Ouro');
-CREATE PROCEDURE associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50))
+CREATE OR REPLACE PROCEDURE associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50))
     LANGUAGE plpgsql
 AS
 $$
@@ -119,13 +107,12 @@ $$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (m) Criar os mecanismos necessários para que, de forma automática, quando uma partida termina, se proceda à
 -- atribuição de crachás do jogo a que ela pertence.
-DROP FUNCTION IF EXISTS atribuirCrachas() CASCADE;
 
 -- This function is called when a match ends and it assigns badges to the players who have played the match.
 --
 -- Example usage:
 --
-CREATE FUNCTION atribuirCrachas()
+CREATE OR REPLACE FUNCTION atribuirCrachas()
     RETURNS trigger
     LANGUAGE plpgsql
 AS
@@ -150,11 +137,9 @@ $$
     END;
 $$;
 
-DROP TRIGGER IF EXISTS atribuirCrachas ON partida;
-
 -- This trigger is called when a match ends and it assigns badges to the players who have played the match if they
 -- have obtained enough points.
-CREATE TRIGGER atribuirCrachas
+CREATE OR REPLACE TRIGGER atribuirCrachas
     AFTER INSERT ON partida
     FOR EACH ROW
     EXECUTE PROCEDURE atribuirCrachas();

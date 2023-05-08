@@ -1,6 +1,5 @@
 -- Model Restrictions
 -- 1. The partida must be played by jogadores of the same regiao
-DROP FUNCTION IF EXISTS checkJogadorPartidaRegiao() CASCADE;
 
 -- This function is called before inserting a new row in the joga table and checks if the jogador is from the same
 -- regiao as the partida he is playing in.
@@ -26,23 +25,20 @@ $$
     END;
 $$;
 
-DROP TRIGGER IF EXISTS checkJogadorPartidaRegiao ON joga;
-
 -- This trigger calls the function checkJogadorPartidaRegiao() before inserting a new row in the joga table
-CREATE TRIGGER checkJogadorPartidaRegiao BEFORE INSERT ON joga
+CREATE OR REPLACE TRIGGER checkJogadorPartidaRegiao BEFORE INSERT ON joga
     FOR EACH ROW
     EXECUTE FUNCTION checkJogadorPartidaRegiao();
 
 ------------------------------------------------------------------------------------------------------------------------
 -- 2. The mensagem must be sent by a jogador of the conversa
-DROP FUNCTION IF EXISTS checkJogadorMensagemConversa() CASCADE;
 
 -- This function is called before inserting a new row in the mensagem table and checks if the jogador is from the same
 -- conversa as the mensagem he is sending.
 --
 -- Example Usage:
 -- INSERT INTO mensagem VALUES (1, 1, 'ola', '2019-12-12 12:12:12');
-CREATE FUNCTION checkJogadorMensagemConversa()
+CREATE OR REPLACE FUNCTION checkJogadorMensagemConversa()
     RETURNS trigger
     LANGUAGE plpgsql
 AS
@@ -59,8 +55,6 @@ $$
     END;
 $$;
 
-DROP TRIGGER IF EXISTS checkJogadorMensagemConversa ON mensagem;
-
-CREATE TRIGGER checkJogadorMensagemConversa BEFORE INSERT ON mensagem
+CREATE OR REPLACE TRIGGER checkJogadorMensagemConversa BEFORE INSERT ON mensagem
     FOR EACH ROW
     EXECUTE PROCEDURE checkJogadorMensagemConversa();

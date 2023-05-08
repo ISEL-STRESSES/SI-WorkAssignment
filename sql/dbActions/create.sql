@@ -1,11 +1,21 @@
 BEGIN TRANSACTION;
 -- Model
+BEGIN TRANSACTION;
+
 -- Create domain
+BEGIN TRANSACTION;
+
+-- Create domain
+DROP DOMAIN IF EXISTS ALPHANUMERIC CASCADE;
+DROP DOMAIN IF EXISTS email CASCADE;
+DROP DOMAIN IF EXISTS url CASCADE;
+
+-- Domains
 CREATE DOMAIN ALPHANUMERIC AS VARCHAR(10) CHECK (VALUE ~* '^[A-Z0-9]+$');
 CREATE DOMAIN URL AS VARCHAR(255) CHECK (VALUE ~* '^(http|https)://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\S*)?$');
 CREATE DOMAIN email AS varchar(254) CHECK (VALUE ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Z]{2,}$');
 
--- Create table
+-- Tables
 -- Região
 CREATE TABLE IF NOT EXISTS regiao(
     nome VARCHAR(50) PRIMARY KEY
@@ -182,68 +192,7 @@ CREATE TABLE IF NOT EXISTS amigo(
 COMMIT;
 
 ------------------------------------------------------------------------------------------------------------------------
-BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
--- RESTRICOES
--- Model Restrictions
--- 1. The partida must be played by jogadores of the same regiao
--- This function is called before inserting a new row in the joga table and checks if the jogador is from the same
--- regiao as the partida he is playing in.
---
--- Example Usage:
--- INSERT INTO partida VALUES (now(), null, 1000000000, 'Portugal');
--- INSERT INTO joga (id_jogador, nr_partida) VALUES (1, 1);
-CREATE OR REPLACE FUNCTION checkJogadorPartidaRegiao()
-    RETURNS TRIGGER
-    LANGUAGE plpgsql
-AS
-$$
-    DECLARE
-        regiao_nome VARCHAR(50);
-        jogador_nome_regiao VARCHAR(50);
-    BEGIN
-        SELECT partida.nome_regiao INTO regiao_nome FROM partida WHERE partida.id_jogo = NEW.id_jogo;
-        SELECT jogador.nome_regiao INTO jogador_nome_regiao FROM jogador WHERE jogador.id = NEW.id_jogador;
-        IF (regiao_nome != jogador_nome_regiao) THEN
-            RAISE EXCEPTION 'O jogador nao pertence a regiao da partida';
-        END IF;
-        RETURN NEW;
-    END;
-$$;
-
--- This trigger calls the function checkJogadorPartidaRegiao() before inserting a new row in the joga table
-CREATE TRIGGER checkJogadorPartidaRegiao BEFORE INSERT ON joga
-    FOR EACH ROW
-    EXECUTE FUNCTION checkJogadorPartidaRegiao();
-
-------------------------------------------------------------------------------------------------------------------------
--- 2. The mensagem must be sent by a jogador of the conversa
--- This function is called before inserting a new row in the mensagem table and checks if the jogador is from the same
--- conversa as the mensagem he is sending.
---
--- Example Usage:
--- INSERT INTO mensagem VALUES (1, 1, 'ola', '2019-12-12 12:12:12');
-CREATE FUNCTION checkJogadorMensagemConversa()
-    RETURNS trigger
-    LANGUAGE plpgsql
-AS
-$$
-    DECLARE
-        jogador_id INT;
-    BEGIN
-        SELECT participa.id_jogador INTO jogador_id FROM participa WHERE(
-            participa.id_jogador = NEW.id_jogador AND participa.id_conversa = NEW.id_conversa);
-        IF(jogador_id IS NULL) THEN
-            RAISE EXCEPTION 'O jogador nao pertence a conversa';
-        END IF;
-        RETURN NEW;
-    END;
-$$;
-
-CREATE TRIGGER checkJogadorMensagemConversa BEFORE INSERT ON mensagem
-    FOR EACH ROW
-    EXECUTE PROCEDURE checkJogadorMensagemConversa();
-
-COMMIT;
+--Create Restrictions
 
 ------------------------------------------------------------------------------------------------------------------------
 BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
@@ -331,61 +280,7 @@ COMMIT TRANSACTION;
 ------------------------------------------------------------------------------------------------------------------------
 BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 -- EXERCICIOS
---(d) Criar os mecanismos que permitam criar o jogador, dados os seus email e username e regiao, desativar e banir o
--- jogador;
-
--- This procedure creates a new player given their region name, username, and email. It performs the following tasks:
---
--- Checks if the given region name exists in the regiao table. If not, it inserts a new row with the given region name.
--- Inserts a new row into the jogador table with the given username, email, and region name.
--- Example usage:
--- CALL create_jogador('Regiao A', 'user123', 'user123@example.com');
-CREATE PROCEDURE createJogador(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
-    LANGUAGE plpgsql
-AS
-$$
-    BEGIN
-        -- Checks
-        IF (regiao_nome NOT IN (SELECT regiao.nome FROM regiao)) THEN
-            RAISE EXCEPTION 'No Region with name (%)', regiao_nome
-                    USING HINT = 'Check the inserted name or insert a new region';
-        END IF;
-        IF (new_username IN (SELECT jogador.username FROM jogador)) THEN
-            RAISE EXCEPTION 'Player already exists with username (%)', new_username
-                    USING HINT = 'Check the inserted username';
-        END IF;
-        -- expected
-        INSERT INTO jogador(username, email, nome_regiao) VALUES (new_username, new_email, regiao_nome);
-    END;
-$$;
-
--- This procedure updates the state of a player given their player ID and new state. It performs the following tasks:
---
--- Checks if the given player ID exists in the jogador table. If not, it raises a notice indicating that the player was
--- not found.
--- Checks if the player already has the new state. If so, it raises a notice indicating that the player already has this
--- state.
--- Updates the estado field of the jogador table with the new state for the given player ID.
--- Example usage:
--- CALL update_estado_jogador(1, 'ativo');
-CREATE PROCEDURE updateEstadoJogador(id_jogador INT, new_estado VARCHAR(10))
-    LANGUAGE plpgsql
-AS
-$$
-    BEGIN
-        -- Checks
-        IF (id_jogador NOT IN (SELECT jogador.id FROM jogador)) THEN
-            RAISE EXCEPTION 'No Player with id (%)', id_jogador
-                    USING HINT = 'Check the inserted id';
-        END IF;
-        IF ((SELECT jogador.estado FROM jogador WHERE jogador.id == id_jogador) == new_estado) THEN
-            RAISE EXCEPTION 'Player already has state (%)', new_estado
-                    USING HINT = 'Check the inserted state';
-        END IF;
-        -- expected
-        UPDATE jogador SET estado = new_estado WHERE jogador.id = id_jogador;
-    END ;
-$$;
+--(d) Criar os mecanismos que permitam criar o jogador, dados os seus email e username, desativar e banir o jogador;
 
 -- This procedure creates a new player given their region name, username, and email. It is an abstraction with
 -- transaction control and it performs the following tasks:
@@ -396,68 +291,88 @@ $$;
 -- already exists and rolls back the transaction.
 -- Example usage:
 -- CALL createJogadorTransaction('Regiao A', 'user123', 'user123@gmail.com');
-CREATE PROCEDURE createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
+CREATE OR REPLACE PROCEDURE createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
     LANGUAGE plpgsql
 AS
 $$
-    Declare t1 text;
-            t2 text;
-            t3 text;
-            t4 text;
-            t5 text;
-    BEGIN
-        SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; -- default is READ COMMITTED
-        call createJogador(regiao_nome, new_username, new_email);
-    EXCEPTION
-        WHEN OTHERS THEN
-            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
-                                    t2 = RETURNED_SQLSTATE,
-                                    t3 = PG_EXCEPTION_DETAIL,
-                                    t4 = PG_EXCEPTION_HINT,
-                                    t5 = PG_EXCEPTION_CONTEXT;
-            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
-            RAISE NOTICE 'SQLSTATE: %', t2;
-            RAISE NOTICE 'DETAIL: %', t3;
-            RAISE NOTICE 'HINT: %', t4;
-            RAISE NOTICE 'CONTEXT: %', t5;
-            ROLLBACK;
+Declare
+    t1 text;
+    t2 text;
+    t3 text;
+    t4 text;
+    t5 text;
+BEGIN
+    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ ; -- default is READ COMMITTED
+    call create_jogador(regiao_nome, new_username, new_email);
+EXCEPTION
+    WHEN unique_violation THEN
+        RAISE NOTICE 'Player % already exists', new_username;
+        ROLLBACK;
+    WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
+            t2 = RETURNED_SQLSTATE,
+            t3 = PG_EXCEPTION_DETAIL,
+            t4 = PG_EXCEPTION_HINT,
+            t5 = PG_EXCEPTION_CONTEXT;
+        RAISE NOTICE 'MESSAGE_TEXT: %', t1;
+        RAISE NOTICE 'SQLSTATE: %', t2;
+        RAISE NOTICE 'DETAIL: %', t3;
+        RAISE NOTICE 'HINT: %', t4;
+        RAISE NOTICE 'CONTEXT: %', t5;
+        ROLLBACK;
+END;
+$$;
+-- This procedure creates a new player given their region name, username, and email. It performs the following tasks:
+--
+-- Checks if the given region name exists in the regiao table. If not, it inserts a new row with the given region name.
+-- Inserts a new row into the jogador table with the given username, email, and region name.
+-- Example usage:
+-- CALL create_jogador('Regiao A', 'user123', 'user123@example.com');
+CREATE OR REPLACE PROCEDURE create_jogador(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    -- Checks
+    IF (regiao_nome NOT IN (SELECT regiao.nome FROM regiao)) THEN
+        RAISE EXCEPTION 'regiao not found' USING
+            HINT = 'Before creating a new jogador, create a new regiao with the given regiao_nome';
+    END IF;
+    IF (new_username IN (SELECT jogador.username FROM jogador)) THEN
+        RAISE EXCEPTION 'username already in use' USING
+            HINT = 'Change to a different username';
+    END IF;
+    IF (new_email IN (SELECT jogador.email FROM jogador)) THEN
+        RAISE EXCEPTION 'email already in use' USING
+            HINT = 'Change to a different account';
+    END IF;
+    -- expected
+    INSERT INTO jogador(username, email, nome_regiao) VALUES (new_username, new_email, regiao_nome);
 END;
 $$;
 
--- This procedure updates the state of a player given their player ID and new state. It is an abstraction with
--- transaction control and it performs the following tasks:
+-- This procedure updates the state of a player given their player ID and new state. It performs the following tasks:
 --
--- Sets the transaction isolation level to SERIALIZABLE.
--- Calls the update_estado_jogador procedure.
--- If the update_estado_jogador procedure raises a unique_violation exception, it raises a notice indicating that the
--- player already has this state and rolls back the transaction.
+-- Checks if the given player ID exists in the jogador table. If not, it raises a notice indicating that the player was not found.
+-- Checks if the player already has the new state. If so, it raises a notice indicating that the player already has this state.
+-- Updates the estado field of the jogador table with the new state for the given player ID.
 -- Example usage:
--- CALL updateEstadoJogadorTransaction(1, 'ativo');
-CREATE PROCEDURE updateEstadoJogadorTransaction(id_jogador INT, new_estado VARCHAR(10))
+-- CALL update_estado_jogador(1, 'ativo');
+CREATE OR REPLACE PROCEDURE update_estado_jogador(id_jogador INT, new_estado VARCHAR(10))
     LANGUAGE plpgsql
 AS
 $$
-    Declare t1 text;
-            t2 text;
-            t3 text;
-            t4 text;
-            t5 text;
-    BEGIN
-        SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; -- default is READ COMMITTED
-        call updateEstadoJogador(id_jogador, new_estado);
-    EXCEPTION
-        WHEN OTHERS THEN
-            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
-                                    t2 = RETURNED_SQLSTATE,
-                                    t3 = PG_EXCEPTION_DETAIL,
-                                    t4 = PG_EXCEPTION_HINT,
-                                    t5 = PG_EXCEPTION_CONTEXT;
-            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
-            RAISE NOTICE 'SQLSTATE: %', t2;
-            RAISE NOTICE 'DETAIL: %', t3;
-            RAISE NOTICE 'HINT: %', t4;
-            RAISE NOTICE 'CONTEXT: %', t5;
-            ROLLBACK;
+BEGIN
+    -- Checks
+    IF (id_jogador NOT IN (SELECT jogador.id FROM jogador)) THEN
+        RAISE EXCEPTION 'jogador not found';
+    END IF;
+    IF ((SELECT jogador.estado FROM jogador WHERE jogador.id = id_jogador) = new_estado) THEN
+        RAISE NOTICE 'jogador already has this estado';
+        RETURN;
+    END IF;
+    -- expected
+    UPDATE jogador SET estado = new_estado WHERE jogador.id = id_jogador;
 END;
 $$;
 
@@ -478,85 +393,51 @@ $$;
 -- Returns the sum of the points from both tables as the total points for the player.
 -- Example usage:
 -- SELECT totalPontosJogador(1);
-CREATE FUNCTION totalPontosJogador(jogador_id INT)
+CREATE OR REPLACE FUNCTION totalPontosJogador(jogador_id INT)
     RETURNS INT
     LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        partidaNormal       INT;
-        partidaMultiJogador INT;
-    BEGIN
-        -- Checks
-        IF(jogador_id NOT IN (SELECT jogador.id FROM jogador)) THEN
-            RAISE EXCEPTION 'Jogador with id (%) not found', jogador_id
-                    USING HINT = 'Check the inserted id';
-        END IF;
-        IF ((SELECT jogador.estado FROM jogador WHERE jogador.id == jogador_id) == 'banido' | 'desativado') THEN
-            RAISE NOTICE 'Jogador with id (%) is banned or inactive', jogador_id
-                    USING HINT = 'Check the inserted id';
-        END IF;
-        IF ((SELECT joga.id_jogador FROM joga) <> jogador_id) THEN
-            RAISE NOTICE 'Jogador with id (%) has not played any games', jogador_id
-                    USING HINT = 'Check the inserted id or start a new game';
-        END IF;
-        -- expected
-        -- points from partida normal
-        SELECT pontuacao FROM partida_normal WHERE (nr_partida == (
-        SELECT partida.nr FROM partida WHERE (
-        SELECT joga.nr_partida FROM joga WHERE (joga.id_jogador == jogador_id)))) INTO partidaNormal;
+DECLARE
+    jogosNormal       INT;
+    jogosMultiJogador INT;
+    estado_jogador   VARCHAR(10);
+BEGIN
+    -- Checks
+    IF(jogador_id NOT IN (SELECT jogador.id FROM jogador)) THEN
+        RAISE EXCEPTION 'jogador not found';
+    END IF;
+    SELECT jogador.estado into estado_jogador FROM jogador WHERE jogador.id = jogador_id;
+    IF (estado_jogador ~* '^(banido)$') THEN
+        RAISE EXCEPTION 'jogador is banned';
+    ELSIF (estado_jogador ~* '^(inativo)$') THEN
+        RAISE NOTICE 'jogador is inactive';
+    END IF;
+    IF (jogador_id not in (SELECT joga.id_jogador FROM joga)) THEN
+        RAISE EXCEPTION 'jogador has not played any games';
+    END IF;
+    -- expected
+    -- counts the points of partidas normais
+    SELECT COALESCE(SUM(pn.pontuacao),0) INTO jogosNormal FROM joga j
+                                                                   JOIN partida_normal pn on j.id_jogo = pn.id_jogo AND j.nr_partida = pn.nr_partida
+                                                                   JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
+    WHERE j.id_jogador = jogador_id AND p.data_fim IS NOT NULL;
 
-        -- points from partida multijogador
-        SELECT pontuacao FROM partida_multijogador WHERE (nr_partida == (
-        SELECT partida.nr FROM partida WHERE (
-        SELECT joga.nr_partida FROM joga WHERE (joga.id_jogador == jogador_id)))) INTO partidaMultiJogador;
+    -- counts the points of partidas multijogador
+    SELECT COALESCE(SUM(pm.pontuacao), 0) INTO jogosMultiJogador FROM joga j
+                                                                          JOIN partida_multijogador pm ON j.id_jogo = pm.id_jogo AND j.nr_partida = pm.nr_partida
+                                                                          JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
+    WHERE j.id_jogador = jogador_id AND pm.estado = 'Terminada' AND p.data_fim IS NOT NULL;
 
-        RETURN partidaNormal + partidaMultiJogador;
-    end;
-$$;
-
--- This procedure calculates and returns the total points obtained by a player given their player ID. It is an
--- abstraction with transaction control and it performs the following tasks:
---
--- Sets the transaction isolation level to READ COMMITED because the functionality is read only.
--- Calls the totalPontosJogador function.
--- If the totalPontosJogador function raises a unique_violation exception, it raises a notice indicating that the
--- player is banned or inactive and rolls back the transaction.
--- Example usage:
--- CALL totalPontosJogadorTransaction(1);
-CREATE PROCEDURE totalPontosJogadorTransaction(jogador_id INT)
-    LANGUAGE plpgsql
-AS
-$$
-    Declare t1 text;
-            t2 text;
-            t3 text;
-            t4 text;
-            t5 text;
-    BEGIN
-        SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-        SELECT totalPontosJogador(jogador_id);
-    EXCEPTION
-        WHEN OTHERS THEN
-            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
-                                    t2 = RETURNED_SQLSTATE,
-                                    t3 = PG_EXCEPTION_DETAIL,
-                                    t4 = PG_EXCEPTION_HINT,
-                                    t5 = PG_EXCEPTION_CONTEXT;
-            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
-            RAISE NOTICE 'SQLSTATE: %', t2;
-            RAISE NOTICE 'DETAIL: %', t3;
-            RAISE NOTICE 'HINT: %', t4;
-            RAISE NOTICE 'CONTEXT: %', t5;
-            ROLLBACK;
-    END;
+    RETURN jogosNormal + jogosMultiJogador;
+END;
 $$;
 
 ------------------------------------------------------------------------------------------------------------------------
 -- (f) Criar a função totalJogosJogador que recebe como parâmetro o identificador de um jogador e devolve o número total
 -- de jogos diferentes nos quais o jogador participou.
 
---- This function calculates and returns the total number of games a player has participated in given their player ID.
+-- This function calculates and returns the total number of games a player has participated in given their player ID.
 -- It performs the following tasks:
 --
 -- Checks if the given player ID exists in the jogador table. If not, it raises a notice indicating that the player was
@@ -569,79 +450,48 @@ $$;
 -- Returns the sum of the number of games from both tables as the total number of games for the player.
 -- Example usage:
 -- SELECT totalJogosJogador(1);
-CREATE FUNCTION totalJogosJogador(jogador_id INT)
+CREATE OR REPLACE FUNCTION totalJogosJogador(jogador_id INT)
     RETURNS INT
     LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        jogosNormal       INT;
-        jogosMultiJogador INT;
-    BEGIN
-        -- Checks
-        IF(jogador_id NOT IN (SELECT jogador.id FROM jogador)) THEN
-            RAISE EXCEPTION 'Jogador with id (%) not found', jogador_id
-                    USING HINT = 'Check the inserted id';
-        END IF;
-        IF ((SELECT jogador.estado FROM jogador WHERE jogador.id == jogador_id) == 'banido' | 'desativado') THEN
-            RAISE NOTICE 'Jogador with id (%) is banned or inactive', jogador_id
-                    USING HINT = 'Check the inserted id';
-        END IF;
-        IF ((SELECT joga.id_jogador FROM joga) <> jogador_id) THEN
-            RAISE NOTICE 'Jogador with id (%) has not played any games', jogador_id
-                    USING HINT = 'Check the inserted id or start a new game';
-        END IF;
-        -- expected
-        -- counts the number of partidas normais
-        SELECT count() INTO jogosNormal FROM partida_normal WHERE partida_normal.nr_partida == (
-        SELECT partida.nr FROM partida WHERE (partida.nr == (
-        SELECT joga.nr_partida FROM joga WHERE (joga.id_jogador == jogador_id))));
+DECLARE
+    jogos INT;
+    estado_jogador VARCHAR(10);
+BEGIN
+    -- Checks
+    IF(jogador_id NOT IN (SELECT jogador.id FROM jogador)) THEN
+        RAISE EXCEPTION 'jogador not found';
+    END IF;
+    SELECT jogador.estado into estado_jogador FROM jogador WHERE jogador.id = jogador_id;
+    IF (estado_jogador ~* '^(banido)$') THEN
+        RAISE EXCEPTION 'jogador is banned';
+    ELSIF (estado_jogador ~* '^(inativo)$') THEN
+        RAISE NOTICE 'jogador is inactive';
+    END IF;
+    IF (jogador_id NOT IN (SELECT joga.id_jogador FROM joga)) THEN
+        RAISE EXCEPTION 'jogador has not played any games';
+    END IF;
+    -- expected
+    -- counts the number of partidas
+    WITH multiplayer_games AS (
+        SELECT DISTINCT j.id_jogo
+        FROM joga j
+                 JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
+                 JOIN partida_multijogador pm ON j.id_jogo = pm.id_jogo AND j.nr_partida = pm.nr_partida
+        WHERE j.id_jogador = jogador_id AND pm.estado = 'Terminada' AND p.data_fim IS NOT NULL
+    ), normal_games AS (
+        SELECT DISTINCT j.id_jogo
+        FROM joga j
+                 JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
+                 JOIN partida_normal pn ON j.id_jogo = pn.id_jogo AND j.nr_partida = pn.nr_partida
+        WHERE j.id_jogador = jogador_id AND p.data_fim IS NOT NULL AND pn.pontuacao IS NOT NULL
+    )
+    SELECT COUNT(*) INTO jogos
+    FROM (SELECT id_jogo FROM multiplayer_games UNION SELECT id_jogo FROM normal_games) AS all_games;
 
-        -- counts the number of partidas multijogador
-        SELECT count() INTO jogosMultiJogador FROM partida_multijogador WHERE partida_multijogador.nr_partida == (
-        SELECT partida.nr FROM partida WHERE (partida.nr == (
-        SELECT joga.nr_partida FROM joga WHERE (joga.id_jogador == jogador_id))));
-
-        RETURN jogosNormal + jogosMultiJogador;
-    END;
-$$;
-
--- This procedure calculates and returns the total number of games a player has participated in given their player ID.
--- It is an abstraction with transaction control and it performs the following tasks:
---
--- Sets the transaction isolation level to READ COMMITED because the functionality is read only.
--- Calls the totalJogosJogador function.
--- If the totalJogosJogador function raises a unique_violation exception, it raises a notice indicating that the
--- player is banned or inactive and rolls back the transaction.
---
--- Example usage:
--- CALL totalJogosJogadorTransaction(1);
-CREATE PROCEDURE totalJogosJogadorTransaction(jogador_id INT)
-    LANGUAGE plpgsql
-AS
-$$
-    Declare t1 text;
-            t2 text;
-            t3 text;
-            t4 text;
-            t5 text;
-    BEGIN
-        SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-        call totalJogosJogador(jogador_id);
-    EXCEPTION
-        WHEN OTHERS THEN
-            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
-                                    t2 = RETURNED_SQLSTATE,
-                                    t3 = PG_EXCEPTION_DETAIL,
-                                    t4 = PG_EXCEPTION_HINT,
-                                    t5 = PG_EXCEPTION_CONTEXT;
-            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
-            RAISE NOTICE 'SQLSTATE: %', t2;
-            RAISE NOTICE 'DETAIL: %', t3;
-            RAISE NOTICE 'HINT: %', t4;
-            RAISE NOTICE 'CONTEXT: %', t5;
-            ROLLBACK;
-    END;
+    RETURN jogos;
+END;
 $$;
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -654,61 +504,25 @@ $$;
 --
 -- Example usage:
 -- SELECT * FROM PontosJogoPorJogador('1');
-CREATE FUNCTION PontosJogoPorJogador(jogo_id ALPHANUMERIC)
-    RETURNS TABLE (id_jogador INT, total_pontos INT)
-    LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION PontosJogoPorJogador(jogo_id ALPHANUMERIC)
+    RETURNS TABLE (id_jogador INT, total_pontos INT) LANGUAGE plpgsql
 AS
 $$
-    BEGIN
-        IF (jogo_id NOT IN (SELECT jogo.id FROM jogo)) THEN
-            RAISE EXCEPTION 'Jogo with id (%) not found', jogo_id
-                    USING HINT = 'Check the inserted id';
-        END IF;
-        RETURN QUERY SELECT joga.id_jogador, totalPontosJogador(joga.id_jogador) FROM joga WHERE joga.id_jogador IN (
-        SELECT joga.id_jogador FROM joga WHERE joga.nr_partida IN (
-        SELECT partida.nr FROM partida WHERE partida.id_jogo == jogo_id));
-    END;
-$$;
+BEGIN
+    IF (jogo_id NOT IN (SELECT jogo.id FROM jogo)) THEN
+        RAISE EXCEPTION 'jogo not found';
+    END IF;
+    IF (jogo_id NOT IN (SELECT joga.id_jogo FROM joga)) THEN
+        RAISE EXCEPTION 'jogo has not been played';
+    END IF;
 
--- This procedure calculates and returns the total points obtained by each player in a game given the game ID. It
--- performs the following tasks:
---
--- Sets the transaction isolation level to READ COMMITED because the functionality is read only.
--- Calls the PontosJogoPorJogador function.
--- If the PontosJogoPorJogador function raises a unique_violation exception, it raises a notice indicating that the
--- game does not exist and rolls back the transaction.
---
--- Example usage:
--- CALL PontosJogoPorJogadorTransaction('1');
-CREATE PROCEDURE PontosJogoPorJogadorTransaction(jogo_id ALPHANUMERIC)
-    LANGUAGE plpgsql
-AS
-$$
-    Declare t1 text;
-            t2 text;
-            t3 text;
-            t4 text;
-            t5 text;
-    BEGIN
-        SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-        SELECT PontosJogoPorJogador(jogo_id);
-    EXCEPTION
-        WHEN no_data_found THEN
-            RAISE NOTICE 'No players have played game with id (%)', jogo_id
-                USING HINT = 'Start a new game';
-        WHEN OTHERS THEN
-            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
-                                    t2 = RETURNED_SQLSTATE,
-                                    t3 = PG_EXCEPTION_DETAIL,
-                                    t4 = PG_EXCEPTION_HINT,
-                                    t5 = PG_EXCEPTION_CONTEXT;
-            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
-            RAISE NOTICE 'SQLSTATE: %', t2;
-            RAISE NOTICE 'DETAIL: %', t3;
-            RAISE NOTICE 'HINT: %', t4;
-            RAISE NOTICE 'CONTEXT: %', t5;
-            ROLLBACK;
-    END;
+    RETURN QUERY SELECT j.id_jogador, CAST(SUM(COALESCE(pn.pontuacao, pm.pontuacao, 0)) AS INTEGER) AS total_pontos FROM joga j
+                                                                                                                             JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
+                                                                                                                             LEFT JOIN partida_normal pn ON j.id_jogo = pn.id_jogo AND j.nr_partida = pn.nr_partida
+                                                                                                                             LEFT JOIN partida_multijogador pm ON j.id_jogo = pm.id_jogo AND j.nr_partida = pm.nr_partida AND pm.estado = 'Terminada'
+                 WHERE j.id_jogo = jogo_id AND p.data_fim IS NOT NULL
+                 GROUP BY j.id_jogador;
+END;
 $$;
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -720,20 +534,35 @@ $$;
 --
 -- Example usage:
 -- CALL associarCracha(1, '1', 'Crachá de Ouro');
-CREATE PROCEDURE associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50))
+CREATE OR REPLACE PROCEDURE associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50))
     LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        nome_cracha VARCHAR(50);
-        total_pontos INT;
-    BEGIN
-        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.nome == cracha_nome;
-        SELECT total_pontos FROM PontosJogoPorJogador(jogo_id) AS pontos_jogo WHERE pontos_jogo.id_jogador = jogador_id INTO total_pontos;
-        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome == cracha_nome)) THEN
-            INSERT INTO ganha VALUES (jogador_id, cracha_nome, jogo_id);
-        END IF;
-    END;
+DECLARE
+    nome_cracha VARCHAR(50);
+    pontos INT;
+BEGIN
+    IF (jogador_id NOT IN (SELECT jogador.id FROM jogador)) THEN
+        RAISE EXCEPTION 'jogador not found';
+    END IF;
+    IF (jogo_id NOT IN (SELECT jogo.id FROM jogo)) THEN
+        RAISE EXCEPTION 'jogo not found';
+    END IF;
+    IF (jogo_id NOT IN (SELECT joga.id_jogo FROM joga)) THEN
+        RAISE EXCEPTION 'jogo has not been played';
+    END IF;
+    IF (NOT EXISTS(SELECT * FROM cracha WHERE cracha.nome = cracha_nome AND cracha.id_jogo = jogo_id)) THEN
+        RAISE EXCEPTION 'cracha not found';
+    END IF;
+    IF (cracha_nome IN (SELECT ganha.nome_cracha FROM ganha WHERE ganha.id_jogador = jogador_id and ganha.id_jogo = jogo_id)) THEN
+        RAISE EXCEPTION 'jogador already has this cracha';
+    END IF;
+    SELECT nome INTO nome_cracha FROM cracha WHERE cracha.nome = cracha_nome;
+    SELECT total_pontos INTO pontos FROM PontosJogoPorJogador(jogo_id) AS pontos_jogo WHERE pontos_jogo.id_jogador = jogador_id;
+    IF (pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome = cracha_nome)) THEN
+        INSERT INTO ganha VALUES (jogador_id, cracha_nome, jogo_id);
+    END IF;
+END
 $$;
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -748,23 +577,23 @@ $$;
 --
 -- Example usage:
 -- CALL iniciarConversa(1, 'Chat 1', conversa_id);
-CREATE PROCEDURE iniciarConversa(jogador_id INT, nome_conversa VARCHAR(50), conversa_id OUT INT)
+CREATE OR REPLACE PROCEDURE iniciarConversa(jogador_id INT, nome_conversa VARCHAR(50), conversa_id OUT INT)
     LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        default_conversa_nr_ordem INT := 1;
-        nome_conversa VARCHAR(50);
-    BEGIN
-        SELECT nome INTO nome_conversa FROM conversa WHERE conversa.nome == nome_conversa;
-        IF (nome_conversa == NULL) THEN
-            INSERT INTO conversa VALUES (nome_conversa);
-            SELECT id INTO conversa_id FROM conversa WHERE conversa.nome == nome_conversa;
-            INSERT INTO participa VALUES (jogador_id, conversa_id);
-            INSERT INTO mensagem VALUES (default_conversa_nr_ordem, 'O jogador criou a conversa', now(),
-                                         jogador_id, conversa_id);
-        END IF;
-    END;
+DECLARE
+    default_conversa_nr_ordem INT := 1;
+    nome_conversa VARCHAR(50);
+BEGIN
+    SELECT nome INTO nome_conversa FROM conversa WHERE conversa.nome = nome_conversa;
+    IF (nome_conversa IS NULL) THEN
+        INSERT INTO conversa VALUES (nome_conversa);
+        SELECT id INTO conversa_id FROM conversa WHERE conversa.nome = nome_conversa;
+        INSERT INTO participa VALUES (jogador_id, conversa_id);
+        INSERT INTO mensagem VALUES (default_conversa_nr_ordem, 'O jogador criou a conversa', now(),
+                                     jogador_id, conversa_id);
+    END IF;
+END;
 $$;
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -777,17 +606,17 @@ $$;
 --
 -- Example usage:
 -- CALL juntarConversa(1, 1);
-CREATE PROCEDURE juntarConversa(jogador_id INT, conversa_id INT)
+CREATE OR REPLACE PROCEDURE juntarConversa(jogador_id INT, conversa_id INT)
     LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        nr INT;
-    BEGIN
-        SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador == jogador_id AND mensagem.id_conversa == conversa_id;
-        INSERT INTO participa VALUES (jogador_id, conversa_id);
-        INSERT INTO mensagem VALUES (nr, 'O jogador entrou na conversa', now(), jogador_id, conversa_id);
-    END;
+DECLARE
+    nr INT;
+BEGIN
+    SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador = jogador_id AND mensagem.id_conversa = conversa_id;
+    INSERT INTO participa VALUES (jogador_id, conversa_id);
+    INSERT INTO mensagem VALUES (nr, 'O jogador entrou na conversa', now(), jogador_id, conversa_id);
+END;
 $$;
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -800,30 +629,30 @@ $$;
 --
 -- Example usage:
 -- CALL enviarMensagem(1, 1, 'Mensagem 1');
-CREATE PROCEDURE enviarMensagem(jogador_id INT, conversa_id INT, mensagem_texto VARCHAR(50))
+CREATE OR REPLACE PROCEDURE enviarMensagem(jogador_id INT, conversa_id INT, mensagem_texto VARCHAR(50))
     LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        nr INT;
-    BEGIN
-        --checks
-        IF (jogador_id NOT IN (SELECT jogador.id FROM jogador)) THEN
-            RAISE EXCEPTION 'O jogador com o id (%) não existe', jogador_id;
-        END IF;
-        IF (conversa_id NOT IN (SELECT conversa.id FROM conversa)) THEN
-            RAISE EXCEPTION 'A conversa com o id (%) não existe', conversa_id;
-        END IF;
-        IF (mensagem_texto == NULL) THEN
-            RAISE EXCEPTION 'A mensagem (%) não tem conteúdo', mensagem_texto;
-        END IF;
-        --expected
-        IF (jogador_id NOT IN (SELECT id_jogador FROM participa WHERE participa.id_conversa == conversa_id)) THEN
-            INSERT INTO participa VALUES (jogador_id, conversa_id);
-        END IF;
-        SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador == jogador_id AND mensagem.id_conversa == conversa_id;
-        INSERT INTO mensagem VALUES (nr, mensagem_texto, now(), jogador_id, conversa_id);
-    END;
+DECLARE
+    nr INT;
+BEGIN
+    --checks
+    IF (jogador_id NOT IN (SELECT jogador.id FROM jogador)) THEN
+        RAISE EXCEPTION 'O jogador com o id (%) não existe', jogador_id;
+    END IF;
+    IF (conversa_id NOT IN (SELECT conversa.id FROM conversa)) THEN
+        RAISE EXCEPTION 'A conversa com o id (%) não existe', conversa_id;
+    END IF;
+    IF (mensagem_texto IS NULL) THEN
+        RAISE EXCEPTION 'A mensagem (%) não tem conteúdo', mensagem_texto;
+    END IF;
+    --expected
+    IF (jogador_id NOT IN (SELECT id_jogador FROM participa WHERE participa.id_conversa = conversa_id)) THEN
+        INSERT INTO participa VALUES (jogador_id, conversa_id);
+    END IF;
+    SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador = jogador_id AND mensagem.id_conversa = conversa_id;
+    INSERT INTO mensagem VALUES (nr, mensagem_texto, now(), jogador_id, conversa_id);
+END;
 $$;
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -836,68 +665,17 @@ $$;
 --
 -- Example usage:
 -- SELECT totalPartidasJogador(1);
-CREATE FUNCTION totalPartidasJogador(jogador_id INT)
+CREATE OR REPLACE FUNCTION totalPartidasJogador(jogador_id INT)
     RETURNS INT
     LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        nr_partidas INT;
-    BEGIN
-        IF (jogador_id NOT IN (SELECT jogador.id FROM jogador)) THEN
-            RAISE EXCEPTION 'Player with id (%) not found', jogador_id
-                    USING HINT = 'Check the inserted id';
-        END IF;
-        IF (SELECT jogador.estado FROM jogador WHERE jogador.id == jogador_id) == 'Banido' THEN
-            RAISE EXCEPTION 'Player with id (%) is banned', jogador_id
-                    USING HINT = 'Check the inserted id';
-        END IF;
-        IF (jogador_id <> (SELECT joga.id_jogador FROM joga)) THEN
-            RAISE NOTICE 'Player with id (%) has not played any matches', jogador_id
-                    USING HINT = 'Check the inserted id';
-            RETURN 0;
-        END IF;
-        SELECT COUNT(nr_partida) INTO nr_partidas FROM joga WHERE joga.id_jogador == jogador_id;
-        RETURN nr_partidas;
-    END;
-$$;
-
--- This procedure returns the total number of matches a player has played given the player ID. It performs the
--- following tasks:
---
--- Sets the transaction isolation level to READ COMMITED because the functionality is read only.
--- Calls the totalPartidasJogador function.
--- If the totalPartidasJogador function raises a unique_violation exception, it raises a notice indicating that the
--- player does not exist and rolls back the transaction.
---
--- Example usage:
--- CALL totalPartidasJogadorTransaction(1);
-CREATE PROCEDURE totalPartidasJogadorTransaction(jogador_id INT)
-    LANGUAGE plpgsql
-AS
-$$
-    Declare t1 text;
-            t2 text;
-            t3 text;
-            t4 text;
-            t5 text;
-    BEGIN
-        SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-        SELECT totalPartidasJogador(jogador_id);
-    EXCEPTION
-        WHEN OTHERS THEN
-            GET STACKED DIAGNOSTICS t1 = MESSAGE_TEXT,
-                                    t2 = RETURNED_SQLSTATE,
-                                    t3 = PG_EXCEPTION_DETAIL,
-                                    t4 = PG_EXCEPTION_HINT,
-                                    t5 = PG_EXCEPTION_CONTEXT;
-            RAISE NOTICE 'MESSAGE_TEXT: %', t1;
-            RAISE NOTICE 'SQLSTATE: %', t2;
-            RAISE NOTICE 'DETAIL: %', t3;
-            RAISE NOTICE 'HINT: %', t4;
-            RAISE NOTICE 'CONTEXT: %', t5;
-            ROLLBACK;
-    END;
+DECLARE
+    nr_partidas INT;
+BEGIN
+    SELECT COUNT(nr_partida) INTO nr_partidas FROM joga WHERE joga.id_jogador = jogador_id;
+    RETURN nr_partidas;
+END;
 $$;
 
 -- This view returns information about the ID, state, email, username, total number of games the player has played,
@@ -906,15 +684,15 @@ $$;
 --
 -- Example usage:
 -- SELECT * FROM jogadorTotalInfo;
-CREATE VIEW jogadorTotalInfo AS
-    SELECT  jogador.id,
-            jogador.estado,
-            jogador.email,
-            jogador.username,
-            totalJogosJogador(jogador.id) AS total_jogos,
-            totalPartidasJogador(jogador.id) AS total_partidas,
-            totalPontosJogador(jogador.id) AS total_pontos
-    FROM jogador WHERE jogador.estado != 'Banido';
+CREATE OR REPLACE VIEW jogadorTotalInfo AS
+SELECT  jogador.id,
+        jogador.estado,
+        jogador.email,
+        jogador.username,
+        totalJogosJogador(jogador.id) AS total_jogos,
+        totalPartidasJogador(jogador.id) AS total_partidas,
+        totalPontosJogador(jogador.id) AS total_pontos
+FROM jogador WHERE jogador.estado != 'Banido';
 
 ------------------------------------------------------------------------------------------------------------------------
 -- (m) Criar os mecanismos necessários para que, de forma automática, quando uma partida termina, se proceda à
@@ -924,36 +702,37 @@ CREATE VIEW jogadorTotalInfo AS
 --
 -- Example usage:
 --
-CREATE FUNCTION atribuirCrachas()
+CREATE OR REPLACE FUNCTION atribuirCrachas()
     RETURNS trigger
     LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        jogo_id      ALPHANUMERIC;
-        jogador_id   INT;
-        nome_cracha  VARCHAR(50);
-        total_pontos INT;
-    BEGIN
-        SELECT jogo_id INTO jogo_id FROM partida WHERE partida.nr == NEW.nr;
-        SELECT id_jogador INTO jogador_id FROM joga WHERE joga.nr_partida == NEW.nr;
-        SELECT nome INTO nome_cracha FROM cracha WHERE cracha.id_jogo == jogo_id;
-        SELECT pontuacao from partida_normal WHERE partida_normal.nr_partida == NEW.nr INTO total_pontos;
-        IF (total_pontos == NULL) THEN
-            SELECT pontuacao from partida_multijogador WHERE partida_multijogador.nr_partida == NEW.nr INTO total_pontos;
-        END IF;
-        IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome == nome_cracha)) THEN
-            INSERT INTO ganha VALUES (jogador_id, nome_cracha, id_jogo);
-        END IF;
-    END;
+DECLARE
+    jogo_id      ALPHANUMERIC;
+    jogador_id   INT;
+    nome_cracha  VARCHAR(50);
+    total_pontos INT;
+BEGIN
+    SELECT jogo_id INTO jogo_id FROM partida WHERE partida.nr = NEW.nr;
+    SELECT id_jogador INTO jogador_id FROM joga WHERE joga.nr_partida = NEW.nr;
+    SELECT nome INTO nome_cracha FROM cracha WHERE cracha.id_jogo = jogo_id;
+    SELECT pontuacao from partida_normal WHERE partida_normal.nr_partida = NEW.nr INTO total_pontos;
+    IF (total_pontos IS NULL) THEN
+        SELECT pontuacao from partida_multijogador WHERE partida_multijogador.nr_partida = NEW.nr INTO total_pontos;
+    END IF;
+    IF (total_pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome = nome_cracha)) THEN
+        INSERT INTO ganha VALUES (jogador_id, nome_cracha, id_jogo);
+    END IF;
+    RETURN NEW;
+END;
 $$;
 
 -- This trigger is called when a match ends and it assigns badges to the players who have played the match if they
 -- have obtained enough points.
-CREATE TRIGGER atribuirCrachas
+CREATE OR REPLACE TRIGGER atribuirCrachas
     AFTER INSERT ON partida
     FOR EACH ROW
-    EXECUTE PROCEDURE atribuirCrachas();
+EXECUTE PROCEDURE atribuirCrachas();
 
 ------------------------------------------------------------------------------------------------------------------------
 -- (n) Criar os mecanismos necessários para que a execução da instrução DELETE sobre a vista jogadorTotalInfo permita
@@ -963,30 +742,24 @@ CREATE TRIGGER atribuirCrachas
 -- "Banido" state.
 --
 -- Example usage:
--- DELETE FROM jogadorTotalInfo WHERE jogadorTotalInfo.username == 'jogador1';
-CREATE FUNCTION banirJogador()
+--
+CREATE OR REPLACE FUNCTION banirJogador()
     RETURNS trigger
     LANGUAGE plpgsql
 AS
 $$
-    BEGIN
-        IF (OLD.id NOT IN (SELECT jogador.id FROM jogador)) THEN
-            RAISE EXCEPTION 'Player with id (%) not found', OLD.id
-                    USING HINT = 'Check Player ID';
-        END IF;
-        IF (OLD.estado == 'Banido') THEN
-            RAISE EXCEPTION 'Player with id (%) is already banned', OLD.id
-                    USING HINT = 'Check Player ID';
-        END IF;
-        UPDATE jogador SET estado = 'Banido' WHERE jogador.id == OLD.id;
-    END;
+DECLARE
+    jogador_id INT;
+BEGIN
+    SELECT jogador.id INTO jogador_id FROM jogador WHERE jogador.username = OLD.username;
+    UPDATE jogador SET estado = 'Banido' WHERE jogador.id = jogador_id;
+    RETURN OLD;
+END;
 $$;
 
 -- This trigger is called when a player is deleted from the view jogadorTotalInfo and it puts the player in the
 -- "Banido" state.
-CREATE TRIGGER banirJogador
+CREATE OR REPLACE TRIGGER banirJogador
     INSTEAD OF DELETE ON jogadorTotalInfo
     FOR EACH ROW
-    EXECUTE FUNCTION banirJogador();
-
-COMMIT TRANSACTION;
+EXECUTE FUNCTION banirJogador();

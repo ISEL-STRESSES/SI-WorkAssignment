@@ -1,10 +1,5 @@
 --(d) Criar os mecanismos que permitam criar o jogador, dados os seus email e username e regiao, desativar e banir o
 -- jogador;
-DROP PROCEDURE IF EXISTS createJogador(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL);
-DROP PROCEDURE IF EXISTS createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL);
-
-DROP PROCEDURE IF EXISTS updateEstadoJogador(id_jogador INT, new_estado VARCHAR(10));
-DROP PROCEDURE IF EXISTS updateEstadoJogadorTransaction(id_jogador INT, new_estado VARCHAR(10));
 
 -- This procedure creates a new player given their region name, username, and email. It performs the following tasks:
 --
@@ -12,7 +7,7 @@ DROP PROCEDURE IF EXISTS updateEstadoJogadorTransaction(id_jogador INT, new_esta
 -- Inserts a new row into the jogador table with the given username, email, and region name.
 -- Example usage:
 -- CALL create_jogador('Regiao A', 'user123', 'user123@example.com');
-CREATE PROCEDURE createJogador(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
+CREATE OR REPLACE PROCEDURE createJogador(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
     LANGUAGE plpgsql
 AS
 $$
@@ -40,7 +35,7 @@ $$;
 -- Updates the estado field of the jogador table with the new state for the given player ID.
 -- Example usage:
 -- CALL update_estado_jogador(1, 'ativo');
-CREATE PROCEDURE updateEstadoJogador(id_jogador INT, new_estado VARCHAR(10))
+CREATE OR REPLACE PROCEDURE updateEstadoJogador(id_jogador INT, new_estado VARCHAR(10))
     LANGUAGE plpgsql
 AS
 $$
@@ -68,7 +63,7 @@ $$;
 -- already exists and rolls back the transaction.
 -- Example usage:
 -- CALL createJogadorTransaction('Regiao A', 'user123', 'user123@gmail.com');
-CREATE PROCEDURE createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
+CREATE OR REPLACE PROCEDURE createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
     LANGUAGE plpgsql
 AS
 $$
@@ -105,7 +100,7 @@ $$;
 -- player already has this state and rolls back the transaction.
 -- Example usage:
 -- CALL updateEstadoJogadorTransaction(1, 'ativo');
-CREATE PROCEDURE updateEstadoJogadorTransaction(id_jogador INT, new_estado VARCHAR(10))
+CREATE OR REPLACE PROCEDURE updateEstadoJogadorTransaction(id_jogador INT, new_estado VARCHAR(10))
     LANGUAGE plpgsql
 AS
 $$
@@ -136,8 +131,6 @@ $$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (e) Criar a função totalPontosJogador que recebe como parâmetro o identificador de um jogador e devolve o número
 -- total de pontos obtidos pelo jogador.
-DROP FUNCTION IF EXISTS totalPontosJogador(jogador_id INT) CASCADE;
-DROP PROCEDURE IF EXISTS totalPontosJogadorTransaction(jogador_id INT);
 
 -- This function calculates and returns the total points obtained by a player given their player ID. It performs the
 -- following tasks:
@@ -152,7 +145,7 @@ DROP PROCEDURE IF EXISTS totalPontosJogadorTransaction(jogador_id INT);
 -- Returns the sum of the points from both tables as the total points for the player.
 -- Example usage:
 -- SELECT totalPontosJogador(1);
-CREATE FUNCTION totalPontosJogador(jogador_id INT)
+CREATE OR REPLACE FUNCTION totalPontosJogador(jogador_id INT)
     RETURNS INT
     LANGUAGE plpgsql
 AS
@@ -198,7 +191,7 @@ $$;
 -- player is banned or inactive and rolls back the transaction.
 -- Example usage:
 -- CALL totalPontosJogadorTransaction(1);
-CREATE PROCEDURE totalPontosJogadorTransaction(jogador_id INT)
+CREATE OR REPLACE PROCEDURE totalPontosJogadorTransaction(jogador_id INT)
     LANGUAGE plpgsql
 AS
 $$
@@ -229,8 +222,6 @@ $$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (f) Criar a função totalJogosJogador que recebe como parâmetro o identificador de um jogador e devolve o número total
 -- de jogos diferentes nos quais o jogador participou.
-DROP FUNCTION IF EXISTS totalJogosJogador(jogador_id INT);
-DROP PROCEDURE IF EXISTS totalJogosJogadorTransaction(jogador_id INT);
 
 -- This function calculates and returns the total number of games a player has participated in given their player ID.
 -- It performs the following tasks:
@@ -245,7 +236,7 @@ DROP PROCEDURE IF EXISTS totalJogosJogadorTransaction(jogador_id INT);
 -- Returns the sum of the number of games from both tables as the total number of games for the player.
 -- Example usage:
 -- SELECT totalJogosJogador(1);
-CREATE FUNCTION totalJogosJogador(jogador_id INT)
+CREATE OR REPLACE FUNCTION totalJogosJogador(jogador_id INT)
     RETURNS INT
     LANGUAGE plpgsql
 AS
@@ -292,7 +283,7 @@ $$;
 --
 -- Example usage:
 -- CALL totalJogosJogadorTransaction(1);
-CREATE PROCEDURE totalJogosJogadorTransaction(jogador_id INT)
+CREATE OR REPLACE PROCEDURE totalJogosJogadorTransaction(jogador_id INT)
     LANGUAGE plpgsql
 AS
 $$
@@ -324,15 +315,13 @@ $$;
 -- (g) Criar a função PontosJogoPorJogador que recebe como parâmetro a referência de um jogo e devolve uma tabela com
 -- duas colunas (identificador de jogador, total de pontos) em que cada linha contém o identificador de um jogador e o
 -- total de pontos que esse jogador teve nesse jogo. Apenas devem ser devolvidos os jogadores que tenham jogado o jogo.
-DROP FUNCTION IF EXISTS PontosJogoPorJogador(jogo_id ALPHANUMERIC);
-DROP PROCEDURE IF EXISTS PontosJogoPorJogadorTransaction(jogo_id ALPHANUMERIC);
 
 -- This function calculates and returns the total points obtained by each player in a game given the game ID. It
 -- performs the following tasks:
 --
 -- Example usage:
 -- SELECT * FROM PontosJogoPorJogador('1');
-CREATE FUNCTION PontosJogoPorJogador(jogo_id ALPHANUMERIC)
+CREATE OR REPLACE FUNCTION PontosJogoPorJogador(jogo_id ALPHANUMERIC)
     RETURNS TABLE (id_jogador INT, total_pontos INT)
     LANGUAGE plpgsql
 AS
@@ -358,7 +347,7 @@ $$;
 --
 -- Example usage:
 -- CALL PontosJogoPorJogadorTransaction('1');
-CREATE PROCEDURE PontosJogoPorJogadorTransaction(jogo_id ALPHANUMERIC)
+CREATE OR REPLACE PROCEDURE PontosJogoPorJogadorTransaction(jogo_id ALPHANUMERIC)
     LANGUAGE plpgsql
 AS
 $$
@@ -394,15 +383,12 @@ $$;
 -- número total de jogos em que participou, número total de partidas em que participou e número total de pontos que já
 -- obteve de todos os jogadores cujo estado seja diferente de “Banido”. Deve implementar na vista os cálculos sem aceder
 -- às tabelas de estatísticas.
-DROP FUNCTION IF EXISTS totalPartidasJogador(jogador_id INT);
-DROP PROCEDURE IF EXISTS totalPartidasJogadorTransaction(jogador_id INT);
-DROP VIEW IF EXISTS jogadorTotalInfo;
 
 -- This function returns the total number of matches a player has played given the player ID.
 --
 -- Example usage:
 -- SELECT totalPartidasJogador(1);
-CREATE FUNCTION totalPartidasJogador(jogador_id INT)
+CREATE OR REPLACE FUNCTION totalPartidasJogador(jogador_id INT)
     RETURNS INT
     LANGUAGE plpgsql
 AS
@@ -438,7 +424,7 @@ $$;
 --
 -- Example usage:
 -- CALL totalPartidasJogadorTransaction(1);
-CREATE PROCEDURE totalPartidasJogadorTransaction(jogador_id INT)
+CREATE OR REPLACE PROCEDURE totalPartidasJogadorTransaction(jogador_id INT)
     LANGUAGE plpgsql
 AS
 $$
@@ -472,7 +458,7 @@ $$;
 --
 -- Example usage:
 -- SELECT * FROM jogadorTotalInfo;
-CREATE VIEW jogadorTotalInfo AS
+CREATE OR REPLACE VIEW jogadorTotalInfo AS
     SELECT  jogador.id,
             jogador.estado,
             jogador.email,
@@ -485,15 +471,13 @@ CREATE VIEW jogadorTotalInfo AS
 ------------------------------------------------------------------------------------------------------------------------
 -- (n) Criar os mecanismos necessários para que a execução da instrução DELETE sobre a vista jogadorTotalInfo permita
 -- colocar os jogadores envolvidos no estado “Banido”.
-DROP FUNCTION IF EXISTS banirJogador();
-DROP TRIGGER IF EXISTS banirJogador ON jogadorTotalInfo;
 
 -- This function is called when a player is deleted from the view jogadorTotalInfo and it puts the player in the
 -- "Banido" state.
 --
 -- Example usage:
 -- DELETE FROM jogadorTotalInfo WHERE jogadorTotalInfo.username == 'jogador1';
-CREATE FUNCTION banirJogador()
+CREATE OR REPLACE FUNCTION banirJogador()
     RETURNS trigger
     LANGUAGE plpgsql
 AS
@@ -513,7 +497,7 @@ $$;
 
 -- This trigger is called when a player is deleted from the view jogadorTotalInfo and it puts the player in the
 -- "Banido" state.
-CREATE TRIGGER banirJogador
+CREATE OR REPLACE TRIGGER banirJogador
     INSTEAD OF DELETE ON jogadorTotalInfo
     FOR EACH ROW
     EXECUTE FUNCTION banirJogador();
@@ -521,22 +505,13 @@ CREATE TRIGGER banirJogador
 ------------------------------------------------------------------------------------------------------------------------
 -- Model functionalities
 -- 1. Implementing the automatic update of the total number of games a player has played when a player's statistics are.
-DROP TRIGGER IF EXISTS update_total_partidas_jogador ON joga;
-DROP FUNCTION IF EXISTS updateTotalPartidasJogador();
-
-DROP TRIGGER IF EXISTS update_total_pontos_jogador ON partida_multijogador;
-DROP TRIGGER IF EXISTS update_total_pontos_jogador ON partida_normal;
-DROP FUNCTION IF EXISTS updateTotalPontosJogador();
-
-DROP TRIGGER IF EXISTS update_total_jogos_jogador ON jogador_estatistica;
-DROP FUNCTION IF EXISTS updateTotalJogosJogador();
 
 -- This function is called when a player's statistics are updated and it updates the total number of games the player
 -- has played.
 --
 -- Example usage:
 -- INSERT INTO joga VALUES (1, 1);
-CREATE FUNCTION updateTotalPartidasJogador()
+CREATE OR REPLACE FUNCTION updateTotalPartidasJogador()
     RETURNS trigger
     LANGUAGE plpgsql
 AS
@@ -547,13 +522,13 @@ $$
 $$;
 
 -- This trigger is called when a player's statistics are updated and it updates the total number of games the player
-CREATE TRIGGER update_total_partidas_jogador
+CREATE OR REPLACE TRIGGER update_total_partidas_jogador
 AFTER INSERT OR DELETE ON joga
 EXECUTE FUNCTION updateTotalPartidasJogador();
 
 -- This function is called when a player's statistics are updated and it updates the total number of points the player
 -- has obtained.
-CREATE FUNCTION updateTotalPontosJogador()
+CREATE OR REPLACE FUNCTION updateTotalPontosJogador()
     RETURNS trigger
     LANGUAGE plpgsql
 AS
@@ -567,19 +542,19 @@ $$;
 
 -- This trigger is called when a player's statistics are updated and it updates the total number of points the player
 -- has obtained.
-CREATE TRIGGER update_total_pontos_jogador
+CREATE OR REPLACE TRIGGER update_total_pontos_jogador
 AFTER INSERT OR DELETE ON partida_multijogador
 EXECUTE FUNCTION updateTotalPontosJogador();
 
 -- This trigger is called when a player's statistics are updated and it updates the total number of points the player
 -- has obtained.
-CREATE TRIGGER update_total_pontos_jogador
+CREATE OR REPLACE TRIGGER update_total_pontos_jogador
 AFTER INSERT OR DELETE ON partida_normal
 EXECUTE FUNCTION updateTotalPontosJogador();
 
 -- This function is called when a player's statistics are updated and it updates the total number of games the player
 -- has played.
-CREATE FUNCTION updateTotalJogosJogador()
+CREATE OR REPLACE FUNCTION updateTotalJogosJogador()
     RETURNS trigger
     LANGUAGE plpgsql
 AS
@@ -591,6 +566,6 @@ $$;
 
 -- This trigger is called when a player's statistics are updated and it updates the total number of games the player
 -- has played.
-CREATE TRIGGER update_total_jogos_jogador
+CREATE OR REPLACE TRIGGER update_total_jogos_jogador
 AFTER INSERT OR DELETE ON partida
 EXECUTE FUNCTION updateTotalJogosJogador();

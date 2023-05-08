@@ -1,7 +1,4 @@
 --(d) Criar os mecanismos que permitam criar o jogador, dados os seus email e username, desativar e banir o jogador;
-DROP PROCEDURE IF EXISTS create_jogador(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL);
-
-DROP PROCEDURE IF EXISTS createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL);
 
 -- This procedure creates a new player given their region name, username, and email. It is an abstraction with
 -- transaction control and it performs the following tasks:
@@ -12,7 +9,7 @@ DROP PROCEDURE IF EXISTS createJogadorTransaction(regiao_nome VARCHAR(50), new_u
 -- already exists and rolls back the transaction.
 -- Example usage:
 -- CALL createJogadorTransaction('Regiao A', 'user123', 'user123@gmail.com');
-CREATE PROCEDURE createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
+CREATE OR REPLACE PROCEDURE createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
     LANGUAGE plpgsql
 AS
 $$
@@ -49,7 +46,7 @@ $$;
 -- Inserts a new row into the jogador table with the given username, email, and region name.
 -- Example usage:
 -- CALL create_jogador('Regiao A', 'user123', 'user123@example.com');
-CREATE PROCEDURE create_jogador(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
+CREATE OR REPLACE PROCEDURE create_jogador(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
     LANGUAGE plpgsql
 AS
 $$
@@ -72,8 +69,6 @@ $$
     END;
 $$;
 
-DROP PROCEDURE IF EXISTS update_estado_jogador(id_jogador INT, new_estado VARCHAR(10));
-
 -- This procedure updates the state of a player given their player ID and new state. It performs the following tasks:
 --
 -- Checks if the given player ID exists in the jogador table. If not, it raises a notice indicating that the player was not found.
@@ -81,7 +76,7 @@ DROP PROCEDURE IF EXISTS update_estado_jogador(id_jogador INT, new_estado VARCHA
 -- Updates the estado field of the jogador table with the new state for the given player ID.
 -- Example usage:
 -- CALL update_estado_jogador(1, 'ativo');
-CREATE PROCEDURE update_estado_jogador(id_jogador INT, new_estado VARCHAR(10))
+CREATE OR REPLACE PROCEDURE update_estado_jogador(id_jogador INT, new_estado VARCHAR(10))
     LANGUAGE plpgsql
 AS
 $$
@@ -102,7 +97,6 @@ $$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (e) Criar a função totalPontosJogador que recebe como parâmetro o identificador de um jogador e devolve o número
 -- total de pontos obtidos pelo jogador.
-DROP FUNCTION IF EXISTS totalPontosJogador(jogador_id INT) CASCADE;
 
 -- This function calculates and returns the total points obtained by a player given their player ID. It performs the
 -- following tasks:
@@ -117,7 +111,7 @@ DROP FUNCTION IF EXISTS totalPontosJogador(jogador_id INT) CASCADE;
 -- Returns the sum of the points from both tables as the total points for the player.
 -- Example usage:
 -- SELECT totalPontosJogador(1);
-CREATE FUNCTION totalPontosJogador(jogador_id INT)
+CREATE OR REPLACE FUNCTION totalPontosJogador(jogador_id INT)
     RETURNS INT
     LANGUAGE plpgsql
 AS
@@ -160,7 +154,6 @@ $$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (f) Criar a função totalJogosJogador que recebe como parâmetro o identificador de um jogador e devolve o número total
 -- de jogos diferentes nos quais o jogador participou.
-DROP FUNCTION IF EXISTS totalJogosJogador(jogador_id INT);
 
 -- This function calculates and returns the total number of games a player has participated in given their player ID.
 -- It performs the following tasks:
@@ -175,7 +168,7 @@ DROP FUNCTION IF EXISTS totalJogosJogador(jogador_id INT);
 -- Returns the sum of the number of games from both tables as the total number of games for the player.
 -- Example usage:
 -- SELECT totalJogosJogador(1);
-CREATE FUNCTION totalJogosJogador(jogador_id INT)
+CREATE OR REPLACE FUNCTION totalJogosJogador(jogador_id INT)
     RETURNS INT
     LANGUAGE plpgsql
 AS
@@ -223,14 +216,13 @@ $$;
 -- (g) Criar a função PontosJogoPorJogador que recebe como parâmetro a referência de um jogo e devolve uma tabela com
 -- duas colunas (identificador de jogador, total de pontos) em que cada linha contém o identificador de um jogador e o
 -- total de pontos que esse jogador teve nesse jogo. Apenas devem ser devolvidos os jogadores que tenham jogado o jogo.
-DROP FUNCTION IF EXISTS PontosJogoPorJogador(jogo_id ALPHANUMERIC);
 
 -- This function calculates and returns the total points obtained by each player in a game given the game ID. It
 -- performs the following tasks:
 --
 -- Example usage:
 -- SELECT * FROM PontosJogoPorJogador('1');
-CREATE FUNCTION PontosJogoPorJogador(jogo_id ALPHANUMERIC)
+CREATE OR REPLACE FUNCTION PontosJogoPorJogador(jogo_id ALPHANUMERIC)
     RETURNS TABLE (id_jogador INT, total_pontos INT) LANGUAGE plpgsql
 AS
 $$
@@ -255,13 +247,12 @@ $$;
 -- (h) Criar o procedimento armazenado associarCrachá que recebe como parâmetros o identificador de um jogador, a
 -- referência de um jogo e o nome de um crachá desse jogo e atribui o crachá a esse jogador se ele reunir as condições
 -- para o obter.
-DROP PROCEDURE IF EXISTS associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50));
 
 -- This procedure associates a crachá with a player if they meet the conditions to obtain it.
 --
 -- Example usage:
 -- CALL associarCracha(1, '1', 'Crachá de Ouro');
-CREATE PROCEDURE associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50))
+CREATE OR REPLACE PROCEDURE associarCracha(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50))
     LANGUAGE plpgsql
 AS
 $$
@@ -297,7 +288,6 @@ $$;
 -- um jogador e o nome da conversa. O jogador deve ficar automaticamente associado à conversa e deve ser criada uma
 -- mensagem a informar que o jogador criou a conversa. O procedimento deve devolver num parâmetro de saída o
 -- identificador da conversa criada.
-DROP PROCEDURE IF EXISTS iniciarConversa(jogador_id INT, nome_conversa VARCHAR(50), conversa_id OUT INT);
 
 -- This procedure starts a chat given the player ID and the name of the chat. The player is automatically associated
 -- with the chat and a message is created informing that the player created the chat. The procedure returns the chat
@@ -305,7 +295,7 @@ DROP PROCEDURE IF EXISTS iniciarConversa(jogador_id INT, nome_conversa VARCHAR(5
 --
 -- Example usage:
 -- CALL iniciarConversa(1, 'Chat 1', conversa_id);
-CREATE PROCEDURE iniciarConversa(jogador_id INT, nome_conversa VARCHAR(50), conversa_id OUT INT)
+CREATE OR REPLACE PROCEDURE iniciarConversa(jogador_id INT, nome_conversa VARCHAR(50), conversa_id OUT INT)
     LANGUAGE plpgsql
 AS
 $$
@@ -328,14 +318,13 @@ $$;
 -- (j) Criar o procedimento armazenado juntarConversa que recebe como parâmetros os identificadores de um jogador e de
 -- uma conversa e junta esse jogador a essa conversa. Deve ser criada uma mensagem a informar que o jogador entrou na
 -- conversa.
-DROP PROCEDURE IF EXISTS juntarConversa(jogador_id INT, conversa_id INT);
 
 -- This procedure joins a player to a chat given the player ID and the chat ID. A message is created informing that
 -- the player joined the chat.
 --
 -- Example usage:
 -- CALL juntarConversa(1, 1);
-CREATE PROCEDURE juntarConversa(jogador_id INT, conversa_id INT)
+CREATE OR REPLACE PROCEDURE juntarConversa(jogador_id INT, conversa_id INT)
     LANGUAGE plpgsql
 AS
 $$
@@ -352,14 +341,13 @@ $$;
 -- (k) Criar o procedimento armazenado enviarMensagem que recebe como parâmetros os identificadores de um jogador e de
 -- uma conversa e o texto de uma mensagem e procede ao envio dessa mensagem para a conversa indicada, associando-a ao
 -- jogador também indicado.
-DROP PROCEDURE IF EXISTS enviarMensagem(jogador_id INT, conversa_id INT, mensagem_texto VARCHAR(50));
 
 -- This procedure sends a message to a chat given the player ID, the chat ID and the message text. The message is
 -- associated with the player and the chat.
 --
 -- Example usage:
 -- CALL enviarMensagem(1, 1, 'Mensagem 1');
-CREATE PROCEDURE enviarMensagem(jogador_id INT, conversa_id INT, mensagem_texto VARCHAR(50))
+CREATE OR REPLACE PROCEDURE enviarMensagem(jogador_id INT, conversa_id INT, mensagem_texto VARCHAR(50))
     LANGUAGE plpgsql
 AS
 $$
@@ -390,13 +378,12 @@ $$;
 -- número total de jogos em que participou, número total de partidas em que participou e número total de pontos que já
 -- obteve de todos os jogadores cujo estado seja diferente de “Banido”. Deve implementar na vista os cálculos sem aceder
 -- às tabelas de estatísticas.
-DROP FUNCTION IF EXISTS totalPartidasJogador(jogador_id INT);
 
 -- This function returns the total number of matches a player has played given the player ID.
 --
 -- Example usage:
 -- SELECT totalPartidasJogador(1);
-CREATE FUNCTION totalPartidasJogador(jogador_id INT)
+CREATE OR REPLACE FUNCTION totalPartidasJogador(jogador_id INT)
     RETURNS INT
     LANGUAGE plpgsql
 AS
@@ -409,15 +396,13 @@ $$
     END;
 $$;
 
-DROP VIEW IF EXISTS jogadorTotalInfo;
-
 -- This view returns information about the ID, state, email, username, total number of games the player has played,
 -- total number of matches the player has played and total number of points the player has obtained from all players
 -- whose state is different from "Banido". It implements the calculations without accessing the statistics tables.
 --
 -- Example usage:
 -- SELECT * FROM jogadorTotalInfo;
-CREATE VIEW jogadorTotalInfo AS
+CREATE OR REPLACE VIEW jogadorTotalInfo AS
     SELECT  jogador.id,
             jogador.estado,
             jogador.email,
@@ -430,13 +415,12 @@ CREATE VIEW jogadorTotalInfo AS
 ------------------------------------------------------------------------------------------------------------------------
 -- (m) Criar os mecanismos necessários para que, de forma automática, quando uma partida termina, se proceda à
 -- atribuição de crachás do jogo a que ela pertence.
-DROP FUNCTION IF EXISTS atribuirCrachas() CASCADE;
 
 -- This function is called when a match ends and it assigns badges to the players who have played the match.
 --
 -- Example usage:
 --
-CREATE FUNCTION atribuirCrachas()
+CREATE OR REPLACE FUNCTION atribuirCrachas()
     RETURNS trigger
     LANGUAGE plpgsql
 AS
@@ -461,11 +445,9 @@ $$
     END;
 $$;
 
-DROP TRIGGER IF EXISTS atribuirCrachas ON partida;
-
 -- This trigger is called when a match ends and it assigns badges to the players who have played the match if they
 -- have obtained enough points.
-CREATE TRIGGER atribuirCrachas
+CREATE OR REPLACE TRIGGER atribuirCrachas
     AFTER INSERT ON partida
     FOR EACH ROW
     EXECUTE PROCEDURE atribuirCrachas();
@@ -473,7 +455,6 @@ CREATE TRIGGER atribuirCrachas
 ------------------------------------------------------------------------------------------------------------------------
 -- (n) Criar os mecanismos necessários para que a execução da instrução DELETE sobre a vista jogadorTotalInfo permita
 -- colocar os jogadores envolvidos no estado “Banido”.
-DROP FUNCTION IF EXISTS banirJogador();
 
 -- This function is called when a player is deleted from the view jogadorTotalInfo and it puts the player in the
 -- "Banido" state.
@@ -494,11 +475,9 @@ BEGIN
 END;
 $$;
 
-DROP TRIGGER IF EXISTS banirJogador ON jogadorTotalInfo;
-
 -- This trigger is called when a player is deleted from the view jogadorTotalInfo and it puts the player in the
 -- "Banido" state.
-CREATE TRIGGER banirJogador
+CREATE OR REPLACE TRIGGER banirJogador
     INSTEAD OF DELETE ON jogadorTotalInfo
     FOR EACH ROW
 EXECUTE FUNCTION banirJogador();

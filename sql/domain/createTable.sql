@@ -10,24 +10,6 @@ CREATE DOMAIN ALPHANUMERIC AS VARCHAR(10) CHECK (VALUE ~* '^[A-Z0-9]+$');
 CREATE DOMAIN URL AS VARCHAR(255) CHECK (VALUE ~* '^(http|https)://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\S*)?$');
 CREATE DOMAIN email AS varchar(254) CHECK (VALUE ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Z]{2,}$');
 
--- Create table
-DROP TABLE IF EXISTS amigo;
-DROP TABLE IF EXISTS participa;
-DROP TABLE IF EXISTS ganha;
-DROP TABLE IF EXISTS joga;
-DROP TABLE IF EXISTS compra;
-DROP TABLE IF EXISTS mensagem;
-DROP TABLE IF EXISTS cracha;
-DROP TABLE IF EXISTS partida_multijogador;
-DROP TABLE IF EXISTS partida_normal;
-DROP TABLE IF EXISTS partida;
-DROP TABLE IF EXISTS jogo_estatistica;
-DROP TABLE IF EXISTS jogador_estatistica;
-DROP TABLE IF EXISTS conversa;
-DROP TABLE IF EXISTS jogo;
-DROP TABLE IF EXISTS jogador;
-DROP TABLE IF EXISTS regiao;
-
 -- Tables
 -- Região
 CREATE TABLE IF NOT EXISTS regiao(

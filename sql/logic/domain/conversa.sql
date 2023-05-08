@@ -3,7 +3,6 @@
 -- um jogador e o nome da conversa. O jogador deve ficar automaticamente associado à conversa e deve ser criada uma
 -- mensagem a informar que o jogador criou a conversa. O procedimento deve devolver num parâmetro de saída o
 -- identificador da conversa criada.
-DROP PROCEDURE IF EXISTS iniciarConversa(jogador_id INT, nome_conversa VARCHAR(50), conversa_id OUT INT);
 
 -- This procedure starts a chat given the player ID and the name of the chat. The player is automatically associated
 -- with the chat and a message is created informing that the player created the chat. The procedure returns the chat
@@ -11,7 +10,7 @@ DROP PROCEDURE IF EXISTS iniciarConversa(jogador_id INT, nome_conversa VARCHAR(5
 --
 -- Example usage:
 -- CALL iniciarConversa(1, 'Chat 1', conversa_id);
-CREATE PROCEDURE iniciarConversa(jogador_id INT, nome_conversa VARCHAR(50), conversa_id OUT INT)
+CREATE OR REPLACE PROCEDURE iniciarConversa(jogador_id INT, nome_conversa VARCHAR(50), conversa_id OUT INT)
     LANGUAGE plpgsql
 AS
 $$
@@ -34,14 +33,13 @@ $$;
 -- (j) Criar o procedimento armazenado juntarConversa que recebe como parâmetros os identificadores de um jogador e de
 -- uma conversa e junta esse jogador a essa conversa. Deve ser criada uma mensagem a informar que o jogador entrou na
 -- conversa.
-DROP PROCEDURE IF EXISTS juntarConversa(jogador_id INT, conversa_id INT);
 
 -- This procedure joins a player to a chat given the player ID and the chat ID. A message is created informing that
 -- the player joined the chat.
 --
 -- Example usage:
 -- CALL juntarConversa(1, 1);
-CREATE PROCEDURE juntarConversa(jogador_id INT, conversa_id INT)
+CREATE OR REPLACE PROCEDURE juntarConversa(jogador_id INT, conversa_id INT)
     LANGUAGE plpgsql
 AS
 $$
@@ -58,14 +56,13 @@ $$;
 -- (k) Criar o procedimento armazenado enviarMensagem que recebe como parâmetros os identificadores de um jogador e de
 -- uma conversa e o texto de uma mensagem e procede ao envio dessa mensagem para a conversa indicada, associando-a ao
 -- jogador também indicado.
-DROP PROCEDURE IF EXISTS enviarMensagem(jogador_id INT, conversa_id INT, mensagem_texto VARCHAR(50));
 
 -- This procedure sends a message to a chat given the player ID, the chat ID and the message text. The message is
 -- associated with the player and the chat.
 --
 -- Example usage:
 -- CALL enviarMensagem(1, 1, 'Mensagem 1');
-CREATE PROCEDURE enviarMensagem(jogador_id INT, conversa_id INT, mensagem_texto VARCHAR(50))
+CREATE OR REPLACE PROCEDURE enviarMensagem(jogador_id INT, conversa_id INT, mensagem_texto VARCHAR(50))
     LANGUAGE plpgsql
 AS
 $$
