@@ -1,7 +1,7 @@
 package pt.isel;
 
 import pt.isel.ui.Commands;
-import pt.isel.ui.ICommand;
+import pt.isel.ui.Command;
 
 import java.util.Map;
 import java.util.Scanner;
@@ -9,10 +9,10 @@ import java.util.Scanner;
 class Main {
     public static void main(String[] args) {
          try {
-            Map<String, ICommand> commands = Commands.buildCommands();
+            Map<String, Command> commands = Commands.buildCommands();
 
             while(true) {
-                final ICommand command = promptCommand(commands);
+                final Command command = promptCommand(commands);
                 command.act();
             }
          } catch(Exception e) {
@@ -25,14 +25,14 @@ class Main {
          }
     }
 
-    public static ICommand promptCommand(Map<String, ICommand> commands) {
+    public static Command promptCommand(Map<String, Command> commands) {
         while (true) {
             printPrompt();
             String input = parseString(new Scanner(System.in).nextLine());
             if (input == null)
                 continue;
 
-            final ICommand command = commands.get(input);
+            final Command command = commands.get(input);
             if(command == null) {
                 System.out.println("Invalid Command, use help");
                 continue;
