@@ -1,12 +1,11 @@
 package pt.isel.ui;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-import jakarta.persistence.Query;
+import jakarta.persistence.*;
 
 import java.util.Map;
 import java.util.TreeMap;
+
+import static pt.isel.ui.Prompts.promptEmail;
 
 public class Commands {
     public static Map<String, Command> buildCommands() {
@@ -48,7 +47,7 @@ public class Commands {
                 final EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPAEx");
                 final EntityManager em = emf.createEntityManager();
 
-                final var tx = em.getTransaction();
+                final EntityTransaction tx = em.getTransaction();
                 tx.begin();
                 // PROCEDURE createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
                 final Query query = em.createNativeQuery("insert into ligma (name) values (?)")
@@ -66,6 +65,8 @@ public class Commands {
 
             @Override
             public void act() {
+                final String email = promptEmail("Insert a new email for the new player.");
+
                 throw new UnsupportedOperationException("Not supported yet.");
 
             }
