@@ -76,6 +76,7 @@ public class Commands {
         return new Command("Obter pontos totais de um jogador.") {
             @Override
             public void act() {
+
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         };

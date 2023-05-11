@@ -14,6 +14,11 @@ public class Prompts {
         return commands.get(input);
     }
 
+    public static int promptId(String promptMessage) {
+        final String input = prompt(in -> true, "");
+        return Integer.parseInt(input);
+    }
+
     // TODO: move this regex to a proper restriction class
     private static final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]{2,}$";
     public static String promptEmail(String promptMessage) {
@@ -21,9 +26,6 @@ public class Prompts {
         return prompt(input -> input.matches(EMAIL_REGEX), "Incorrect email, please input a correct email.");
     }
 
-    private static String prompt(Function<String, Boolean> verification) {
-        return prompt(verification, null);
-    }
 
     private static String prompt(Function<String, Boolean> verification, @Nullable String failMessage) {
         while(true) {
@@ -40,10 +42,11 @@ public class Prompts {
     }
 
     public static String parseString(String command) {
-        String cleanString = command.trim();
+        final String cleanString = command.trim();
         if (cleanString.isEmpty() || cleanString.isBlank())
             return null;
-        else return cleanString;
+        else
+            return cleanString;
     }
 
     private static void printPrompt() {
