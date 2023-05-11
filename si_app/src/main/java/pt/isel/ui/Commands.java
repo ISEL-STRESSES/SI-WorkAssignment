@@ -30,7 +30,7 @@ public class Commands {
     }
 
     private static Command buildExitCommand() {
-        return new Command("Exit the program") {
+        return new Command("Sair do programa.") {
             @Override
             public void act() {
                 System.exit(0);
@@ -73,7 +73,7 @@ public class Commands {
         };
     }
     private static Command build2e() {
-        return new Command("SET 2E DESCRIPTION") {
+        return new Command("Obter pontos totais de um jogador.") {
             @Override
             public void act() {
                 throw new UnsupportedOperationException("Not supported yet.");
@@ -81,7 +81,7 @@ public class Commands {
         };
     }
     private static Command build2f() {
-        return new Command("SET 2F DESCRIPTION") {
+        return new Command("Obter número de jogos de um jogador.") {
             @Override
             public void act() {
                 throw new UnsupportedOperationException("Not supported yet.");
@@ -89,7 +89,7 @@ public class Commands {
         };
     }
     private static Command build2g() {
-        return new Command("SET 2G DESCRIPTION") {
+        return new Command("Associar crachá.") {
             @Override
             public void act() {
                 throw new UnsupportedOperationException("Not supported yet.");
@@ -97,7 +97,7 @@ public class Commands {
         };
     }
     private static Command build2h() {
-        return new Command("SET 2H DESCRIPTION") {
+        return new Command("Iniciar conversa.") {
             @Override
             public void act() {
                 throw new UnsupportedOperationException("Not supported yet.");
@@ -105,7 +105,7 @@ public class Commands {
         };
     }
     private static Command build2i() {
-        return new Command("SET 2I DESCRIPTION") {
+        return new Command("Juntar a uma conversa.") {
 
             @Override
             public void act() {
@@ -114,7 +114,7 @@ public class Commands {
         };
     }
     private static Command build2j() {
-        return new Command("SET 2J DESCRIPTION") {
+        return new Command("Enviar uma mensagem para uma conversa.") {
 
             @Override
             public void act() {
@@ -123,7 +123,7 @@ public class Commands {
         };
     }
     private static Command build2l() {
-        return new Command("SET 2L DESCRIPTION") {
+        return new Command("Obter informação total de um jogador") {
 
             @Override
             public void act() {
@@ -133,7 +133,7 @@ public class Commands {
     }
 
     private static Command buildHelpCommand(Map<String, Command> commands) {
-        return new Command("List all available commands") {
+        return new Command("Liste todos os comandos disponíveis.") {
             @Override
             public void act() {
                 for(final Map.Entry<String, Command> command : commands.entrySet()) {
