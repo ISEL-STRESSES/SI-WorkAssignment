@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS jogador(
     username    VARCHAR(50) NOT NULL,
     email       EMAIL       NOT NULL,
     estado      VARCHAR(20) DEFAULT 'Ativo',
-    nome_regiao VARCHAR(50) NOT NULL REFERENCES regiao(nome),
+    nome_regiao VARCHAR(50) NOT NULL REFERENCES regiao(nome) ON DELETE CASCADE,
 
     UNIQUE(username),
     UNIQUE(email),
@@ -77,18 +77,16 @@ CREATE TABLE IF NOT EXISTS partida(
 
     CONSTRAINT date_constraint CHECK(data_inicio < data_fim),
 
-    CONSTRAINT pk_partida PRIMARY KEY(id_jogo, nr) --INCLUDE (nr)
+    CONSTRAINT pk_partida PRIMARY KEY(id_jogo, nr)
 );
-
 
 -- Partida normal
 CREATE TABLE IF NOT EXISTS partida_normal(
     id_jogo     ALPHANUMERIC NOT NULL,
     nr_partida  INT          NOT NULL,
     dificuldade INT          NOT NULL,
-    pontuacao   INT          DEFAULT 0,
 
-    UNIQUE(id_jogo, nr_partida),
+    UNIQUE (id_jogo, nr_partida),
 
     CONSTRAINT dificuldade_constraint CHECK(dificuldade BETWEEN 1 and 5),
 
@@ -101,7 +99,6 @@ CREATE TABLE IF NOT EXISTS partida_multijogador(
     id_jogo    ALPHANUMERIC NOT NULL,
     nr_partida INT          NOT NULL,
     estado     VARCHAR(20)  DEFAULT 'Por iniciar',
-    pontuacao  INT          DEFAULT 0,
 
     CONSTRAINT estado_constraint CHECK(estado ~* '^(Por iniciar|A aguardar jogadores|Em curso|Terminada)$'),
     CONSTRAINT fk_partida_multijogador FOREIGN KEY(id_jogo, nr_partida) REFERENCES partida(id_jogo, nr) ON DELETE CASCADE,
@@ -123,14 +120,14 @@ CREATE TABLE IF NOT EXISTS cracha(
 -- Mensagem
 CREATE TABLE IF NOT EXISTS mensagem(
     nr_ordem    INT  NOT NULL,
-    id_jogador  INT  NOT NULL REFERENCES jogador(id),
     id_conversa INT  NOT NULL REFERENCES conversa(id) ON DELETE CASCADE,
+    id_jogador  INT  NOT NULL REFERENCES jogador(id),
     texto       TEXT NOT NULL,
     data        DATE NOT NULL,
 
-    UNIQUE(nr_ordem, id_jogador, id_conversa),
+    UNIQUE(nr_ordem, id_conversa, id_jogador),
 
-    CONSTRAINT pk_mensagem PRIMARY KEY(nr_ordem, id_jogador, id_conversa)
+    CONSTRAINT pk_mensagem PRIMARY KEY(nr_ordem, id_conversa, id_jogador)
 );
 
 -- Compra (Jogador - Jogo)
@@ -147,9 +144,10 @@ CREATE TABLE IF NOT EXISTS compra(
 
 -- Joga (Jogador - Partida)
 CREATE TABLE IF NOT EXISTS joga(
-    id_jogador INT          NOT NULL REFERENCES jogador(id),
-    nr_partida INT          NOT NULL,
     id_jogo    ALPHANUMERIC NOT NULL,
+    nr_partida INT          NOT NULL,
+    id_jogador INT          NOT NULL REFERENCES jogador(id),
+    pontuacao  INT          DEFAULT 0,
 
     CONSTRAINT fk_joga_partida FOREIGN KEY(id_jogo, nr_partida) REFERENCES partida(id_jogo, nr) ON DELETE CASCADE,
     CONSTRAINT pk_joga PRIMARY KEY(id_jogador, nr_partida, id_jogo)
@@ -158,13 +156,13 @@ CREATE TABLE IF NOT EXISTS joga(
 -- Ganha (Jogador - Cracha)
 CREATE TABLE IF NOT EXISTS ganha(
     id_jogador  INT          NOT NULL REFERENCES jogador(id) ON DELETE CASCADE,
-    nome_cracha VARCHAR(50)  NOT NULL,
     id_jogo     ALPHANUMERIC NOT NULL,
+    nome_cracha VARCHAR(50)  NOT NULL,
 
-    UNIQUE(id_jogador, nome_cracha, id_jogo),
+    UNIQUE(id_jogador, id_jogo, nome_cracha),
 
-    CONSTRAINT fk_ganha_cracha FOREIGN KEY(nome_cracha, id_jogo) REFERENCES cracha(nome, id_jogo) ON DELETE CASCADE,
-    CONSTRAINT pk_ganha PRIMARY KEY(id_jogador, nome_cracha, id_jogo)
+    CONSTRAINT fk_ganha_cracha FOREIGN KEY(id_jogo, nome_cracha) REFERENCES cracha(id_jogo, nome) ON DELETE CASCADE,
+    CONSTRAINT pk_ganha PRIMARY KEY(id_jogador, id_jogo, nome_cracha)
 );
 
 -- Participa (Jogador - Conversa)

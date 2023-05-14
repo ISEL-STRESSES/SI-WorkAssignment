@@ -10,6 +10,7 @@ INSERT INTO regiao (nome) VALUES ('Canada');
 INSERT INTO regiao (nome) VALUES ('Antigua & Deps');
 INSERT INTO regiao (nome) VALUES ('Lithuania');
 COMMIT;
+
 BEGIN TRANSACTION;
 INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('AlarmPiercer', 'alarmpiercer@hotmail.com', 'ativo', 'Lithuania');
 INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('Goodwill', 'goodwill@hotmail.com', 'banido', 'Antigua & Deps');
@@ -22,6 +23,7 @@ INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('Infuse', 'in
 INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('Reply', 'reply@outlook.com', 'banido', 'Central African Rep');
 INSERT INTO jogador (username, email, estado, nome_regiao) VALUES ('Piercer', 'piercer@aol.com', 'inativo', 'Cape Verde');
 COMMIT;
+
 BEGIN TRANSACTION;
 INSERT INTO jogo (id, nome, url) VALUES ('dRiuhNLeeu', 'The Snooty Gamer', 'https://TheSnootyGamer.com/?dRiuhNLeeu');
 INSERT INTO jogo (id, nome, url) VALUES ('WvKx6LoOFa', 'FragileBrainsLMAO', 'https://FragileBrainsLMAO.com/?WvKx6LoOFa');
@@ -34,6 +36,7 @@ INSERT INTO jogo (id, nome, url) VALUES ('wcEePgDiw6', 'Uber Snooty Koala', 'htt
 INSERT INTO jogo (id, nome, url) VALUES ('6FdjoYdZ1v', 'FragileLegsOMG', 'https://FragileLegsOMG.com/?6FdjoYdZ1v');
 INSERT INTO jogo (id, nome, url) VALUES ('KFMGS4D8w9', 'CallousLegsLOL', 'https://CallousLegsLOL.com/?KFMGS4D8w9');
 COMMIT;
+
 BEGIN TRANSACTION;
 INSERT INTO conversa (nome) VALUES ('cvs0');
 INSERT INTO conversa (nome) VALUES ('cvs1');
@@ -46,28 +49,34 @@ INSERT INTO conversa (nome) VALUES ('cvs7');
 INSERT INTO conversa (nome) VALUES ('cvs8');
 INSERT INTO conversa (nome) VALUES ('cvs9');
 COMMIT;
+
 BEGIN TRANSACTION;
 INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (0, 'WvKx6LoOFa', '2023-05-03', '2023-05-16', 'Cape Verde');
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado, pontuacao) VALUES ('WvKx6LoOFa', 0, 'A aguardar jogadores', 59716);
 INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (0, 'B86C76ooav', '2023-05-03', null, 'Antigua & Deps');
-INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade, pontuacao) VALUES ('B86C76ooav', 0, 2, 68380);
 INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (0, 'KFMGS4D8w9', '2023-05-03', '2023-05-17', 'Belize');
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado, pontuacao) VALUES ('KFMGS4D8w9', 0, 'Em curso', 6452);
 INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, 'KFMGS4D8w9', '2023-05-03', '2023-05-29', 'Spain');
-INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade, pontuacao) VALUES ('KFMGS4D8w9', 1, 1, 30999);
 INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (0, 'i7px2DVUdf', '2023-05-03', '2023-05-29', 'Japan');
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado, pontuacao) VALUES ('i7px2DVUdf', 0, 'Terminada', 48989);
 INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (2, 'KFMGS4D8w9', '2023-05-03', null, 'Canada');
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado, pontuacao) VALUES ('KFMGS4D8w9', 2, 'Terminada', 49810);
 INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (0, 'dRiuhNLeeu', '2023-05-03', null, 'Papua New Guinea');
-INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade, pontuacao) VALUES ('dRiuhNLeeu', 0, 1, 20552);
 INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (3, 'KFMGS4D8w9', '2023-05-03', null, 'Antigua & Deps');
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado, pontuacao) VALUES ('KFMGS4D8w9', 3, 'Por iniciar', 42999);
 INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (4, 'KFMGS4D8w9', '2023-05-03', '2023-05-22', 'Congo');
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado, pontuacao) VALUES ('KFMGS4D8w9', 4, 'Terminada', 13475);
 INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (5, 'KFMGS4D8w9', '2023-05-03', '2023-05-23', 'Papua New Guinea');
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado, pontuacao) VALUES ('KFMGS4D8w9', 5, 'Terminada', 36431);
+
+INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('KFMGS4D8w9', 0, 'Em curso');
+INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade)  VALUES ('KFMGS4D8w9', 1, 1);
+INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('KFMGS4D8w9', 2, 'Terminada');
+INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('KFMGS4D8w9', 3, 'Por iniciar');
+INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('KFMGS4D8w9', 4, 'Terminada');
+INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('KFMGS4D8w9', 5, 'Terminada');
+
+INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('WvKx6LoOFa', 0, 'A aguardar jogadores');
+INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('i7px2DVUdf', 0, 'Terminada');
+INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade)  VALUES ('B86C76ooav', 0, 2);
+INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade)  VALUES ('dRiuhNLeeu', 0, 1);
+
+
 COMMIT;
+
 BEGIN TRANSACTION;
 INSERT INTO cracha (nome, id_jogo, imagem, limite_pontos) VALUES ('Cracha The Snooty Gamer', 'dRiuhNLeeu', 'https://TheSnootyGamer.com/?CrachaTheSnootyGamer', 95799);
 INSERT INTO cracha (nome, id_jogo, imagem, limite_pontos) VALUES ('Cracha FragileBrainsLMAO', 'WvKx6LoOFa', 'https://FragileBrainsLMAO.com/?CrachaFragileBrainsLMAO', 93001);
