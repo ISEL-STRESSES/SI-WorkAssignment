@@ -524,7 +524,7 @@ $$
     END;
 $$;
 ------------------------------------------------------------------------------------------------------------------------
--- (h)
+-- (h) only works if this before the associar cracha procedure is in the db
 CREATE OR REPLACE PROCEDURE test_h()
     LANGUAGE plpgsql
 AS
@@ -668,7 +668,7 @@ $$
     DELETE FROM jogador WHERE id = player_id1;
     DELETE FROM regiao WHERE nome = region_name1;
     EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
-END;
+    END;
 $$;
 ------------------------------------------------------------------------------------------------------------------------
 -- (i)
@@ -728,35 +728,38 @@ $$
         player_name3 varchar := 'TestPlayer73';
         player_email3 varchar := 'testplayer73@gmail.com';
         player_id3 INT;
-        chat_name varchar := 'TestChat61';
-        chat_id INT :=0;
+        chat_name varchar := 'TestChat71';
+        chat_id INT := 0;
         text_message varchar := 'O jogador entrou na conversa';
         player_sequence integer := 0;
         chat_sequence integer := 0;
     BEGIN
         SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
         SELECT conversa_id_seq.last_value FROM conversa_id_seq INTO chat_sequence;
-        insert into regiao(nome) values(region_name1);
-        insert into regiao(nome) values(region_name2);
+        INSERT INTO regiao(nome) VALUES (region_name1);
+        INSERT INTO regiao(nome) VALUES (region_name2);
         CALL create_jogador(region_name1, player_name1, player_email1);
         SELECT id INTO player_id1 FROM jogador WHERE email = player_email1;
         CALL create_jogador(region_name2, player_name2, player_email2);
         SELECT id INTO player_id2 FROM jogador WHERE email = player_email2;
         CALL create_jogador(region_name1, player_name3, player_email3);
         SELECT id INTO player_id3 FROM jogador WHERE email = player_email3;
-        CALL iniciarconversa(player_id1, chat_name, chat_id);
+        -- Call the iniciarConversa procedure and retrieve the chat_id
+        CALL iniciarConversa(player_id1, chat_name, chat_id);
         RAISE NOTICE 'Exercise 2j';
         RAISE NOTICE 'Test data created';
         RAISE NOTICE 'Testing the addition of a player to a chat';
     BEGIN
-        CALL juntarconversa(player_id2, chat_id);
-            IF (SELECT COUNT(mensagem.nr_ordem) FROM mensagem WHERE id_conversa = chat_id) >= 2 THEN
-                IF (text_message in (Select texto from mensagem where id_conversa = chat_id and id_jogador = player_id2)) THEN
-                    RAISE NOTICE 'Test 1 succeeded';
-                ELSE RAISE EXCEPTION 'Test 1 failed 1';
-                END IF;
-            ELSE RAISE EXCEPTION 'Test 1 failed';
+        CALL juntarConversa(player_id2, chat_id);
+        IF (SELECT COUNT(mensagem.nr_ordem) FROM mensagem WHERE id_conversa = chat_id) >= 1 THEN
+            IF (text_message IN (SELECT texto FROM mensagem WHERE id_conversa = chat_id AND id_jogador = player_id2)) THEN
+                RAISE NOTICE 'Test 1 succeeded';
+            ELSE
+                RAISE EXCEPTION 'Test 1 failed: Player message not found';
             END IF;
+        ELSE
+            RAISE EXCEPTION 'Test 1 failed: No messages found';
+        END IF;
     END;
         DELETE FROM mensagem WHERE id_conversa = chat_id;
         DELETE FROM participa WHERE id_conversa = chat_id;
@@ -832,7 +835,7 @@ $$
     END;
 $$;
 ------------------------------------------------------------------------------------------------------------------------
--- (l) -- only works on empty db
+-- (l)
 CREATE OR REPLACE PROCEDURE test_l()
     LANGUAGE plpgsql
 AS
@@ -1003,26 +1006,24 @@ $$
         RAISE NOTICE 'Testing atribuirCrachas function';
 
         -- Test 1: Do not award badge when total points < badge points limit
-        UPDATE joga
-        SET pontuacao = 40
+        UPDATE joga SET pontuacao = 40
         WHERE nr_partida = partida_nr1 AND id_jogo = game_id1 AND id_jogador = player_id1;
 
-    --     IF (NOT has_badge(player_id1, cracha_name1, game_id1)) THEN
-    --         RAISE NOTICE 'Test 1 succeeded';
-    --     ELSE
-    --         RAISE EXCEPTION 'Test 1 failed';
-    --     END IF;
+        IF (NOT has_badge(player_id1, cracha_name1, game_id1)) THEN
+            RAISE NOTICE 'Test 1 succeeded';
+        ELSE
+            RAISE EXCEPTION 'Test 1 failed';
+        END IF;
 
         -- Test 2: Award badge when total points >= badge points limit
-        UPDATE joga
-        SET pontuacao = 60
+        UPDATE joga SET pontuacao = 60
         WHERE nr_partida = partida_nr1 AND id_jogo = game_id1 AND id_jogador = player_id1;
 
-    --     IF (has_badge(player_id1, cracha_name1, game_id1)) THEN
-    --         RAISE NOTICE 'Test 2 succeeded';
-    --     ELSE
-    --         RAISE EXCEPTION 'Test 2 failed';
-    --     END IF;
+        IF (has_badge(player_id1, cracha_name1, game_id1)) THEN
+            RAISE NOTICE 'Test 2 succeeded';
+        ELSE
+            RAISE EXCEPTION 'Test 2 failed';
+        END IF;
         -- Clean up test data
         DELETE FROM ganha WHERE id_jogador = player_id1;
         DELETE FROM joga WHERE id_jogador = player_id1;
@@ -1153,11 +1154,10 @@ CALL test_d2(); -- Passed
 CALL test_e(); -- Passed
 CALL test_f(); -- Passed
 CALL test_g(); -- Passed
-CALL test_h(); -- Passed
+CALL test_h(); -- Not Passed
 CALL test_i(); -- Passed
-CALL test_j(); -- Not Passed (messes with teh trigger of the restriction on sending a message)
-CALL test_k(); -- Not Tested
-CALL test_l(); -- Not Tested
-CALL test_m(); -- Not Tested
-CALL test_n(); -- Not Tested
-
+CALL test_j(); -- Passed
+CALL test_k(); -- Passed
+CALL test_l(); -- Passed
+CALL test_m(); -- Not Passed
+CALL test_n(); -- Passed

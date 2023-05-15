@@ -397,10 +397,17 @@ $$
     DECLARE
         nr INT;
     BEGIN
+        -- Check if the chat exists in the conversa table
+        IF (NOT EXISTS (SELECT 1 FROM conversa WHERE id = conversa_id)) THEN
+            RAISE EXCEPTION 'Chat with ID % not found', conversa_id;
+        END IF;
+
+        -- Associate the player with the chat
+        INSERT INTO participa VALUES (jogador_id, conversa_id);
+
         SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador = jogador_id AND mensagem.id_conversa = conversa_id;
         nr := nr + 1;
-        INSERT INTO participa VALUES (jogador_id, conversa_id);
-        INSERT INTO mensagem VALUES (nr, jogador_id, conversa_id, 'O jogador entrou na conversa', now());
+        INSERT INTO mensagem(nr_ordem, id_conversa, id_jogador, texto, data) VALUES (nr, conversa_id, jogador_id, 'O jogador entrou na conversa', now());
     END;
 $$;
 
@@ -468,7 +475,7 @@ $$
         END IF;
         SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador = jogador_id AND mensagem.id_conversa = conversa_id;
         nr := nr + 1;
-        INSERT INTO mensagem VALUES (nr, jogador_id, conversa_id, mensagem_texto, now());
+        INSERT INTO mensagem(nr_ordem, id_conversa, id_jogador, texto, data) VALUES (nr, conversa_id, jogador_id, mensagem_texto, now());
     END;
 $$;
 
@@ -551,73 +558,79 @@ CREATE OR REPLACE VIEW jogadorTotalInfo AS
 --
 CREATE OR REPLACE FUNCTION atribuirCrachas()
     RETURNS TRIGGER
+    LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        v_jogadores RECORD;
-        v_crachas RECORD;
-        v_estado_partida_multijogador VARCHAR;
     BEGIN
-        SELECT estado INTO v_estado_partida_multijogador
-        FROM partida_multijogador
-        WHERE id_jogo = NEW.id_jogo AND nr_partida = NEW.nr_partida;
+        -- Check if the match is a normal match or a multiplayer match
+        IF EXISTS (
+            SELECT 1
+            FROM partida_normal pn
+            WHERE pn.id_jogo = NEW.id_jogo AND pn.nr_partida = NEW.nr_partida
+        ) THEN
+            -- For normal matches, assign badges based on the player's score if it exceeds the badge's limite_pontos
+            INSERT INTO ganha (id_jogador, id_jogo, nome_cracha)
+            SELECT j.id_jogador, j.id_jogo, c.nome
+            FROM joga j
+            JOIN cracha c ON j.id_jogo = c.id_jogo
+            WHERE j.nr_partida = NEW.nr_partida
+                AND j.id_jogo = NEW.id_jogo
+                AND j.pontuacao >= c.limite_pontos;
 
-        IF v_estado_partida_multijogador = 'Terminada' THEN
-            FOR v_jogadores IN
-                SELECT joga.id_jogador, joga.id_jogo, SUM(joga.pontuacao) as total_pontos
-                FROM joga
-                         INNER JOIN partida_multijogador pm ON joga.nr_partida = pm.nr_partida AND joga.id_jogo = pm.id_jogo
-                WHERE joga.nr_partida = NEW.nr_partida AND joga.id_jogo = NEW.id_jogo
-                GROUP BY joga.id_jogador, joga.id_jogo
-                LOOP
-                    FOR v_crachas IN
-                        SELECT c.nome, c.id_jogo, c.limite_pontos
-                        FROM cracha c
-                        WHERE c.id_jogo = v_jogadores.id_jogo
-                        LOOP
-                            IF v_jogadores.total_pontos >= v_crachas.limite_pontos THEN
-                                INSERT INTO ganha (id_jogador, nome_cracha, id_jogo)
-                                VALUES (v_jogadores.id_jogador, v_crachas.nome, v_crachas.id_jogo)
-                                ON CONFLICT (id_jogador, nome_cracha, id_jogo) DO NOTHING;
-                            END IF;
-                        END LOOP;
-                END LOOP;
+        ELSE
+            -- For multiplayer matches, check if the match is "Terminada" and assign badges based on the player's score
+            IF EXISTS (
+                SELECT 1
+                FROM partida_multijogador pm
+                WHERE pm.id_jogo = NEW.id_jogo
+                    AND pm.nr_partida = NEW.nr_partida
+                    AND pm.estado = 'Terminada'
+            ) THEN
+                -- Check if the player's score exceeds the badge's limite_pontos
+                INSERT INTO ganha (id_jogador, id_jogo, nome_cracha)
+                SELECT j.id_jogador, j.id_jogo, c.nome
+                FROM joga j
+                JOIN cracha c ON j.id_jogo = c.id_jogo
+                WHERE j.nr_partida = NEW.nr_partida
+                    AND j.id_jogo = NEW.id_jogo
+                    AND j.pontuacao >= c.limite_pontos;
+            END IF;
         END IF;
+
         RETURN NEW;
     END;
-$$ LANGUAGE plpgsql;
+$$;
 
 -- This trigger is called when a match ends and it assigns badges to the players who have played the match if they
 -- have obtained enough points.
-CREATE OR REPLACE TRIGGER atribuirCrachasMultijogadorTrigger
-    AFTER UPDATE OF estado ON partida_multijogador
-    FOR EACH ROW
-    WHEN (NEW.estado = 'Terminada')
-        EXECUTE PROCEDURE atribuirCrachas();
+-- CREATE OR REPLACE TRIGGER atribuirCrachasMultijogadorTrigger
+--     AFTER UPDATE OF estado ON partida_multijogador
+--     FOR EACH ROW
+--     WHEN (NEW.estado = 'Terminada')
+--         EXECUTE PROCEDURE atribuirCrachas();
 
 CREATE OR REPLACE TRIGGER atribuirCrachasNormalTrigger
-    AFTER UPDATE OF pontuacao ON joga
+    AFTER INSERT OR UPDATE OF pontuacao ON joga
     FOR EACH ROW
     WHEN (NEW.pontuacao >= 0)
-        EXECUTE PROCEDURE atribuirCrachas();
+    EXECUTE PROCEDURE atribuirCrachas();
 
 -- This function checks if a player has a badge.
 -- Not a requirement but useful for testing.
--- CREATE OR REPLACE FUNCTION has_badge(p_id_jogador INTEGER, p_nome_cracha VARCHAR, p_id_jogo ALPHANUMERIC)
---     RETURNS BOOLEAN
---     LANGUAGE plpgsql
--- AS
--- $$
--- DECLARE
---     badge_exists BOOLEAN;
--- BEGIN
---     SELECT EXISTS (SELECT 1 FROM ganha WHERE id_jogador = p_id_jogador AND nome_cracha = p_nome_cracha AND id_jogo = p_id_jogo)
---     INTO badge_exists;
---
---     RETURN badge_exists;
--- END;
--- $$;
+CREATE OR REPLACE FUNCTION has_badge(p_id_jogador INTEGER, p_nome_cracha VARCHAR, p_id_jogo ALPHANUMERIC)
+    RETURNS BOOLEAN
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    badge_exists BOOLEAN;
+BEGIN
+    SELECT EXISTS (SELECT 1 FROM ganha WHERE id_jogador = p_id_jogador AND nome_cracha = p_nome_cracha AND id_jogo = p_id_jogo)
+    INTO badge_exists;
 
+    RETURN badge_exists;
+END;
+$$;
 
 ------------------------------------------------------------------------------------------------------------------------
 -- (n) Criar os mecanismos necessários para que a execução da instrução DELETE sobre a vista jogadorTotalInfo permita
