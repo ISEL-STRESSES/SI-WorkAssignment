@@ -973,7 +973,7 @@ $$
         player_email1 varchar := 'testplayer104@gmail.com';
         game_id1 ALPHANUMERIC := 'GAME1234';
         game_name1 varchar := 'TestGame102';
-        game_url1 varchar := 'http://testgame102.example.com';
+        game_url1 varchar := 'https://testgame102.example.com';
         partida_nr1 INT := 100;
         cracha_name1 VARCHAR(50) := 'TestCracha1';
         match_state varchar := 'Em curso';
@@ -1000,7 +1000,7 @@ $$
         INSERT INTO partida_multijogador (nr_partida, id_jogo, estado) VALUES (partida_nr1, game_id1, match_state);
 
         DELETE FROM cracha WHERE nome = cracha_name1;
-        INSERT INTO cracha (nome, id_jogo, imagem, limite_pontos) VALUES (cracha_name1, game_id1, 'http://test-cracha.example.com', 50);
+        INSERT INTO cracha (nome, id_jogo, imagem, limite_pontos) VALUES (cracha_name1, game_id1, 'https://test-cracha.example.com', 50);
 
         -- Tests
         RAISE NOTICE 'Testing atribuirCrachas function';

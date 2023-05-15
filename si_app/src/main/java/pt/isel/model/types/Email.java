@@ -9,8 +9,8 @@ public record Email(String email) {
     }
 };
 
-class some {
-    void test() {
-        var e = new Email("a");
-    }
-}
+//class some {
+//    void test() {
+//        var e = new Email("a");
+//    }
+//}
