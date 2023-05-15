@@ -9,7 +9,7 @@
 -- already exists and rolls back the transaction.
 -- Example usage:
 -- CALL createJogadorTransaction('Regiao A', 'user123', 'user123@gmail.com');
-CREATE OR REPLACE PROCEDURE createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
+CREATE OR REPLACE PROCEDURE createJogadorTransaction(regiao_nome VARCHAR(50), new_username VARCHAR(50), new_email EMAIL)
     LANGUAGE plpgsql
 AS
 $$
@@ -47,7 +47,7 @@ $$;
 -- Inserts a new row into the jogador table with the given username, email, and region name.
 -- Example usage:
 -- CALL create_jogador('Regiao A', 'user123', 'user123@example.com');
-CREATE OR REPLACE PROCEDURE create_jogador(regiao_nome VARCHAR(50), new_username VARCHAR(10), new_email EMAIL)
+CREATE OR REPLACE PROCEDURE create_jogador(regiao_nome VARCHAR(50), new_username VARCHAR(50), new_email EMAIL)
     LANGUAGE plpgsql
 AS
 $$
@@ -118,8 +118,8 @@ CREATE OR REPLACE FUNCTION totalPontosJogador(jogador_id INT)
 AS
 $$
     DECLARE
-        jogosNormal       INT;
-        jogosMultiJogador INT;
+        pontos_normal INT;
+        pontos_multi INT;
         estado_jogador   VARCHAR(10);
     BEGIN
         -- Checks
@@ -137,18 +137,18 @@ $$
         END IF;
         -- expected
         -- counts the points of partidas normais
-        SELECT COALESCE(SUM(pn.pontuacao),0) INTO jogosNormal FROM joga j
-        JOIN partida_normal pn on j.id_jogo = pn.id_jogo AND j.nr_partida = pn.nr_partida
-        JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
-        WHERE j.id_jogador = jogador_id AND p.data_fim IS NOT NULL;
+        SELECT SUM(COALESCE(joga.pontuacao, 0)) INTO pontos_normal FROM joga
+        JOIN partida_normal pn on joga.id_jogo = pn.id_jogo AND joga.nr_partida = pn.nr_partida
+        JOIN partida p ON joga.id_jogo = p.id_jogo AND joga.nr_partida = p.nr
+        WHERE joga.id_jogador = jogador_id AND p.data_fim IS NOT NULL;
 
         -- counts the points of partidas multijogador
-        SELECT COALESCE(SUM(pm.pontuacao), 0) INTO jogosMultiJogador FROM joga j
-        JOIN partida_multijogador pm ON j.id_jogo = pm.id_jogo AND j.nr_partida = pm.nr_partida
-        JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
-        WHERE j.id_jogador = jogador_id AND pm.estado = 'Terminada' AND p.data_fim IS NOT NULL;
+        SELECT SUM(COALESCE(joga.pontuacao, 0)) INTO pontos_multi FROM joga
+        JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr_partida
+        JOIN partida p ON joga.id_jogo = p.id_jogo AND joga.nr_partida = p.nr
+        WHERE joga.id_jogador = jogador_id AND pm.estado = 'Terminada' AND p.data_fim IS NOT NULL;
 
-        RETURN jogosNormal + jogosMultiJogador;
+        RETURN pontos_normal + pontos_multi;
     END;
 $$;
 
@@ -194,17 +194,17 @@ $$
         -- expected
         -- counts the number of partidas
         WITH multiplayer_games AS (
-        SELECT DISTINCT j.id_jogo
-        FROM joga j
-        JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
-        JOIN partida_multijogador pm ON j.id_jogo = pm.id_jogo AND j.nr_partida = pm.nr_partida
-        WHERE j.id_jogador = jogador_id AND pm.estado = 'Terminada' AND p.data_fim IS NOT NULL
+        SELECT DISTINCT joga.id_jogo
+        FROM joga
+        JOIN partida ON joga.id_jogo = partida.id_jogo AND joga.nr_partida = partida.nr
+        JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr_partida
+        WHERE joga.id_jogador = jogador_id AND pm.estado = 'Terminada' AND partida.data_fim IS NOT NULL
     ), normal_games AS (
-        SELECT DISTINCT j.id_jogo
-        FROM joga j
-        JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
-        JOIN partida_normal pn ON j.id_jogo = pn.id_jogo AND j.nr_partida = pn.nr_partida
-        WHERE j.id_jogador = jogador_id AND p.data_fim IS NOT NULL AND pn.pontuacao IS NOT NULL
+        SELECT DISTINCT joga.id_jogo
+        FROM joga
+        JOIN partida ON joga.id_jogo = partida.id_jogo AND joga.nr_partida = partida.nr
+        JOIN partida_normal pn ON joga.id_jogo = pn.id_jogo AND joga.nr_partida = pn.nr_partida
+        WHERE joga.id_jogador = jogador_id AND partida.data_fim IS NOT NULL
     )
     SELECT COUNT(*) INTO jogos
     FROM (SELECT id_jogo FROM multiplayer_games UNION SELECT id_jogo FROM normal_games) AS all_games;
@@ -235,12 +235,12 @@ $$
             RAISE EXCEPTION 'jogo has not been played';
         END IF;
 
-        RETURN QUERY SELECT j.id_jogador, CAST(SUM(COALESCE(pn.pontuacao, pm.pontuacao, 0)) AS INTEGER) AS total_pontos FROM joga j
-        JOIN partida p ON j.id_jogo = p.id_jogo AND j.nr_partida = p.nr
-        LEFT JOIN partida_normal pn ON j.id_jogo = pn.id_jogo AND j.nr_partida = pn.nr_partida
-        LEFT JOIN partida_multijogador pm ON j.id_jogo = pm.id_jogo AND j.nr_partida = pm.nr_partida AND pm.estado = 'Terminada'
-        WHERE j.id_jogo = jogo_id AND p.data_fim IS NOT NULL
-        GROUP BY j.id_jogador;
+        RETURN QUERY SELECT joga.id_jogador, SUM(COALESCE(joga.pontuacao, 0))::integer AS total_pontos FROM joga
+        JOIN partida p ON joga.id_jogo = p.id_jogo AND joga.nr_partida = p.nr
+        LEFT JOIN partida_normal pn ON joga.id_jogo = pn.id_jogo AND joga.nr_partida = pn.nr_partida
+        LEFT JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr_partida AND pm.estado = 'Terminada'
+        WHERE joga.id_jogo = jogo_id AND p.data_fim IS NOT NULL
+        GROUP BY joga.id_jogador;
     END;
 $$;
 
@@ -277,9 +277,9 @@ $$
             RAISE EXCEPTION 'jogador already has this cracha';
         END IF;
         SELECT nome INTO nome_cracha FROM cracha WHERE cracha.nome = cracha_nome;
-        SELECT total_pontos INTO pontos FROM PontosJogoPorJogador(jogo_id) AS pontos_jogo WHERE pontos_jogo.id_jogador = jogador_id;
+        SELECT total_pontos INTO pontos FROM PontosJogoPorJogador(jogo_id) pontos_jogo WHERE pontos_jogo.id_jogador = jogador_id;
         IF (pontos >= (SELECT limite_pontos FROM cracha WHERE cracha.nome = cracha_nome)) THEN
-            INSERT INTO ganha VALUES (jogador_id, cracha_nome, jogo_id);
+            INSERT INTO ganha (id_jogador, id_jogo, nome_cracha) VALUES (jogador_id, jogo_id, cracha_nome);
         END IF;
     END
 $$;
@@ -353,6 +353,7 @@ CREATE OR REPLACE PROCEDURE iniciarConversatransacao(jogador_id INT, nome_conver
     AS
 $$
     Declare
+        conversa_id INT;
         t1 text;
         t2 text;
         t3 text;
@@ -549,69 +550,73 @@ CREATE OR REPLACE VIEW jogadorTotalInfo AS
 -- Example usage:
 --
 CREATE OR REPLACE FUNCTION atribuirCrachas()
-    RETURNS TRIGGER AS $$
-DECLARE
-    v_jogadores RECORD;
-    v_crachas RECORD;
-    v_estado_partida_multijogador VARCHAR;
-BEGIN
-    SELECT estado INTO v_estado_partida_multijogador
-    FROM partida_multijogador
-    WHERE id_jogo = NEW.id_jogo AND nr_partida = NEW.nr_partida;
+    RETURNS TRIGGER
+AS
+$$
+    DECLARE
+        v_jogadores RECORD;
+        v_crachas RECORD;
+        v_estado_partida_multijogador VARCHAR;
+    BEGIN
+        SELECT estado INTO v_estado_partida_multijogador
+        FROM partida_multijogador
+        WHERE id_jogo = NEW.id_jogo AND nr_partida = NEW.nr_partida;
 
-    IF v_estado_partida_multijogador = 'Terminada' THEN
-        FOR v_jogadores IN
-            SELECT j.id_jogador, j.id_jogo, SUM(pm.pontuacao) as total_pontos
-            FROM joga j
-                     INNER JOIN partida_multijogador pm ON j.nr_partida = pm.nr_partida AND j.id_jogo = pm.id_jogo
-            WHERE j.nr_partida = NEW.nr_partida AND j.id_jogo = NEW.id_jogo
-            GROUP BY j.id_jogador, j.id_jogo
-            LOOP
-                FOR v_crachas IN
-                    SELECT c.nome, c.id_jogo, c.limite_pontos
-                    FROM cracha c
-                    WHERE c.id_jogo = v_jogadores.id_jogo
-                    LOOP
-                        IF v_jogadores.total_pontos >= v_crachas.limite_pontos THEN
-                            INSERT INTO ganha (id_jogador, nome_cracha, id_jogo)
-                            VALUES (v_jogadores.id_jogador, v_crachas.nome, v_crachas.id_jogo)
-                            ON CONFLICT (id_jogador, nome_cracha, id_jogo) DO NOTHING;
-                        END IF;
-                    END LOOP;
-            END LOOP;
-    END IF;
-    RETURN NEW;
-END;
+        IF v_estado_partida_multijogador = 'Terminada' THEN
+            FOR v_jogadores IN
+                SELECT joga.id_jogador, joga.id_jogo, SUM(joga.pontuacao) as total_pontos
+                FROM joga
+                         INNER JOIN partida_multijogador pm ON joga.nr_partida = pm.nr_partida AND joga.id_jogo = pm.id_jogo
+                WHERE joga.nr_partida = NEW.nr_partida AND joga.id_jogo = NEW.id_jogo
+                GROUP BY joga.id_jogador, joga.id_jogo
+                LOOP
+                    FOR v_crachas IN
+                        SELECT c.nome, c.id_jogo, c.limite_pontos
+                        FROM cracha c
+                        WHERE c.id_jogo = v_jogadores.id_jogo
+                        LOOP
+                            IF v_jogadores.total_pontos >= v_crachas.limite_pontos THEN
+                                INSERT INTO ganha (id_jogador, nome_cracha, id_jogo)
+                                VALUES (v_jogadores.id_jogador, v_crachas.nome, v_crachas.id_jogo)
+                                ON CONFLICT (id_jogador, nome_cracha, id_jogo) DO NOTHING;
+                            END IF;
+                        END LOOP;
+                END LOOP;
+        END IF;
+        RETURN NEW;
+    END;
 $$ LANGUAGE plpgsql;
-
-
-
-
 
 -- This trigger is called when a match ends and it assigns badges to the players who have played the match if they
 -- have obtained enough points.
 CREATE OR REPLACE TRIGGER atribuirCrachasMultijogadorTrigger
-    AFTER UPDATE OF estado, pontuacao ON partida_multijogador
+    AFTER UPDATE OF estado ON partida_multijogador
     FOR EACH ROW
     WHEN (NEW.estado = 'Terminada')
         EXECUTE PROCEDURE atribuirCrachas();
 
+CREATE OR REPLACE TRIGGER atribuirCrachasNormalTrigger
+    AFTER UPDATE OF pontuacao ON joga
+    FOR EACH ROW
+    WHEN (NEW.pontuacao >= 0)
+        EXECUTE PROCEDURE atribuirCrachas();
+
 -- This function checks if a player has a badge.
 -- Not a requirement but useful for testing.
-CREATE OR REPLACE FUNCTION has_badge(p_id_jogador INTEGER, p_nome_cracha VARCHAR, p_id_jogo ALPHANUMERIC)
-    RETURNS BOOLEAN
-    LANGUAGE plpgsql
-AS
-$$
-DECLARE
-    badge_exists BOOLEAN;
-BEGIN
-    SELECT EXISTS (SELECT 1 FROM ganha WHERE id_jogador = p_id_jogador AND nome_cracha = p_nome_cracha AND id_jogo = p_id_jogo)
-    INTO badge_exists;
-
-    RETURN badge_exists;
-END;
-$$;
+-- CREATE OR REPLACE FUNCTION has_badge(p_id_jogador INTEGER, p_nome_cracha VARCHAR, p_id_jogo ALPHANUMERIC)
+--     RETURNS BOOLEAN
+--     LANGUAGE plpgsql
+-- AS
+-- $$
+-- DECLARE
+--     badge_exists BOOLEAN;
+-- BEGIN
+--     SELECT EXISTS (SELECT 1 FROM ganha WHERE id_jogador = p_id_jogador AND nome_cracha = p_nome_cracha AND id_jogo = p_id_jogo)
+--     INTO badge_exists;
+--
+--     RETURN badge_exists;
+-- END;
+-- $$;
 
 
 ------------------------------------------------------------------------------------------------------------------------

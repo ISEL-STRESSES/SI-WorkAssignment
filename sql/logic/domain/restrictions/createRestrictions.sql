@@ -1,4 +1,6 @@
+BEGIN TRANSACTION;
 -- Model Restrictions
+
 -- 1. The partida must be played by jogadores of the same regiao
 
 -- This function is called before inserting a new row in the joga table and checks if the jogador is from the same
@@ -26,7 +28,8 @@ $$
 $$;
 
 -- This trigger calls the function checkJogadorPartidaRegiao() before inserting a new row in the joga table
-CREATE OR REPLACE TRIGGER checkJogadorPartidaRegiao BEFORE INSERT ON joga
+CREATE OR REPLACE TRIGGER checkJogadorPartidaRegiao
+    BEFORE INSERT ON joga
     FOR EACH ROW
     EXECUTE FUNCTION checkJogadorPartidaRegiao();
 
@@ -39,22 +42,21 @@ CREATE OR REPLACE TRIGGER checkJogadorPartidaRegiao BEFORE INSERT ON joga
 -- Example Usage:
 -- INSERT INTO mensagem VALUES (1, 1, 'ola', '2019-12-12 12:12:12');
 CREATE OR REPLACE FUNCTION checkJogadorMensagemConversa()
-    RETURNS trigger
+    RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        jogador_id INT;
     BEGIN
-        SELECT participa.id_jogador INTO jogador_id FROM participa WHERE(
-            participa.id_jogador = NEW.id_jogador AND participa.id_conversa = NEW.id_conversa);
-        IF(jogador_id IS NULL) THEN
+        IF (NOT EXISTS (SELECT 1 FROM participa WHERE id_jogador = NEW.id_jogador AND id_conversa = NEW.id_conversa)) THEN
             RAISE EXCEPTION 'O jogador nao pertence a conversa';
         END IF;
         RETURN NEW;
     END;
 $$;
 
-CREATE OR REPLACE TRIGGER checkJogadorMensagemConversa BEFORE INSERT ON mensagem
+CREATE OR REPLACE TRIGGER checkJogadorMensagemConversa
+    BEFORE INSERT ON mensagem
     FOR EACH ROW
     EXECUTE PROCEDURE checkJogadorMensagemConversa();
+
+COMMIT;

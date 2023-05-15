@@ -63,25 +63,18 @@ CREATE OR REPLACE FUNCTION updatePontuacaoTotal()
 AS
 $$
     DECLARE
-        pontos_normal INT;
-        pontos_multijogador INT;
+        pontos INT;
     BEGIN
-        SELECT SUM(pontuacao) INTO pontos_normal FROM partida_normal WHERE partida_normal.id_jogo = NEW.id_jogo;
-        SELECT SUM(pontuacao) INTO pontos_multijogador FROM partida_multijogador WHERE partida_multijogador.id_jogo = NEW.id_jogo;
+        SELECT SUM(COALESCE(pontuacao, 0)) INTO pontos FROM joga WHERE joga.id_jogo = NEW.id_jogo;
         -- not atomic because of multiplayer and single player games
         UPDATE jogo_estatistica
-        SET total_pontos = pontos_normal + pontos_multijogador
+        SET total_pontos = pontos
         WHERE id_jogo = NEW.id_jogo;
         RETURN NEW;
     END;
 $$;
 
 CREATE OR REPLACE TRIGGER updatePontuacaoTotalTrigger
-    AFTER INSERT OR DELETE ON partida_multijogador
-    FOR EACH ROW
-    EXECUTE FUNCTION updatePontuacaoTotal();
-
-CREATE OR REPLACE TRIGGER update_total_pontos_trigger
-    AFTER INSERT OR DELETE ON partida_normal
+    AFTER INSERT OR UPDATE OR DELETE ON joga
     FOR EACH ROW
     EXECUTE FUNCTION updatePontuacaoTotal();
