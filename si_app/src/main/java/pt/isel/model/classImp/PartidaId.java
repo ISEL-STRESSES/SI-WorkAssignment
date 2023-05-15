@@ -1,4 +1,4 @@
-package pt.isel.model;
+package pt.isel.model.classImp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

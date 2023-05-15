@@ -1,13 +1,15 @@
-package pt.isel.model;
+package pt.isel.model.classImp;
 
 import jakarta.persistence.*;
+import pt.isel.model.classImp.Jogo;
+import pt.isel.model.types.Alphanumeric;
 
 @Entity
 @Table(name = "jogo_estatistica", schema = "public")
 public class JogoEstatistica {
     @Id
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
-    private Object id;
+    private String id;
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
@@ -27,8 +29,8 @@ public class JogoEstatistica {
         return id;
     }
 
-    public void setId(Object id) {
-        this.id = id;
+    public void setId(Alphanumeric id) {
+        this.id = id.toString();
     }
 
     public Jogo getJogo() {

@@ -1,6 +1,7 @@
-package pt.isel.model;
+package pt.isel.model.classImp;
 
 import jakarta.persistence.*;
+import pt.isel.model.types.Alphanumeric;
 
 @Entity
 @Table(name = "jogo", schema = "public", indexes = {
@@ -9,7 +10,7 @@ import jakarta.persistence.*;
 public class Jogo {
     @Id
     @Column(name = "id", columnDefinition = "alphanumeric(0, 0) not null")
-    private Object id;
+    private String id;
 
     @Column(name = "nome", nullable = false, length = 50)
     private String nome;
@@ -18,8 +19,8 @@ public class Jogo {
         return id;
     }
 
-    public void setId(Object id) {
-        this.id = id;
+    public void setId(Alphanumeric id) {
+        this.id = id.toString();
     }
 
     public String getNome() {

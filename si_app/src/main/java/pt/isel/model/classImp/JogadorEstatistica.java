@@ -1,10 +1,13 @@
-package pt.isel.model;
+package pt.isel.model.classImp;
 
 import jakarta.persistence.*;
+import pt.isel.model.Player;
+import pt.isel.model.PlayerStats;
 
 @Entity
 @Table(name = "jogador_estatistica", schema = "public")
-public class JogadorEstatistica {
+public class JogadorEstatistica implements PlayerStats {
+    //Fields
     @Id
     @Column(name = "id_jogador", nullable = false)
     private Integer id;
@@ -12,7 +15,7 @@ public class JogadorEstatistica {
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_jogador", nullable = false)
-    private Player player;
+    private Jogador jogador;
 
     @Column(name = "nr_partidas")
     private Integer nrPartidas;
@@ -23,44 +26,53 @@ public class JogadorEstatistica {
     @Column(name = "total_pontos")
     private Integer totalPontos;
 
-    public Integer getId() {
-        return id;
+    @Override
+    public Player getPlayer() {
+        return this.jogador;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    @Override
+    public Integer getPlayerId() {
+        return this.id;
     }
 
-    public Player getJogador() {
-        return player;
-    }
-
-    public void setJogador(Player player) {
-        this.player = player;
-    }
-
+    @Override
     public Integer getNrPartidas() {
-        return nrPartidas;
+        return this.nrPartidas;
     }
 
+    @Override
+    public Integer getNrJogos() {
+        return this.nrJogos;
+    }
+
+    @Override
+    public Integer getTotalPontos() {
+        return this.totalPontos;
+    }
+
+    @Override
+    public void setJogador(Player player) {
+        this.jogador = (Jogador) player;
+    }
+
+    @Override
+    public void setPlayerId(Integer playerId) {
+        this.id = playerId;
+    }
+
+    @Override
     public void setNrPartidas(Integer nrPartidas) {
         this.nrPartidas = nrPartidas;
     }
 
-    public Integer getNrJogos() {
-        return nrJogos;
-    }
-
+    @Override
     public void setNrJogos(Integer nrJogos) {
         this.nrJogos = nrJogos;
     }
 
-    public Integer getTotalPontos() {
-        return totalPontos;
-    }
-
+    @Override
     public void setTotalPontos(Integer totalPontos) {
         this.totalPontos = totalPontos;
     }
-
 }

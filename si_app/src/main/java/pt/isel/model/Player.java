@@ -1,12 +1,13 @@
 package pt.isel.model;
 
+import pt.isel.model.classImp.JogadorEstatistica;
 import pt.isel.model.types.Email;
 
 public interface Player {
     //getters
     Integer getId();
 
-    String getNome();
+    String getUserName();
 
     Email getEmail();
 
@@ -15,7 +16,7 @@ public interface Player {
     String getNomeRegiao();
 
     //setters
-    void setNome(String nome);
+    void setUserName(String userName);
 
     void setEmail(Email email);
 
@@ -24,6 +25,10 @@ public interface Player {
     void setNomeRegiao(String nomeRegiao);
 
     //others
+    JogadorEstatistica getJogadorEstatistica();
+
+    void setJogadorEstatistica(PlayerStats jogadorEstatistica);
+
     boolean isValid();
 
 }

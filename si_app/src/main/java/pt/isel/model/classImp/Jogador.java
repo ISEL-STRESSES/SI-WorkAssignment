@@ -3,6 +3,7 @@ package pt.isel.model.classImp;
 import com.sun.istack.NotNull;
 import jakarta.persistence.*;
 import pt.isel.model.Player;
+import pt.isel.model.PlayerStats;
 import pt.isel.model.types.Email;
 
 
@@ -59,43 +60,65 @@ public class Jogador implements Player {
     @Column(name = "nome_regiao", nullable = false)
     private String nomeRegiao;
 
-    public String getUsername() {
-        return username;
-    }
+    @OneToOne(mappedBy = "jogador")
+    private JogadorEstatistica estatistica;
+
     @Override
-    public Email getEmail() {
-        return new Email(email);
+    public Integer getId() {
+        return this.id;
     }
 
+    @Override
+    public String getUserName() {
+        return this.username;
+    }
+
+    @Override
+    public Email getEmail() {
+        return new Email(this.email);
+    }
+
+    @Override
     public String getEstado() {
-        return estado;
-    }
-
-    public String getNomeRegiao() {
-        return nomeRegiao;
+        return this.estado;
     }
 
     @Override
-    public void setNome(String nome) {
-        this.username = nome;
+    public String getNomeRegiao() {
+        return this.nomeRegiao;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    @Override
+    public void setUserName(String userName) {
+        this.username = userName;
     }
 
+    @Override
     public void setEmail(Email email) {
         this.email = email.toString();
     }
 
+    @Override
     public void setEstado(String estado) {
         if(estado.matches("^(ativo|banido|inativo)$"))
             this.estado = estado;
-        else throw new IllegalArgumentException("Estado inválido");
+        else
+            throw new IllegalArgumentException("Estado inválido");
     }
 
+    @Override
     public void setNomeRegiao(String nomeRegiao) {
         this.nomeRegiao = nomeRegiao;
+    }
+
+    @Override
+    public JogadorEstatistica getJogadorEstatistica() {
+        return this.estatistica;
+    }
+
+    @Override
+    public void setJogadorEstatistica(PlayerStats estatistica) {
+        this.estatistica = (JogadorEstatistica) estatistica;
     }
 
     @Override
@@ -103,25 +126,12 @@ public class Jogador implements Player {
         return false;
     }
 
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    @Override
-    public String getNome() {
-        return null;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
+    // Constructors
     public Jogador() {
     }
 
     public Jogador(String username, Email email, String estado, String nomeRegiao) {
-        setUsername(username);
+        setUserName(username);
         setEmail(email);
         setEstado(estado);
         setNomeRegiao(nomeRegiao);
@@ -143,12 +153,12 @@ public class Jogador implements Player {
         if (this == o) return true;
         if (!(o instanceof Jogador)) return false;
         Jogador jogador = (Jogador) o;
-        return getUsername().equals(jogador.getUsername()) && getEmail().equals(jogador.getEmail());
+        return username.equals(jogador.username) && email.equals(jogador.email);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(getUsername(), getEmail());
+        return username.hashCode() + email.hashCode();
     }
 }
 
