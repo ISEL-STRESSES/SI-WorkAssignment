@@ -5,6 +5,8 @@ import pt.isel.model.Player;
 import pt.isel.model.PlayerStats;
 
 @Entity
+@NamedQuery(name = "JogadorEstatistica.findAll", query = "SELECT je FROM JogadorEstatistica je")
+@NamedQuery(name = "JogadorEstatistica.findByKey", query = "SELECT je FROM JogadorEstatistica je where je.id = :id")
 @Table(name = "jogador_estatistica", schema = "public")
 public class JogadorEstatistica implements PlayerStats {
     //Fields
