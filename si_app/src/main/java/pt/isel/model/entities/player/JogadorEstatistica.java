@@ -1,8 +1,6 @@
-package pt.isel.model.classImp;
+package pt.isel.model.entities.player;
 
 import jakarta.persistence.*;
-import pt.isel.model.Player;
-import pt.isel.model.PlayerStats;
 
 @Entity
 @NamedQuery(name = "JogadorEstatistica.findAll", query = "SELECT je FROM JogadorEstatistica je")
@@ -18,7 +16,6 @@ public class JogadorEstatistica implements PlayerStats {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_jogador", nullable = false)
     private Jogador jogador;
-
     @Column(name = "nr_partidas")
     private Integer nrPartidas;
 

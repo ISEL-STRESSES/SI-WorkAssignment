@@ -1,19 +1,19 @@
-package pt.isel.model.classImp;
+package pt.isel.model.entities.game.matches;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import pt.isel.model.types.Alphanumeric;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class PartidaId implements Serializable {
-    private static final long serialVersionUID = 355099648053410683L;
     @Column(name = "nr", nullable = false)
     private Integer nr;
 
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
-    private Object idJogo;
+    private String idJogo;
 
     public Integer getNr() {
         return nr;
@@ -23,12 +23,12 @@ public class PartidaId implements Serializable {
         this.nr = nr;
     }
 
-    public Object getIdJogo() {
-        return idJogo;
+    public Alphanumeric getIdJogo() {
+        return new Alphanumeric(idJogo);
     }
 
-    public void setIdJogo(Object idJogo) {
-        this.idJogo = idJogo;
+    public void setIdJogo(Alphanumeric idJogo) {
+        this.idJogo = idJogo.toString();
     }
 
     @Override

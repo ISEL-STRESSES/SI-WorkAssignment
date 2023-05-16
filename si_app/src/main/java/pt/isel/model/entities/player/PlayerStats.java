@@ -1,6 +1,4 @@
-package pt.isel.model;
-
-import pt.isel.model.classImp.Jogador;
+package pt.isel.model.entities.player;
 
 public interface PlayerStats {
     // Methods Getters

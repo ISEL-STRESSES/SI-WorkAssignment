@@ -1,6 +1,6 @@
-package pt.isel.model;
+package pt.isel.model.entities.player;
 
-import pt.isel.model.classImp.JogadorEstatistica;
+import pt.isel.model.entities.player.JogadorEstatistica;
 import pt.isel.model.types.Email;
 
 public interface Player {

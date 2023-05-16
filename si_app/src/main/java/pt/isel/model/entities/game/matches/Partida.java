@@ -1,12 +1,13 @@
-package pt.isel.model.classImp;
+package pt.isel.model.entities.game.matches;
 
 import jakarta.persistence.*;
+import pt.isel.model.entities.Regiao;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "partida", schema = "public")
-public class Partida {
+public class Partida implements Match {
     @EmbeddedId
     private PartidaId id;
 
@@ -20,14 +21,14 @@ public class Partida {
     @JoinColumn(name = "nome_regiao", nullable = false)
     private Regiao nomeRegiao;
 
-    public PartidaId getId() {
-        return id;
+    public MatchId getId() {
+        return (MatchId) id;
     }
+
 
     public void setId(PartidaId id) {
         this.id = id;
     }
-
     public LocalDate getDataInicio() {
         return dataInicio;
     }

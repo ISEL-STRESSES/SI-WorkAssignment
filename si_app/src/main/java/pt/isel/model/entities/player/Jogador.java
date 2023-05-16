@@ -1,8 +1,6 @@
-package pt.isel.model.classImp;
+package pt.isel.model.entities.player;
 
 import jakarta.persistence.*;
-import pt.isel.model.Player;
-import pt.isel.model.PlayerStats;
 import pt.isel.model.types.Email;
 
 
@@ -61,7 +59,7 @@ public class Jogador implements Player {
     private String nomeRegiao;
 
     @OneToOne(mappedBy = "jogador")
-    private JogadorEstatistica estatistica;
+    private JogadorEstatistica jogadorEstatistica;
 
     @Override
     public Integer getId() {
@@ -113,12 +111,12 @@ public class Jogador implements Player {
 
     @Override
     public JogadorEstatistica getJogadorEstatistica() {
-        return this.estatistica;
+        return this.jogadorEstatistica;
     }
 
     @Override
     public void setJogadorEstatistica(PlayerStats estatistica) {
-        this.estatistica = (JogadorEstatistica) estatistica;
+        this.jogadorEstatistica = (JogadorEstatistica) estatistica;
     }
 
     @Override
