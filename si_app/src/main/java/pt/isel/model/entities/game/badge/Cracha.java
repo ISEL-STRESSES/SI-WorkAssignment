@@ -2,6 +2,7 @@ package pt.isel.model.entities.game.badge;
 
 import jakarta.persistence.*;
 import pt.isel.model.entities.game.Jogo;
+import pt.isel.model.types.URL;
 
 @Entity
 @Table(name = "cracha", schema = "public")
@@ -20,12 +21,12 @@ public class Cracha {
     @Column(name = "imagem", columnDefinition = "url(0, 0) not null")
     private String imagem;
 
-    public String getImagem() {
-        return imagem;
+    public URL getImagem() {
+        return new URL(imagem);
     }
 
-    public void setImagem(String imagem) {
-        this.imagem = imagem;
+    public void setImagem(URL imagem) {
+        this.imagem = imagem.toString();
     }
 
     public CrachaId getId() {

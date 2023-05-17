@@ -2,6 +2,7 @@ package pt.isel.model.entities.game.badge;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import pt.isel.model.types.Alphanumeric;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -13,7 +14,7 @@ public class CrachaId implements Serializable {
     private String nome;
 
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
-    private Object idJogo;
+    private String idJogo;
 
     public String getNome() {
         return nome;
@@ -23,12 +24,12 @@ public class CrachaId implements Serializable {
         this.nome = nome;
     }
 
-    public Object getIdJogo() {
-        return idJogo;
+    public Alphanumeric getIdJogo() {
+        return new Alphanumeric(idJogo);
     }
 
-    public void setIdJogo(Object idJogo) {
-        this.idJogo = idJogo;
+    public void setIdJogo(Alphanumeric idJogo) {
+        this.idJogo = idJogo.toString();
     }
 
     @Override

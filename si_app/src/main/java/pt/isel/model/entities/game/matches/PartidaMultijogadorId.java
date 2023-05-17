@@ -2,6 +2,7 @@ package pt.isel.model.entities.game.matches;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import pt.isel.model.types.Alphanumeric;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -10,17 +11,17 @@ import java.util.Objects;
 public class PartidaMultijogadorId implements Serializable {
     private static final long serialVersionUID = 1411821698711291498L;
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
-    private Object idJogo;
+    private String idJogo;
 
     @Column(name = "nr_partida", nullable = false)
     private Integer nrPartida;
 
-    public Object getIdJogo() {
-        return idJogo;
+    public Alphanumeric getIdJogo(){
+        return new Alphanumeric(idJogo);
     }
 
-    public void setIdJogo(Object idJogo) {
-        this.idJogo = idJogo;
+    public void setIdJogo(Alphanumeric idJogo) {
+        this.idJogo = idJogo.toString();
     }
 
     public Integer getNrPartida() {
