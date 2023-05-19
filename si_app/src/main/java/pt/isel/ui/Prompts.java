@@ -1,10 +1,13 @@
 package pt.isel.ui;
 
 import com.sun.istack.Nullable;
+import pt.isel.model.types.Email;
 
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
+
+import static pt.isel.model.types.Email.EMAIL_REGEX;
 
 public class Prompts {
     private static final String PROMPT = "> ";
@@ -19,13 +22,20 @@ public class Prompts {
         return Integer.parseInt(input);
     }
 
-    // TODO: move this regex to a proper restriction class
-    private static final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]{2,}$";
-    public static String promptEmail(String promptMessage) {
+    public static Email promptEmail(String promptMessage) {
         System.out.println(promptMessage);
-        return prompt(input -> input.matches(EMAIL_REGEX), "Incorrect email, please input a correct email.");
+        return new Email(prompt(input -> input.matches(EMAIL_REGEX), "Incorrect email, please input a correct email."));
     }
 
+        public static String promptUsername(String promptMessage) {
+        System.out.println(promptMessage);
+        return prompt(input -> input.length() > 1, "Incorrect username, please input a correct username.");
+    }
+
+    public static String promptRegion(String promptMessage) {
+        System.out.println(promptMessage);
+        return prompt(input -> input.length() > 1, "Incorrect region name, please input a correct region name.");
+    }
 
     private static String prompt(Function<String, Boolean> verification, @Nullable String failMessage) {
         while(true) {

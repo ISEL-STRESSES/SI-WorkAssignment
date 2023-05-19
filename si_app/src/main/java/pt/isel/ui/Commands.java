@@ -1,11 +1,15 @@
 package pt.isel.ui;
 
 import jakarta.persistence.*;
+import pt.isel.dataAccess.JPAContext;
+import pt.isel.model.entities.player.Jogador;
+import pt.isel.model.entities.player.Player;
+import pt.isel.model.types.Email;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-import static pt.isel.ui.Prompts.promptEmail;
+import static pt.isel.ui.Prompts.*;
 
 public class Commands {
     public static Map<String, Command> buildCommands() {
@@ -65,11 +69,19 @@ public class Commands {
 
             @Override
             public void act() {
-                final String email = promptEmail("Insert a new email for the new player.");
+                final Email email = promptEmail("Insert a new email for the new player.");
+                final String username = promptUsername("Insert a new username for the new player.");
+                final String region = promptRegion("Insert a new region for the new player.");
 
-                throw new UnsupportedOperationException("Not supported yet.");
-
+                try (JPAContext ctx = new JPAContext()) {
+                    Player player = new Jogador(username, email, region);
+                    ctx.connect();
+                    ctx.createPlayer(player);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+
         };
     }
     private static Command build2e() {
