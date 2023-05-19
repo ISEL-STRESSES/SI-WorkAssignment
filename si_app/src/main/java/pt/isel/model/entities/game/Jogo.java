@@ -5,6 +5,8 @@ import pt.isel.model.types.Alphanumeric;
 import pt.isel.model.types.URL;
 
 @Entity
+@NamedQuery(name = "Jogo.findAll", query = "SELECT j FROM Jogo j")
+@NamedQuery(name = "Jogo.findByKey", query = "SELECT j FROM Jogo j where j.id = :id")
 @Table(name = "jogo", schema = "public", indexes = {
         @Index(name = "jogo_nome_key", columnList = "nome", unique = true)
 })

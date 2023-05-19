@@ -82,7 +82,7 @@ public class Repositories {
     protected class PlayerStatsRepository implements pt.isel.logic.repositories.player.PlayerStatsRepository {
         @Override
         public PlayerStats findByKey(Integer key) {
-            return context.em.createNamedQuery("EstatisticasJogador.findByKey", PlayerStats.class)
+            return context.em.createNamedQuery("JogadorEstatistica.findByKey", PlayerStats.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -94,7 +94,7 @@ public class Repositories {
 
         @Override
         public List<PlayerStats> findAll() {
-            return context.em.createNamedQuery("EstatisticasJogador.findAll", PlayerStats.class)
+            return context.em.createNamedQuery("JogadorEstatistica.findAll", PlayerStats.class)
                     .getResultList();
         }
     }
@@ -186,7 +186,7 @@ public class Repositories {
     protected class MultiPlayerMatchRepository implements pt.isel.logic.repositories.game.match.MultiPlayerMatchRepository {
         @Override
         public MultiPlayerMatch findByKey(Integer key) {
-            return context.em.createNamedQuery("PartidaMultiplayer.findByKey", MultiPlayerMatch.class)
+            return context.em.createNamedQuery("PartidaMultijogador.findByKey", MultiPlayerMatch.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -199,7 +199,7 @@ public class Repositories {
 
         @Override
         public List<MultiPlayerMatch> findAll() {
-            return context.em.createNamedQuery("PartidaMultiplayer.findAll", MultiPlayerMatch.class)
+            return context.em.createNamedQuery("PartidaMultijogador.findAll", MultiPlayerMatch.class)
                     .getResultList();
         }
     }
@@ -207,7 +207,7 @@ public class Repositories {
     protected class BadgeRepository implements pt.isel.logic.repositories.game.badge.BadgeRepository {
         @Override
         public Badge findByKey(String key) {
-            return context.em.createNamedQuery("Badge.findByKey", Badge.class)
+            return context.em.createNamedQuery("Cracha.findByKey", Badge.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -220,7 +220,7 @@ public class Repositories {
 
         @Override
         public List<Badge> findAll() {
-            return context.em.createNamedQuery("Badge.findAll", Badge.class)
+            return context.em.createNamedQuery("Cracha.findAll", Badge.class)
                     .getResultList();
         }
     }
@@ -229,7 +229,7 @@ public class Repositories {
 
         @Override
         public Chat findByKey(Integer key) {
-            return context.em.createNamedQuery("Chat.findByKey", Chat.class)
+            return context.em.createNamedQuery("Conversa.findByKey", Chat.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -242,7 +242,7 @@ public class Repositories {
 
         @Override
         public List<Chat> findAll() {
-            return context.em.createNamedQuery("Chat.findAll", Chat.class)
+            return context.em.createNamedQuery("Conversa.findAll", Chat.class)
                     .getResultList();
         }
     }
@@ -251,7 +251,7 @@ public class Repositories {
 
         @Override
         public Message findByKey(Integer key) {
-            return context.em.createNamedQuery("Message.findByKey", Message.class)
+            return context.em.createNamedQuery("Mensagem.findByKey", Message.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -264,7 +264,7 @@ public class Repositories {
 
         @Override
         public List<Message> findAll() {
-            return context.em.createNamedQuery("Message.finAll", Message.class)
+            return context.em.createNamedQuery("Mensagem.findAll", Message.class)
                     .getResultList();
         }
     }

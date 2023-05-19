@@ -17,6 +17,8 @@ import java.util.Set;
  * @property partidas - set of matches that belong to the region.
  */
 @Entity
+@NamedQuery(name= "Regiao.findByKey", query = "SELECT r FROM Regiao r WHERE r.nome = :key")
+@NamedQuery(name= "Regiao.findAll", query = "SELECT r FROM Regiao r")
 @Table(name = "regiao", schema = "public")
 public class Regiao implements Region {
     @Id

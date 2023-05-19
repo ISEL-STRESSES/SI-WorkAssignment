@@ -5,6 +5,8 @@ import pt.isel.model.entities.game.Jogo;
 import pt.isel.model.types.URL;
 
 @Entity
+@NamedQuery(name = "Cracha.findAll", query = "SELECT c FROM Cracha c")
+@NamedQuery(name = "Cracha.findByKey", query = "SELECT c FROM Cracha c where c.id = :id")
 @Table(name = "cracha", schema = "public")
 public class Cracha {
     @EmbeddedId

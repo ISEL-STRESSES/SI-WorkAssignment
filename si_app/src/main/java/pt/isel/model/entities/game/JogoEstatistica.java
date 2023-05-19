@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import pt.isel.model.types.Alphanumeric;
 
 @Entity
+@NamedQuery(name = "JogoEstatistica.findAll", query = "SELECT j FROM JogoEstatistica j")
+@NamedQuery(name = "JogoEstatistica.findByKey", query = "SELECT j FROM JogoEstatistica j where j.id = :id")
 @Table(name = "jogo_estatistica", schema = "public")
 public class JogoEstatistica implements GameStats {
 

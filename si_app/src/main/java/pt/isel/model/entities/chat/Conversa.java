@@ -3,6 +3,8 @@ package pt.isel.model.entities.chat;
 import jakarta.persistence.*;
 
 @Entity
+@NamedQuery(name= "Conversa.findByKey", query = "SELECT c FROM Conversa c WHERE c.id = :key")
+@NamedQuery(name= "Conversa.findAll", query = "SELECT c FROM Conversa c")
 @Table(name = "conversa", schema = "public")
 public class Conversa {
     @Id

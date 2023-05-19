@@ -3,6 +3,8 @@ package pt.isel.model.entities.game.matches;
 import jakarta.persistence.*;
 
 @Entity
+@NamedQuery(name= "PartidaMultijogador.findByKey", query = "SELECT p FROM PartidaMultijogador p WHERE p.id = :key")
+@NamedQuery(name= "PartidaMultijogador.findAll", query = "SELECT p FROM PartidaMultijogador p")
 @Table(name = "partida_multijogador", schema = "public")
 public class PartidaMultijogador {
     @EmbeddedId

@@ -6,6 +6,8 @@ import pt.isel.model.entities.region.Regiao;
 import java.time.LocalDate;
 
 @Entity
+@NamedQuery(name= "Partida.findByKey", query = "SELECT p FROM Partida p WHERE p.id = :key")
+@NamedQuery(name= "Partida.findAll", query = "SELECT p FROM Partida p")
 @Table(name = "partida", schema = "public")
 public class Partida implements Match {
     @EmbeddedId

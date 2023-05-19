@@ -6,6 +6,8 @@ import pt.isel.model.entities.player.Jogador;
 import java.time.LocalDate;
 
 @Entity
+@NamedQuery(name= "Mensagem.findByKey", query = "SELECT m FROM Mensagem m WHERE m.id = :key")
+@NamedQuery(name= "Mensagem.findAll", query = "SELECT m FROM Mensagem m")
 @Table(name = "mensagem", schema = "public")
 public class Mensagem {
     @EmbeddedId
