@@ -1,4 +1,4 @@
-package pt.isel.model.entities;
+package pt.isel.model.entities.region;
 
 import pt.isel.model.entities.game.matches.Match;
 import pt.isel.model.entities.player.Player;

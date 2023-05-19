@@ -1,7 +1,7 @@
 package pt.isel.model.entities.game.matches;
 
 import jakarta.persistence.*;
-import pt.isel.model.entities.Regiao;
+import pt.isel.model.entities.region.Regiao;
 
 import java.time.LocalDate;
 

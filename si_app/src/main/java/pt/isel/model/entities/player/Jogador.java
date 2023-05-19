@@ -10,6 +10,8 @@ import pt.isel.model.types.Email;
 @Entity
 @NamedQuery(name = "Jogador.findByKey", query = "SELECT j FROM Jogador j where j.id = :id")
 @NamedQuery(name = "Jogador.findByUsername", query = "SELECT j FROM Jogador j where j.username = :username")
+@NamedQuery(name = "Jogador.findByEmail", query = "SELECT j FROM Jogador j where j.email = :email")
+@NamedQuery(name = "Jogador.findAll", query = "SELECT j FROM Jogador j")
 @NamedStoredProcedureQueries({
         @NamedStoredProcedureQuery(
             name="updatePlayerStatus",
@@ -67,7 +69,7 @@ public class Jogador implements Player {
     }
 
     @Override
-    public String getUserName() {
+    public String getUsername() {
         return this.username;
     }
 
@@ -87,7 +89,7 @@ public class Jogador implements Player {
     }
 
     @Override
-    public void setUserName(String userName) {
+    public void setUsername(String userName) {
         this.username = userName;
     }
 
@@ -128,8 +130,12 @@ public class Jogador implements Player {
     public Jogador() {
     }
 
+    public Jogador(String username, Email email, String nomeRegiao) {
+        this(username, email, "ativo", nomeRegiao);
+    }
+
     public Jogador(String username, Email email, String estado, String nomeRegiao) {
-        setUserName(username);
+        setUsername(username);
         setEmail(email);
         setEstado(estado);
         setNomeRegiao(nomeRegiao);

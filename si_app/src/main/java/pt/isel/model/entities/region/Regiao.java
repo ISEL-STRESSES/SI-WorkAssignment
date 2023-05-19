@@ -1,4 +1,4 @@
-package pt.isel.model.entities;
+package pt.isel.model.entities.region;
 
 import jakarta.persistence.*;
 import pt.isel.model.entities.game.matches.Match;
