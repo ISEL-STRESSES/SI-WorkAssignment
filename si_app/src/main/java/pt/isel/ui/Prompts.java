@@ -27,7 +27,7 @@ public class Prompts {
         return new Email(prompt(input -> input.matches(EMAIL_REGEX), "Incorrect email, please input a correct email."));
     }
 
-        public static String promptUsername(String promptMessage) {
+    public static String promptUsername(String promptMessage) {
         System.out.println(promptMessage);
         return prompt(input -> input.length() > 1, "Incorrect username, please input a correct username.");
     }
@@ -38,14 +38,14 @@ public class Prompts {
     }
 
     private static String prompt(Function<String, Boolean> verification, @Nullable String failMessage) {
-        while(true) {
+        while (true) {
             printPrompt();
             final String rawInput = new Scanner(System.in).nextLine();
             final String input = parseString(rawInput);
-            if(verification.apply(input)) {
+            if (verification.apply(input)) {
                 return input;
             } else {
-                if(failMessage != null)
+                if (failMessage != null)
                     System.out.println(failMessage);
             }
         }

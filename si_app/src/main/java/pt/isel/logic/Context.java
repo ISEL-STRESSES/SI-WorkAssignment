@@ -10,25 +10,57 @@ import pt.isel.logic.repositories.game.match.NormalMatchRepository;
 import pt.isel.logic.repositories.player.PlayerRepository;
 import pt.isel.logic.repositories.player.PlayerStatsRepository;
 import pt.isel.logic.repositories.region.RegionRepository;
-import pt.isel.model.entities.game.badge.Badge;
 
-public interface Context extends AutoCloseable{
+/**
+ * Interface that represents a context
+ *
+ * @see AutoCloseable
+ */
+public interface Context extends AutoCloseable {
 
+    /**
+     * Begins a transaction
+     */
     void beginTransaction();
+
+    /**
+     * Commits a transaction
+     */
     void commit();
+
+    /**
+     * Rollbacks a transaction
+     */
     void rollback();
+
+    /**
+     * Flushes the context
+     */
     void flush();
+
+    /**
+     * Connects to the current transaction context
+     */
     void connect();
 
     RegionRepository getRegions();
+
     PlayerRepository getPlayers();
+
     PlayerStatsRepository getPlayersStats();
+
     GameRepository getGames();
+
     MatchRepository getMatches();
+
     NormalMatchRepository getNormalMatches();
+
     MultiPlayerMatchRepository getMultiPlayerMatches();
+
     BadgeRepository getBadges();
+
     ChatRepository getChats();
+
     MessageRepository getMessages();
 
 }

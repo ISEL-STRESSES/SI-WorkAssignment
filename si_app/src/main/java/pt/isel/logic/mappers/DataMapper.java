@@ -23,9 +23,43 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+/**
+ * Interface that defines the methods that a DataMapper must implement to be able
+ * to perform CRUD operations on the database.
+ *
+ * @param <T>  Entity type
+ * @param <TK> Entity key type
+ */
 public interface DataMapper<T, TK> {
+    /**
+     * Creates a new entity in the database.
+     *
+     * @param entity Entity to be created
+     * @return The key of the created entity
+     */
     TK create(T entity);
+
+    /**
+     * Reads an entity from the database.
+     *
+     * @param id Key of the entity to be read
+     * @return The entity with the given key
+     */
     T read(TK id);
+
+    /**
+     * Updates an entity in the database.
+     *
+     * @param entity Entity to be updated
+     * @return The key of the updated entity
+     */
     TK update(T entity);
+
+    /**
+     * Deletes an entity from the database.
+     *
+     * @param id Key of the entity to be deleted
+     */
     void delete(TK id);
 }

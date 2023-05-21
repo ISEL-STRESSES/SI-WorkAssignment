@@ -84,6 +84,7 @@ public class Commands {
 
         };
     }
+
     private static Command build2e() {
         return new Command("Obter pontos totais de um jogador.") {
             @Override
@@ -93,6 +94,7 @@ public class Commands {
             }
         };
     }
+
     private static Command build2f() {
         return new Command("Obter número de jogos de um jogador.") {
             @Override
@@ -101,6 +103,7 @@ public class Commands {
             }
         };
     }
+
     private static Command build2g() {
         return new Command("Associar crachá.") {
             @Override
@@ -109,6 +112,7 @@ public class Commands {
             }
         };
     }
+
     private static Command build2h() {
         return new Command("Iniciar conversa.") {
             @Override
@@ -117,6 +121,7 @@ public class Commands {
             }
         };
     }
+
     private static Command build2i() {
         return new Command("Juntar a uma conversa.") {
 
@@ -126,6 +131,7 @@ public class Commands {
             }
         };
     }
+
     private static Command build2j() {
         return new Command("Enviar uma mensagem para uma conversa.") {
 
@@ -135,6 +141,7 @@ public class Commands {
             }
         };
     }
+
     private static Command build2l() {
         return new Command("Obter informação total de um jogador") {
 
@@ -149,7 +156,7 @@ public class Commands {
         return new Command("Liste todos os comandos disponíveis.") {
             @Override
             public void act() {
-                for(final Map.Entry<String, Command> command : commands.entrySet()) {
+                for (final Map.Entry<String, Command> command : commands.entrySet()) {
                     final String name = command.getKey();
                     final String description = command.getValue().description;
                     System.out.println(String.format("%6s", name) + "\t\t" + description);

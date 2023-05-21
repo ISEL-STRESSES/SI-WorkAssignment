@@ -7,5 +7,6 @@ public abstract class Command {
     Command(String description) {
         this.description = description;
     }
-     public abstract void act();
+
+    public abstract void act();
 }

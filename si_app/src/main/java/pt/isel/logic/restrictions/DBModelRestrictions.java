@@ -2,7 +2,7 @@ package pt.isel.logic.restrictions;
 
 import pt.isel.model.entities.player.Player;
 
-public class DBModelRestrictions{
+public class DBModelRestrictions {
 
     public static class PlayerRestrictions implements Restrictions<Player> {
         @Override

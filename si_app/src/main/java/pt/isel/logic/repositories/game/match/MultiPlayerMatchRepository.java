@@ -1,7 +1,7 @@
 package pt.isel.logic.repositories.game.match;
 
 import pt.isel.logic.repositories.Repository;
-import pt.isel.model.entities.game.matches.MultiPlayerMatch;
+import pt.isel.model.entities.game.matches.multiplayer.MultiPlayerMatch;
 
 import java.util.List;
 

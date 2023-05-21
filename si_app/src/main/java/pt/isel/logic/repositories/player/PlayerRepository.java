@@ -9,6 +9,7 @@ import java.util.List;
 public interface PlayerRepository extends Repository<Player, List<Player>, Integer> {
 
     Player findByUsername();
+
     Player findByEmail(Email email);
 
 
