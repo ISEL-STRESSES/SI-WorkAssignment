@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class PartidaId implements Serializable, MatchId {
+public class PartidaId implements Serializable {
     @Column(name = "nr", nullable = false)
     private Integer nr;
 
@@ -35,8 +35,7 @@ public class PartidaId implements Serializable, MatchId {
      *
      * @return the match id
      */
-    @Override
-    public Pair<Alphanumeric, Integer> getMatchId() {
+    public Pair<Alphanumeric, Integer> getId() {
         return new Pair<>(new Alphanumeric(idJogo), nr);
     }
 
@@ -45,7 +44,6 @@ public class PartidaId implements Serializable, MatchId {
      *
      * @return the game id
      */
-    @Override
     public Alphanumeric getGameId() {
         return new Alphanumeric(idJogo);
     }
@@ -55,7 +53,6 @@ public class PartidaId implements Serializable, MatchId {
      *
      * @return the match number
      */
-    @Override
     public Integer getMatchNumber() {
         return nr;
     }
@@ -65,8 +62,7 @@ public class PartidaId implements Serializable, MatchId {
      *
      * @param matchId the match id
      */
-    @Override
-    public void setMatchId(Pair<Alphanumeric, Integer> matchId) {
+    public void setId(Pair<Alphanumeric, Integer> matchId) {
         this.idJogo = matchId.first().toString();
         this.nr = matchId.second();
     }
@@ -76,7 +72,6 @@ public class PartidaId implements Serializable, MatchId {
      *
      * @param gameId the game id
      */
-    @Override
     public void setGameId(Alphanumeric gameId) {
         this.idJogo = gameId.toString();
     }
@@ -86,7 +81,6 @@ public class PartidaId implements Serializable, MatchId {
      *
      * @param matchNumber the match number
      */
-    @Override
     public void setMatchNumber(Integer matchNumber) {
         this.nr = matchNumber;
     }

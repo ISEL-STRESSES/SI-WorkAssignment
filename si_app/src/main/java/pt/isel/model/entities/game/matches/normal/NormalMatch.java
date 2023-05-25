@@ -1,7 +1,6 @@
 package pt.isel.model.entities.game.matches.normal;
 
 import pt.isel.model.entities.game.matches.Match;
-import pt.isel.model.entities.game.matches.MatchId;
 import pt.isel.model.types.Alphanumeric;
 
 /**
@@ -14,7 +13,7 @@ public interface NormalMatch{
      * Getter function for the match id
      * @return the match id
      */
-    MatchId getId();
+    PartidaNormalId getId();
 
     /**
      * Getter function for the match number
@@ -42,9 +41,9 @@ public interface NormalMatch{
 
     /**
      * Setter function for the match id
-     * @param matchId the match id
+     * @param normalMatchId the match id
      */
-    void setMatchId(MatchId matchId);
+    void setId(PartidaNormalId normalMatchId);
 
     /**
      * Setter function for the match number

@@ -3,17 +3,15 @@ package pt.isel.model.entities.game;
 import pt.isel.model.types.Alphanumeric;
 
 public interface GameStats {
-    // Methods Getters
+    Alphanumeric getId();
     Game getGame();
-    Alphanumeric getGameId();
-    Integer getNrPartidas();
-    Integer getNrJogadores();
-    Integer getTotalPontos();
+    Integer getNrOfMatches();
+    Integer getNrOfPlayers();
+    Integer getTotalOfPoints();
 
-    // Methods Setters
-    void setGame(Game game);
     void setId(Alphanumeric id);
-    void setNrPartidas(Integer nrPartidas);
-    void setNrJogadores(Integer nrJogadores);
-    void setTotalPontos(Integer totalPontos);
+    void setGame(Game game);
+    void setNrOfMatches(Integer nrOfMatches);
+    void setNrOfPlayers(Integer nrOfPlayers);
+    void setTotalOfPoints(Integer totalOfPoints);
 }

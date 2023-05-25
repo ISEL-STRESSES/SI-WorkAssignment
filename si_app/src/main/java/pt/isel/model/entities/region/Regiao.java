@@ -17,35 +17,37 @@ import java.util.Set;
  * @property partidas - set of matches that belong to the region.
  */
 @Entity
-@NamedQuery(name= "Regiao.findByKey", query = "SELECT r FROM Regiao r WHERE r.nome = :key")
+@NamedQuery(name= "Regiao.findByKey", query = "SELECT r FROM Regiao r WHERE r.name = :key")
 @NamedQuery(name= "Regiao.findAll", query = "SELECT r FROM Regiao r")
 @Table(name = "regiao", schema = "public")
 public class Regiao implements Region {
     @Id
     @Column(name = "nome", nullable = false, length = 50)
-    private String nome;
+    private String name;
 
-    @OneToMany(mappedBy = "nomeRegiao")
-    private Set<Jogador> jogadores = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "regionName")
+    private Set<Jogador> players = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "nomeRegiao")
-    private Set<Partida> partidas = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "region")
+    private Set<Partida> matches = new LinkedHashSet<>();
 
     @Override
-    public String getNome() {
-        return this.nome;
+    public String getId() {
+        return this.name;
     }
 
-    @Override
-    public void setNome(String name) {
-        this.nome = name;
-    }
 
     @Override
-    public Set<Player> getJogadores() {
-        return jogadores.stream().map(
-                jogador -> (Player) jogador
-        ).collect(
+    public Set<Player> getPlayers() {
+        return players.stream().collect(
+                LinkedHashSet::new,
+                Set::add,
+                Set::addAll
+        );
+    }
+    @Override
+    public Set<Match> getMatches() {
+        return matches.stream().collect(
                 LinkedHashSet::new,
                 Set::add,
                 Set::addAll
@@ -53,12 +55,13 @@ public class Regiao implements Region {
     }
 
     @Override
-    public void addJogador(Player players) {
-        this.jogadores.add((Jogador) players);
+    public void setId(String name) {
+        this.name = name;
     }
 
-    public void setJogadores(Set<Player> players) {
-        this.jogadores = players.stream().map(
+    @Override
+    public void setPlayers(Set<Player> players) {
+        this.players = players.stream().map(
                 player -> (Jogador) player
         ).collect(
                 LinkedHashSet::new,
@@ -68,29 +71,13 @@ public class Regiao implements Region {
     }
 
     @Override
-    public Set<Match> getPartidas() {
-        return partidas.stream().map(
-                partida -> (Match) partida
-        ).collect(
-                LinkedHashSet::new,
-                Set::add,
-                Set::addAll
-        );
-    }
-
-    @Override
-    public void setPartidas(Set<Match> Matches) {
-        this.partidas = Matches.stream().map(
+    public void setMatches(Set<Match> Matches) {
+        this.matches = Matches.stream().map(
                 match -> (Partida) match
         ).collect(
                 LinkedHashSet::new,
                 Set::add,
                 Set::addAll
         );
-    }
-
-    @Override
-    public void addPartida(Match match) {
-        this.partidas.add((Partida) match);
     }
 }

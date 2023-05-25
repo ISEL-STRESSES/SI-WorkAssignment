@@ -32,7 +32,7 @@ public class Cracha implements Badge{
      * @return the badge id
      */
     @Override
-    public BadgeId getId() {
+    public CrachaId getId() {
         return this.id;
     }
 
@@ -92,8 +92,8 @@ public class Cracha implements Badge{
      * @param id the badge id
      */
     @Override
-    public void setId(BadgeId id) {
-        this.id = (CrachaId) id;
+    public void setId(CrachaId id) {
+        this.id = id;
     }
 
     /**

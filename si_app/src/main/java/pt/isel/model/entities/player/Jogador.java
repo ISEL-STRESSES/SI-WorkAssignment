@@ -1,7 +1,12 @@
 package pt.isel.model.entities.player;
 
 import jakarta.persistence.*;
+import pt.isel.model.entities.chat.Mensagem;
+import pt.isel.model.entities.chat.Message;
 import pt.isel.model.types.Email;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 
 /**
@@ -55,13 +60,16 @@ public class Jogador implements Player {
     private String email;
 
     @Column(name = "estado", columnDefinition = "VARCHAR(20) DEFAULT 'Ativo'")
-    private String estado;
+    private String state;
 
     @Column(name = "nome_regiao", nullable = false)
-    private String nomeRegiao;
+    private String regionName;
 
-    @OneToOne(mappedBy = "jogador")
-    private JogadorEstatistica jogadorEstatistica;
+    @OneToOne(mappedBy = "player")
+    private JogadorEstatistica stats;
+
+    @OneToMany(mappedBy = "playerId", orphanRemoval = true)
+    private Set<Mensagem> messages = new LinkedHashSet<>();
 
     @Override
     public Integer getId() {
@@ -79,13 +87,13 @@ public class Jogador implements Player {
     }
 
     @Override
-    public String getEstado() {
-        return this.estado;
+    public String getState() {
+        return this.state;
     }
 
     @Override
-    public String getNomeRegiao() {
-        return this.nomeRegiao;
+    public String getRegionName() {
+        return this.regionName;
     }
 
     @Override
@@ -95,50 +103,62 @@ public class Jogador implements Player {
 
     @Override
     public void setEmail(Email email) {
+        if (!email.isValid())
+            throw new IllegalArgumentException("Email inválido");
         this.email = email.toString();
     }
 
     @Override
-    public void setEstado(String estado) {
-        if(estado.matches("^(ativo|banido|inativo)$"))
-            this.estado = estado;
+    public void setState(String state) {
+        if(state.matches("^(ativo|banido|inativo)$"))
+            this.state = state;
         else
             throw new IllegalArgumentException("Estado inválido");
     }
 
     @Override
-    public void setNomeRegiao(String nomeRegiao) {
-        this.nomeRegiao = nomeRegiao;
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
     }
 
     @Override
-    public JogadorEstatistica getJogadorEstatistica() {
-        return this.jogadorEstatistica;
+    public PlayerStats getStats() {
+        return this.stats;
     }
 
     @Override
-    public void setJogadorEstatistica(PlayerStats estatistica) {
-        this.jogadorEstatistica = (JogadorEstatistica) estatistica;
+    public Set<Message> getMessages() {
+        return this.messages.stream().collect(
+                LinkedHashSet::new,
+                Set::add,
+                Set::addAll
+        );
     }
 
     @Override
-    public boolean isValid() {
-        return false;
+    public void setStats(PlayerStats stats) {
+        this.stats = (JogadorEstatistica) stats;
+    }
+
+
+    @Override
+    public void setMessages(Set<Message> messages) {
+        this.messages = messages.stream().map(m -> (Mensagem) m).collect(LinkedHashSet::new, Set::add, Set::addAll);
     }
 
     // Constructors
     public Jogador() {
     }
 
-    public Jogador(String username, Email email, String nomeRegiao) {
-        this(username, email, "ativo", nomeRegiao);
-    }
-
     public Jogador(String username, Email email, String estado, String nomeRegiao) {
         setUsername(username);
         setEmail(email);
-        setEstado(estado);
-        setNomeRegiao(nomeRegiao);
+        setState(estado);
+        setRegionName(nomeRegiao);
+    }
+
+    public Jogador(String username, Email email, String nomeRegiao) {
+        this(username, email, "ativo", nomeRegiao);
     }
 
     @Override
@@ -147,8 +167,8 @@ public class Jogador implements Player {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                ", estado='" + estado + '\'' +
-                ", nomeRegiao='" + nomeRegiao + '\'' +
+                ", estado='" + state + '\'' +
+                ", nomeRegiao='" + regionName + '\'' +
                 '}';
     }
 

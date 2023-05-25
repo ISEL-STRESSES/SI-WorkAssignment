@@ -2,7 +2,6 @@ package pt.isel.model.entities.game.matches.multiplayer;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import pt.isel.model.entities.game.matches.MatchId;
 import pt.isel.model.types.Alphanumeric;
 import pt.isel.utils.Pair;
 
@@ -10,7 +9,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class PartidaMultijogadorId implements Serializable, MatchId {
+public class PartidaMultijogadorId implements Serializable {
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
     private String idJogo;
 
@@ -22,7 +21,6 @@ public class PartidaMultijogadorId implements Serializable, MatchId {
      *
      * @return the match id
      */
-    @Override
     public Pair<Alphanumeric, Integer> getMatchId() {
         return new Pair<>(new Alphanumeric(idJogo), nrPartida);
     }
@@ -32,7 +30,6 @@ public class PartidaMultijogadorId implements Serializable, MatchId {
      *
      * @return the game id
      */
-    @Override
     public Alphanumeric getGameId() {
         return new Alphanumeric(idJogo);
     }
@@ -42,7 +39,6 @@ public class PartidaMultijogadorId implements Serializable, MatchId {
      *
      * @return the match number
      */
-    @Override
     public Integer getMatchNumber() {
         return nrPartida;
     }
@@ -52,7 +48,6 @@ public class PartidaMultijogadorId implements Serializable, MatchId {
      *
      * @param matchId the match id
      */
-    @Override
     public void setMatchId(Pair<Alphanumeric, Integer> matchId) {
         this.idJogo = matchId.first().toString();
         this.nrPartida = matchId.second();
@@ -63,7 +58,6 @@ public class PartidaMultijogadorId implements Serializable, MatchId {
      *
      * @param gameId the game id
      */
-    @Override
     public void setGameId(Alphanumeric gameId) {
         this.idJogo = gameId.toString();
     }
@@ -73,7 +67,6 @@ public class PartidaMultijogadorId implements Serializable, MatchId {
      *
      * @param matchNumber the match number
      */
-    @Override
     public void setMatchNumber(Integer matchNumber) {
         this.nrPartida = matchNumber;
     }

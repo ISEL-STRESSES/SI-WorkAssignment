@@ -2,7 +2,6 @@ package pt.isel.model.entities.game.matches.normal;
 
 import jakarta.persistence.*;
 import pt.isel.model.entities.game.matches.Match;
-import pt.isel.model.entities.game.matches.MatchId;
 import pt.isel.model.entities.game.matches.Partida;
 import pt.isel.model.types.Alphanumeric;
 
@@ -15,7 +14,7 @@ public class PartidaNormal implements NormalMatch {
     private PartidaNormalId id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumns({
             @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo", nullable = false),
             @JoinColumn(name = "nr_partida", referencedColumnName = "nr", nullable = false)
@@ -32,7 +31,7 @@ public class PartidaNormal implements NormalMatch {
      * @return the match id
      */
     @Override
-    public MatchId getId() {
+    public PartidaNormalId getId() {
         return this.id;
     }
 
@@ -79,11 +78,11 @@ public class PartidaNormal implements NormalMatch {
     /**
      * Setter function for the match id
      *
-     * @param matchId the match id
+     * @param normalMatchId the match id
      */
     @Override
-    public void setMatchId(MatchId matchId) {
-        this.id = (PartidaNormalId) matchId;
+    public void setId(PartidaNormalId normalMatchId) {
+        this.id = normalMatchId;
     }
 
     /**

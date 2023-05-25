@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class CrachaId implements Serializable, BadgeId {
+public class CrachaId implements Serializable {
     @Column(name = "nome", nullable = false, length = 50)
     private String nome;
 
@@ -21,9 +21,8 @@ public class CrachaId implements Serializable, BadgeId {
      *
      * @return the badge id
      */
-    @Override
-    public Pair<Alphanumeric, String> getBadgeId() {
-        return new Pair<>(new Alphanumeric(idJogo), nome);
+    public CrachaId getId() {
+        return new CrachaId(new Alphanumeric(idJogo), nome);
     }
 
     /**
@@ -31,7 +30,6 @@ public class CrachaId implements Serializable, BadgeId {
      *
      * @return the game id
      */
-    @Override
     public Alphanumeric getGameId() {
         return new Alphanumeric(idJogo);
     }
@@ -41,20 +39,8 @@ public class CrachaId implements Serializable, BadgeId {
      *
      * @return the badge name
      */
-    @Override
     public String getBadgeName() {
         return nome;
-    }
-
-    /**
-     * Setter function for the badge id
-     *
-     * @param badgeId the badge id
-     */
-    @Override
-    public void setBadgeId(Pair<Alphanumeric, String> badgeId) {
-        idJogo = badgeId.first().toString();
-        nome = badgeId.second();
     }
 
     /**
@@ -62,7 +48,6 @@ public class CrachaId implements Serializable, BadgeId {
      *
      * @param gameId the game id
      */
-    @Override
     public void setGameId(Alphanumeric gameId) {
         idJogo = gameId.toString();
     }
@@ -72,9 +57,16 @@ public class CrachaId implements Serializable, BadgeId {
      *
      * @param badgeName the badge name
      */
-    @Override
     public void setBadgeName(String badgeName) {
         nome = badgeName;
+    }
+
+    public CrachaId() {
+    }
+
+    public CrachaId(Alphanumeric idJogo, String nome) {
+        this.idJogo = idJogo.toString();
+        this.nome = nome;
     }
 
     @Override

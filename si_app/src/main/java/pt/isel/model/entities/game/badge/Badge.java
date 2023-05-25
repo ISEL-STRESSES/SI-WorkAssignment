@@ -12,7 +12,7 @@ public interface Badge {
      * Getter function for the badge id
      * @return the badge id
      */
-    BadgeId getId();
+    CrachaId getId();
 
     /**
      * Getter function for the badge name
@@ -48,7 +48,7 @@ public interface Badge {
      * Setter function for the badge id
      * @param id the badge id
      */
-    void setId(BadgeId id);
+    void setId(CrachaId id);
 
     /**
      * Setter function for the badge name

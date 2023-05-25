@@ -1,33 +1,24 @@
 package pt.isel.model.entities.player;
 
+import pt.isel.model.entities.chat.Message;
 import pt.isel.model.types.Email;
 
+import java.util.List;
+import java.util.Set;
+
 public interface Player {
-    //getters
     Integer getId();
-
     String getUsername();
-
     Email getEmail();
+    String getState();
+    String getRegionName();
+    PlayerStats getStats();
+    Set<Message> getMessages();
 
-    String getEstado();
-
-    String getNomeRegiao();
-
-    //setters
     void setUsername(String userName);
-
     void setEmail(Email email);
-
-    void setEstado(String estado);
-
-    void setNomeRegiao(String nomeRegiao);
-
-    //others
-    JogadorEstatistica getJogadorEstatistica();
-
-    void setJogadorEstatistica(PlayerStats jogadorEstatistica);
-
-    boolean isValid();
-
+    void setState(String state);
+    void setRegionName(String regionName);
+    void setStats(PlayerStats stats);
+    void setMessages(Set<Message> messages);
 }

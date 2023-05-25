@@ -6,9 +6,7 @@ import pt.isel.model.entities.game.matches.normal.NormalMatch;
 import pt.isel.model.entities.region.Region;
 import pt.isel.model.types.Alphanumeric;
 
-import java.sql.Date;
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Represents a match
@@ -18,7 +16,7 @@ public interface Match {
      * Getter function for the match id
      * @return the match id
      */
-    MatchId getId();
+    PartidaId getId();
 
     /**
      * Getter function for the game
@@ -42,19 +40,19 @@ public interface Match {
      * Getter function for the match start date
      * @return the match start date
      */
-    LocalDate getDataInicio();
+    LocalDate getStartDate();
 
     /**
      * Getter function for the match end date
      * @return the match end date
      */
-    LocalDate getDataFim();
+    LocalDate getEndDate();
 
     /**
      * Getter function for the match region
      * @return the match region
      */
-    Region getRegiao();
+    Region getRegion();
 
     /**
      * Getter function for the normal match
@@ -94,21 +92,21 @@ public interface Match {
 
     /**
      * Setter function for the match start date
-     * @param dataInicio the match start date
+     * @param startDate the match start date
      */
-    void setDataInicio(LocalDate dataInicio);
+    void setStartDate(LocalDate startDate);
 
     /**
      * Setter function for the match end date
-     * @param dataFim the match end date
+     * @param endDate the match end date
      */
-    void setDataFim(LocalDate dataFim);
+    void setEndDate(LocalDate endDate);
 
     /**
      * Setter function for the match region
-     * @param regiao the match region
+     * @param region the match region
      */
-    void setNomeRegiao(Region regiao);
+    void setRegion(Region region);
 
     /**
      * Setter function for the normal match

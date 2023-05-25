@@ -8,54 +8,47 @@ import pt.isel.model.types.Alphanumeric;
 @NamedQuery(name = "JogoEstatistica.findByKey", query = "SELECT j FROM JogoEstatistica j where j.id = :id")
 @Table(name = "jogo_estatistica", schema = "public")
 public class JogoEstatistica implements GameStats {
-
     @Id
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
     private String id;
 
+    @Column(name = "nr_partidas", nullable = false)
+    private Integer nrOfMatches;
+
+    @Column(name = "nr_jogadores", nullable = false)
+    private Integer nrOfPlayers;
+
+    @Column(name = "total_pontos", nullable = false)
+    private Integer totalOfPoints;
+
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_jogo", nullable = false)
-    private Jogo jogo;
-
-    @Column(name = "nr_partidas", nullable = false)
-    private Integer nrPartidas;
-
-    @Column(name = "nr_jogadores", nullable = false)
-    private Integer nrJogadores;
-
-    @Column(name = "total_pontos", nullable = false)
-    private Integer totalPontos;
-
+    private Jogo game;
 
     @Override
-    public Game getGame() {
-        return this.jogo;
-    }
-
-    @Override
-    public Alphanumeric getGameId() {
+    public Alphanumeric getId() {
         return new Alphanumeric(this.id);
     }
 
     @Override
-    public Integer getNrPartidas() {
-        return this.nrPartidas;
+    public Game getGame() {
+        return this.game;
     }
 
     @Override
-    public Integer getNrJogadores() {
-        return this.nrJogadores;
+    public Integer getNrOfMatches() {
+        return this.nrOfMatches;
     }
 
     @Override
-    public Integer getTotalPontos() {
-        return this.totalPontos;
+    public Integer getNrOfPlayers() {
+        return this.nrOfPlayers;
     }
 
     @Override
-    public void setGame(Game game) {
-        this.jogo = (Jogo) game;
+    public Integer getTotalOfPoints() {
+        return this.totalOfPoints;
     }
 
     @Override
@@ -64,29 +57,34 @@ public class JogoEstatistica implements GameStats {
     }
 
     @Override
-    public void setNrPartidas(Integer nrPartidas) {
-        this.nrPartidas = nrPartidas;
+    public void setGame(Game game) {
+        this.game = (Jogo) game;
     }
 
     @Override
-    public void setNrJogadores(Integer nrJogadores) {
-        this.nrJogadores = nrJogadores;
+    public void setNrOfMatches(Integer nrOfMatches) {
+        this.nrOfMatches = nrOfMatches;
     }
 
     @Override
-    public void setTotalPontos(Integer totalPontos) {
-        this.totalPontos = totalPontos;
+    public void setNrOfPlayers(Integer nrOfPlayers) {
+        this.nrOfPlayers = nrOfPlayers;
+    }
+
+    @Override
+    public void setTotalOfPoints(Integer totalOfPoints) {
+        this.totalOfPoints = totalOfPoints;
     }
 
     public JogoEstatistica() {
         // for ORM only
     }
 
-    public JogoEstatistica(Game game, Integer nrPartidas, Integer nrJogadores, Integer totalPontos) {
+    public JogoEstatistica(Game game, Integer nrOfMatches, Integer nrOfPlayers, Integer totalOfPoints) {
         setGame(game);
         setId(game.getId());
-        setNrPartidas(nrPartidas);
-        setNrJogadores(nrJogadores);
-        setTotalPontos(totalPontos);
+        setNrOfMatches(nrOfMatches);
+        setNrOfPlayers(nrOfPlayers);
+        setTotalOfPoints(totalOfPoints);
     }
 }

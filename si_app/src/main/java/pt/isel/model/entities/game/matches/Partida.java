@@ -2,8 +2,11 @@ package pt.isel.model.entities.game.matches;
 
 import jakarta.persistence.*;
 import pt.isel.model.entities.game.Game;
+import pt.isel.model.entities.game.Jogo;
 import pt.isel.model.entities.game.matches.multiplayer.MultiPlayerMatch;
+import pt.isel.model.entities.game.matches.multiplayer.PartidaMultijogador;
 import pt.isel.model.entities.game.matches.normal.NormalMatch;
+import pt.isel.model.entities.game.matches.normal.PartidaNormal;
 import pt.isel.model.entities.region.Regiao;
 import pt.isel.model.entities.region.Region;
 import pt.isel.model.types.Alphanumeric;
@@ -17,19 +20,39 @@ import java.time.LocalDate;
 public class Partida implements Match {
     @EmbeddedId
     private PartidaId id;
-
     @Column(name = "data_inicio", nullable = false)
-    private LocalDate dataInicio;
+    private LocalDate startDate;
 
     @Column(name = "data_fim")
-    private LocalDate dataFim;
+    private LocalDate endDate;
+
+    @MapsId("idJogo")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_jogo", nullable = false)
+    private Jogo game;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "nome_regiao", nullable = false)
-    private Regiao nomeRegiao;
+    private Regiao region;
+
+    // TODO: 2020-11-10
+    @OneToOne(orphanRemoval = true)
+    @JoinColumns({
+            @JoinColumn(name = "partida", referencedColumnName = "ID_JOGO"),
+            @JoinColumn(name = "PARTIDA_NORMAL_NR_PARTIDA", referencedColumnName = "NR_PARTIDA")
+    })
+    private PartidaNormal normalMatch;
+
+    // TODO: 2020-11-10
+    @OneToOne(orphanRemoval = true)
+    @JoinColumns({
+            @JoinColumn(name = "PARTIDA_MULTIJOGADOR_ID_JOGO", referencedColumnName = "ID_JOGO"),
+            @JoinColumn(name = "PARTIDA_MULTIJOGADOR_NR_PARTIDA", referencedColumnName = "NR_PARTIDA")
+    })
+    private PartidaMultijogador multiplayerMatch;
 
     @Override
-    public MatchId getId() {
+    public PartidaId getId() {
         return id;
     }
 
@@ -40,7 +63,7 @@ public class Partida implements Match {
      */
     @Override
     public Game getGame() {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return this.game;
     }
 
     /**
@@ -69,8 +92,8 @@ public class Partida implements Match {
      * @return the match start date
      */
     @Override
-    public LocalDate getDataInicio() {
-        return this.dataInicio;
+    public LocalDate getStartDate() {
+        return this.startDate;
     }
 
     /**
@@ -79,8 +102,8 @@ public class Partida implements Match {
      * @return the match end date
      */
     @Override
-    public LocalDate getDataFim() {
-        return this.dataFim;
+    public LocalDate getEndDate() {
+        return this.endDate;
     }
 
     /**
@@ -89,8 +112,8 @@ public class Partida implements Match {
      * @return the match region
      */
     @Override
-    public Region getRegiao() {
-        return this.nomeRegiao;
+    public Region getRegion() {
+        return this.region;
     }
 
     /**
@@ -100,7 +123,7 @@ public class Partida implements Match {
      */
     @Override
     public NormalMatch getNormalMatch() {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return this.normalMatch;
     }
 
     /**
@@ -110,7 +133,7 @@ public class Partida implements Match {
      */
     @Override
     public MultiPlayerMatch getMultiPlayerMatch() {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return this.multiplayerMatch;
     }
 
     /**
@@ -130,7 +153,7 @@ public class Partida implements Match {
      */
     @Override
     public void setGame(Game game) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        this.game = (Jogo) game;
     }
 
     /**
@@ -156,31 +179,31 @@ public class Partida implements Match {
     /**
      * Setter function for the match start date
      *
-     * @param dataInicio the match start date
+     * @param startDate the match start date
      */
     @Override
-    public void setDataInicio(LocalDate dataInicio) {
-        this.dataInicio = dataInicio;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
     /**
      * Setter function for the match end date
      *
-     * @param dataFim the match end date
+     * @param endDate the match end date
      */
     @Override
-    public void setDataFim(LocalDate dataFim) {
-        this.dataFim = dataFim;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     /**
      * Setter function for the match region
      *
-     * @param regiao the match region
+     * @param region the match region
      */
     @Override
-    public void setNomeRegiao(Region regiao) {
-        this.nomeRegiao = (Regiao) regiao;
+    public void setRegion(Region region) {
+        this.region = (Regiao) region;
     }
 
     /**
@@ -190,7 +213,7 @@ public class Partida implements Match {
      */
     @Override
     public void setNormalMatch(NormalMatch normalMatch) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        this.normalMatch = (PartidaNormal) normalMatch;
     }
 
     /**
@@ -200,7 +223,6 @@ public class Partida implements Match {
      */
     @Override
     public void setMultiPlayerMatch(MultiPlayerMatch multiPlayerMatch) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        this.multiplayerMatch = (PartidaMultijogador) multiPlayerMatch;
     }
-
 }

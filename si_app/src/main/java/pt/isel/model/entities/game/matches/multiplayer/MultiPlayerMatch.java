@@ -1,8 +1,11 @@
 package pt.isel.model.entities.game.matches.multiplayer;
 
+import pt.isel.model.entities.game.Game;
 import pt.isel.model.entities.game.matches.Match;
-import pt.isel.model.entities.game.matches.MatchId;
+import pt.isel.model.entities.region.Region;
 import pt.isel.model.types.Alphanumeric;
+
+import java.time.LocalDate;
 
 /**
  * Represents a multiplayer match
@@ -14,7 +17,7 @@ public interface MultiPlayerMatch {
      * Getter function for the match id
      * @return the match id
      */
-    MatchId getId();
+    PartidaMultijogadorId getId();
 
     /**
      * Getter function for the match number
@@ -32,7 +35,7 @@ public interface MultiPlayerMatch {
      * Getter function for the game status
      * @return the game status
      */
-    String getMatchStatus();
+    String getState();
 
     /**
      * Getter function for the match
@@ -42,9 +45,10 @@ public interface MultiPlayerMatch {
 
     /**
      * Setter function for the match id
-     * @param matchId the match id
+     * @param id the match id
      */
-    void setMatchId(MatchId matchId);
+    void setId(PartidaMultijogadorId id);
+
 
     /**
      * Setter function for the match number
@@ -60,9 +64,9 @@ public interface MultiPlayerMatch {
 
     /**
      * Setter function for the game status
-     * @param machStatus the game status
+     * @param state the game status
      */
-    void setMatchStatus(String machStatus);
+    void setState(String state);
 
     /**
      * Setter function for the match

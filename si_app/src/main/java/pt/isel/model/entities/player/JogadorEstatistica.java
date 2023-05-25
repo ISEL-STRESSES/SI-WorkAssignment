@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 @NamedQuery(name = "JogadorEstatistica.findByKey", query = "SELECT je FROM JogadorEstatistica je where je.id = :id")
 @Table(name = "jogador_estatistica", schema = "public")
 public class JogadorEstatistica implements PlayerStats {
-    //Fields
     @Id
     @Column(name = "id_jogador", nullable = false)
     private Integer id;
@@ -15,63 +14,60 @@ public class JogadorEstatistica implements PlayerStats {
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_jogador", nullable = false)
-    private Jogador jogador;
+    private Jogador player;
     @Column(name = "nr_partidas")
-    private Integer nrPartidas;
+    private Integer nrOfMatches;
 
     @Column(name = "nr_jogos")
-    private Integer nrJogos;
+    private Integer nrOfGames;
 
     @Column(name = "total_pontos")
-    private Integer totalPontos;
+    private Integer totalOfPoints;
 
     @Override
-    public Player getPlayer() {
-        return this.jogador;
-    }
-
-    @Override
-    public Integer getPlayerId() {
+    public Integer getId() {
         return this.id;
     }
-
     @Override
-    public Integer getNrPartidas() {
-        return this.nrPartidas;
+    public Player getPlayer() {
+        return this.player;
+    }
+    @Override
+    public Integer getNrOfMatches() {
+        return this.nrOfMatches;
     }
 
     @Override
-    public Integer getNrJogos() {
-        return this.nrJogos;
+    public Integer getNrOfGames() {
+        return this.nrOfGames;
     }
 
     @Override
-    public Integer getTotalPontos() {
-        return this.totalPontos;
+    public Integer getTotalOfPoints() {
+        return this.totalOfPoints;
     }
 
     @Override
-    public void setJogador(Player player) {
-        this.jogador = (Jogador) player;
-    }
-
-    @Override
-    public void setPlayerId(Integer playerId) {
+    public void setId(Integer playerId) {
         this.id = playerId;
     }
-
     @Override
-    public void setNrPartidas(Integer nrPartidas) {
-        this.nrPartidas = nrPartidas;
+    public void setPlayer(Player player) {
+        this.player = (Jogador) player;
     }
 
     @Override
-    public void setNrJogos(Integer nrJogos) {
-        this.nrJogos = nrJogos;
+    public void setNrOfMatches(Integer nrOfMatches) {
+        this.nrOfMatches = nrOfMatches;
     }
 
     @Override
-    public void setTotalPontos(Integer totalPontos) {
-        this.totalPontos = totalPontos;
+    public void setNrOfGames(Integer nrOfGames) {
+        this.nrOfGames = nrOfGames;
+    }
+
+    @Override
+    public void setTotalOfPoints(Integer totalOfPoints) {
+        this.totalOfPoints = totalOfPoints;
     }
 }

@@ -1,8 +1,8 @@
 package pt.isel.model.entities.game.matches.multiplayer;
 
 import jakarta.persistence.*;
+import pt.isel.model.entities.game.Game;
 import pt.isel.model.entities.game.matches.Match;
-import pt.isel.model.entities.game.matches.MatchId;
 import pt.isel.model.entities.game.matches.Partida;
 import pt.isel.model.types.Alphanumeric;
 
@@ -23,7 +23,7 @@ public class PartidaMultijogador implements MultiPlayerMatch{
     private Partida partida;
 
     @Column(name = "estado", length = 20)
-    private String estado;
+    private String state;
 
     /**
      * Getter function for the match id
@@ -31,8 +31,8 @@ public class PartidaMultijogador implements MultiPlayerMatch{
      * @return the match id
      */
     @Override
-    public MatchId getId() {
-        return this.id;
+    public PartidaMultijogadorId getId() {
+        return id;
     }
 
     /**
@@ -61,8 +61,8 @@ public class PartidaMultijogador implements MultiPlayerMatch{
      * @return the game status
      */
     @Override
-    public String getMatchStatus() {
-        return this.estado;
+    public String getState() {
+        return this.state;
     }
 
     /**
@@ -78,11 +78,11 @@ public class PartidaMultijogador implements MultiPlayerMatch{
     /**
      * Setter function for the match id
      *
-     * @param matchId the match id
+     * @param id the match id
      */
     @Override
-    public void setMatchId(MatchId matchId) {
-        this.id = (PartidaMultijogadorId) matchId;
+    public void setId(PartidaMultijogadorId id) {
+        this.id = id;
     }
 
     /**
@@ -108,11 +108,11 @@ public class PartidaMultijogador implements MultiPlayerMatch{
     /**
      * Setter function for the game status
      *
-     * @param machStatus the game status
+     * @param state the game status
      */
     @Override
-    public void setMatchStatus(String machStatus) {
-        this.estado = machStatus;
+    public void setState(String state) {
+        this.state = state;
     }
 
     /**

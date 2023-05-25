@@ -7,23 +7,11 @@ import java.util.Set;
 
 public interface Region {
 
-    String getNome();
+    String getId();
+    Set<Player> getPlayers();
+    Set<Match> getMatches();
 
-    void setNome(String name);
-
-    // Player Related
-    Set<Player> getJogadores();
-
-    void setJogadores(Set<Player> players);
-
-    void addJogador(Player players);
-
-    // Matches Related
-
-    Set<Match> getPartidas();
-
-    void setPartidas(Set<Match> matches);
-
-    void addPartida(Match match);
-
+    void setId(String name);
+    void setPlayers(Set<Player> players);
+    void setMatches(Set<Match> matches);
 }

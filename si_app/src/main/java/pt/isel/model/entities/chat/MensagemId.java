@@ -8,7 +8,6 @@ import java.util.Objects;
 
 @Embeddable
 public class MensagemId implements Serializable {
-    private static final long serialVersionUID = 7625716103423031047L;
     @Column(name = "nr_ordem", nullable = false)
     private Integer nrOrdem;
 
@@ -18,26 +17,50 @@ public class MensagemId implements Serializable {
     @Column(name = "id_jogador", nullable = false)
     private Integer idJogador;
 
+    /**
+     * Getter function for the message number
+     * @return the message number
+     */
     public Integer getNrOrdem() {
         return nrOrdem;
     }
 
+    /**
+     * Setter function for the message number
+     * @param nrOrdem the message number
+     */
     public void setNrOrdem(Integer nrOrdem) {
         this.nrOrdem = nrOrdem;
     }
 
+    /**
+     * Getter function for the chat id
+     * @return the chat id
+     */
     public Integer getIdConversa() {
         return idConversa;
     }
 
+    /**
+     * Setter function for the chat id
+     * @param idConversa the chat id
+     */
     public void setIdConversa(Integer idConversa) {
         this.idConversa = idConversa;
     }
 
+    /**
+     * Getter function for the player id
+     * @return the player id
+     */
     public Integer getIdJogador() {
-        return idJogador;
+        return this.idJogador;
     }
 
+    /**
+     * Setter function for the player id
+     * @param idJogador the player id
+     */
     public void setIdJogador(Integer idJogador) {
         this.idJogador = idJogador;
     }
