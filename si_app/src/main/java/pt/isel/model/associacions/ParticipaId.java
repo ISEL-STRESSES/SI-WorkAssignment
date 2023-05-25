@@ -8,7 +8,6 @@ import java.util.Objects;
 
 @Embeddable
 public class ParticipaId implements Serializable {
-    private static final long serialVersionUID = 5973249867039919296L;
     @Column(name = "id_jogador", nullable = false)
     private Integer idJogador;
 

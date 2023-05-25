@@ -8,7 +8,6 @@ import java.util.Objects;
 
 @Embeddable
 public class AmigoId implements Serializable {
-    private static final long serialVersionUID = -5379209943452289924L;
     @Column(name = "id_jogador1", nullable = false)
     private Integer idJogador1;
 
