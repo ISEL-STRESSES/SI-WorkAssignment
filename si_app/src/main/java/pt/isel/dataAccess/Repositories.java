@@ -63,8 +63,9 @@ public class Repositories {
         }
 
         @Override
-        public Player findByUsername() {
+        public Player findByUsername(String username) {
             return context.em.createNamedQuery("Jogador.findByUsername", Player.class)
+                    .setParameter("username", username)
                     .getSingleResult();
         }
 

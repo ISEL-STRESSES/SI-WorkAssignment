@@ -5,10 +5,12 @@ import jakarta.persistence.LockModeType;
 import pt.isel.logic.mappers.game.GameMapper;
 import pt.isel.logic.mappers.game.GameStatsMapper;
 import pt.isel.logic.mappers.game.match.MatchMapper;
+import pt.isel.logic.mappers.player.PlayerMapper;
+import pt.isel.logic.mappers.player.PlayerStatsMapper;
 import pt.isel.model.entities.game.Game;
 import pt.isel.model.entities.game.GameStats;
 import pt.isel.model.entities.game.matches.Match;
-import pt.isel.model.entities.game.matches.MatchId;
+import pt.isel.model.entities.game.matches.PartidaId;
 import pt.isel.model.entities.player.Player;
 import pt.isel.model.entities.player.PlayerStats;
 import pt.isel.model.types.Alphanumeric;
@@ -21,7 +23,7 @@ public class DataMappers {
         this.context = context;
     }
 
-    protected class PlayerDataMapper implements pt.isel.logic.mappers.player.PlayerMapper {
+    protected class PlayerDataMapper implements PlayerMapper {
 
         /**
          * Creates a new entity in the database.
@@ -64,9 +66,9 @@ public class DataMappers {
             // player.setId(entity.getId());
             player.setUsername(entity.getUsername());
             player.setEmail(entity.getEmail());
-            player.setEstado(entity.getEstado());
-            player.setNomeRegiao(entity.getNomeRegiao());
-            player.setJogadorEstatistica(entity.getJogadorEstatistica());
+            player.setState(entity.getState());
+            player.setRegionName(entity.getRegionName());
+            player.setStats(entity.getStats());
             context.commit();
             return entity.getId();
         }
@@ -90,7 +92,7 @@ public class DataMappers {
         }
     }
 
-    protected class PlayerStatsDataMapper implements pt.isel.logic.mappers.player.PlayerStatsMapper {
+    protected class PlayerStatsDataMapper implements PlayerStatsMapper {
 
         /**
          * Creates a new entity in the database.
@@ -103,7 +105,7 @@ public class DataMappers {
             context.beginTransaction();
             context.em.persist(entity);
             context.commit();
-            return entity.getPlayerId();
+            return entity.getId();
         }
 
         /**
@@ -126,16 +128,16 @@ public class DataMappers {
         @Override
         public Integer update(PlayerStats entity) {
             context.beginTransaction();
-            PlayerStats playerStats = context.em.find(PlayerStats.class, entity.getPlayerId(), LockModeType.PESSIMISTIC_WRITE);
+            PlayerStats playerStats = context.em.find(PlayerStats.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (playerStats == null) {
-                throw new EntityNotFoundException("PlayerStats with id " + entity.getPlayerId() + " not found");
+                throw new EntityNotFoundException("PlayerStats with id " + entity.getId() + " not found");
             }
-            playerStats.setPlayerId(entity.getPlayerId());
-            playerStats.setNrJogos(entity.getNrJogos());
-            playerStats.setNrPartidas(entity.getNrPartidas());
-            playerStats.setTotalPontos(entity.getTotalPontos());
+            playerStats.setId(entity.getId());
+            playerStats.setNrOfGames(entity.getNrOfGames());
+            playerStats.setNrOfMatches(entity.getNrOfMatches());
+            playerStats.setTotalOfPoints(entity.getTotalOfPoints());
             context.commit();
-            return entity.getPlayerId();
+            return entity.getId();
         }
 
         /**
@@ -190,7 +192,7 @@ public class DataMappers {
                 throw new EntityNotFoundException("Game with id " + entity.getId() + " not found");
             }
             game.setId(entity.getId());
-            game.setNome(entity.getNome());
+            game.setName(entity.getName());
             game.setUrl(entity.getUrl());
             context.commit();
             return entity.getId();
@@ -228,7 +230,7 @@ public class DataMappers {
             context.beginTransaction();
             context.em.persist(entity);
             context.commit();
-            return entity.getGameId();
+            return entity.getId();
         }
 
         /**
@@ -251,17 +253,17 @@ public class DataMappers {
         @Override
         public Alphanumeric update(GameStats entity) {
             context.beginTransaction();
-            GameStats gameStats = context.em.find(GameStats.class, entity.getGameId(), LockModeType.PESSIMISTIC_WRITE);
+            GameStats gameStats = context.em.find(GameStats.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (gameStats == null) {
-                throw new EntityNotFoundException("GameStats with id " + entity.getGameId() + " not found");
+                throw new EntityNotFoundException("GameStats with id " + entity.getId() + " not found");
             }
-            gameStats.setId(entity.getGameId());
+            gameStats.setId(entity.getId());
             gameStats.setGame(entity.getGame());
-            gameStats.setNrPartidas(entity.getNrPartidas());
-            gameStats.setTotalPontos(entity.getTotalPontos());
-            gameStats.setNrJogadores(entity.getNrJogadores());
+            gameStats.setNrOfMatches(entity.getNrOfMatches());
+            gameStats.setTotalOfPoints(entity.getTotalOfPoints());
+            gameStats.setNrOfPlayers(entity.getNrOfPlayers());
             context.commit();
-            return entity.getGameId();
+            return entity.getId();
         }
 
         /**
@@ -284,7 +286,7 @@ public class DataMappers {
          * @return The key of the created entity
          */
         @Override
-        public MatchId create(Match entity) {
+        public PartidaId create(Match entity) {
             context.beginTransaction();
             context.em.persist(entity);
             context.commit();
@@ -298,7 +300,7 @@ public class DataMappers {
          * @return The entity with the given key
          */
         @Override
-        public Match read(MatchId id) {
+        public Match read(PartidaId id) {
             return null;
         }
 
@@ -309,7 +311,7 @@ public class DataMappers {
          * @return The key of the updated entity
          */
         @Override
-        public MatchId update(Match entity) {
+        public PartidaId update(Match entity) {
             return null;
         }
 
@@ -319,7 +321,7 @@ public class DataMappers {
          * @param id Key of the entity to be deleted
          */
         @Override
-        public void delete(MatchId id) {
+        public void delete(PartidaId id) {
 
         }
     }

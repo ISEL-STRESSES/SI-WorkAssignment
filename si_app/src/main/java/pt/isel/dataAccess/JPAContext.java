@@ -212,7 +212,7 @@ public class JPAContext implements Context {
     public void createPlayer(Player player) {
         beginTransaction();
         Query q = em.createNativeQuery("call create_jogador(?, ?, ?)")
-                .setParameter(1, player.getNomeRegiao())
+                .setParameter(1, player.getRegionName())
                 .setParameter(2, player.getUsername())
                 .setParameter(3, player.getEmail().toString());
         q.executeUpdate();
