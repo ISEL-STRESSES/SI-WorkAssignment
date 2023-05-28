@@ -22,6 +22,7 @@ public class MensagemId implements Serializable {
 
     /**
      * Getter function for the message number
+     *
      * @return the message number
      */
     public Integer getNrOrdem() {
@@ -30,6 +31,7 @@ public class MensagemId implements Serializable {
 
     /**
      * Setter function for the message number
+     *
      * @param nrOrdem the message number
      */
     public void setNrOrdem(Integer nrOrdem) {
@@ -38,6 +40,7 @@ public class MensagemId implements Serializable {
 
     /**
      * Getter function for the chat id
+     *
      * @return the chat id
      */
     public Integer getIdConversa() {
@@ -46,6 +49,7 @@ public class MensagemId implements Serializable {
 
     /**
      * Setter function for the chat id
+     *
      * @param idConversa the chat id
      */
     public void setIdConversa(Integer idConversa) {
@@ -54,6 +58,7 @@ public class MensagemId implements Serializable {
 
     /**
      * Getter function for the player id
+     *
      * @return the player id
      */
     public Integer getIdJogador() {
@@ -62,6 +67,7 @@ public class MensagemId implements Serializable {
 
     /**
      * Setter function for the player id
+     *
      * @param idJogador the player id
      */
     public void setIdJogador(Integer idJogador) {
