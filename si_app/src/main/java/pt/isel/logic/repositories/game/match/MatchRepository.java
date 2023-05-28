@@ -1,14 +1,13 @@
 package pt.isel.logic.repositories.game.match;
 
 import pt.isel.logic.repositories.Repository;
-import pt.isel.model.entities.chat.Message;
 import pt.isel.model.entities.game.matches.Match;
+import pt.isel.model.entities.game.matches.PartidaId;
 
 import java.util.List;
 
 /**
- * {@link Match} repository interface.
- * TODO: Check the type of the primary key (Alphanumeric, Integer)
+ * Interface to access the matches repository
  */
-public interface MatchRepository extends Repository<Match, List<Match>, Integer> {
+public interface MatchRepository extends Repository<Match, List<Match>, PartidaId> {
 }

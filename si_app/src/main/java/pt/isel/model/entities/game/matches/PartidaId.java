@@ -8,9 +8,6 @@ import pt.isel.utils.Pair;
 import java.io.Serializable;
 import java.util.Objects;
 
-/**
- * Represents the primary key of the {@link Partida} entity.
- */
 @Embeddable
 public class PartidaId implements Serializable {
     @Column(name = "nr", nullable = false)
@@ -18,6 +15,10 @@ public class PartidaId implements Serializable {
 
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
     private String idJogo;
+
+    public String getIdJogo() {
+        return idJogo;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -35,6 +36,7 @@ public class PartidaId implements Serializable {
 
     /**
      * Getter function for the match id
+     *
      * @return the match id
      */
     public Pair<Alphanumeric, Integer> getId() {
@@ -42,23 +44,8 @@ public class PartidaId implements Serializable {
     }
 
     /**
-     * Getter function for the game id
-     * @return the game id
-     */
-    public Alphanumeric getGameId() {
-        return new Alphanumeric(idJogo);
-    }
-
-    /**
-     * Getter function for the match number
-     * @return the match number
-     */
-    public Integer getMatchNumber() {
-        return nr;
-    }
-
-    /**
      * Setter function for the match id
+     *
      * @param matchId the match id
      */
     public void setId(Pair<Alphanumeric, Integer> matchId) {
@@ -67,7 +54,17 @@ public class PartidaId implements Serializable {
     }
 
     /**
+     * Getter function for the game id
+     *
+     * @return the game id
+     */
+    public Alphanumeric getGameId() {
+        return new Alphanumeric(idJogo);
+    }
+
+    /**
      * Setter function for the game id
+     *
      * @param gameId the game id
      */
     public void setGameId(Alphanumeric gameId) {
@@ -75,7 +72,17 @@ public class PartidaId implements Serializable {
     }
 
     /**
+     * Getter function for the match number
+     *
+     * @return the match number
+     */
+    public Integer getMatchNumber() {
+        return nr;
+    }
+
+    /**
      * Setter function for the match number
+     *
      * @param matchNumber the match number
      */
     public void setMatchNumber(Integer matchNumber) {

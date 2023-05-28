@@ -1,95 +1,61 @@
-package pt.isel.model.associacions;
+package pt.isel.model.associacions.plays;
 
 import jakarta.persistence.*;
 import pt.isel.model.entities.game.matches.Partida;
 import pt.isel.model.entities.player.Jogador;
 
-/**
- * This class represents a player that has played a game.
- */
 @Entity
 @Table(name = "joga", schema = "public")
 public class Joga {
     @EmbeddedId
     private JogaId id;
 
-    @MapsId
+    @MapsId("matchNr")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumns({
             @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo", nullable = false),
             @JoinColumn(name = "nr_partida", referencedColumnName = "nr", nullable = false)
     })
-    private Partida partida;
+    private Partida match;
 
-    @MapsId("idJogador")
+    @MapsId("idPlayer")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_jogador", nullable = false)
-    private Jogador idJogador;
+    private Jogador idPlayer;
 
     @Column(name = "pontuacao")
-    private Integer pontuacao;
+    private Integer points;
 
-    /**
-     * Getter function for the player that played the game
-     * @return the player that played the game
-     */
     public JogaId getId() {
         return id;
     }
 
-    /**
-     * Setter function for the player that played the game
-     * @param id the player that played the game
-     */
     public void setId(JogaId id) {
         this.id = id;
     }
 
-    /**
-     * Getter function for the player that played the game
-     * @return the player that played the game
-     */
-    public Partida getPartida() {
-        return partida;
+    public Partida getMatch() {
+        return match;
     }
 
-    /**
-     * Setter function for the player that played the game
-     * @param partida the player that played the game
-     */
-    public void setPartida(Partida partida) {
-        this.partida = partida;
+    public void setMatch(Partida match) {
+        this.match = match;
     }
 
-    /**
-     * Getter function for the player that played the game
-     * @return the player that played the game
-     */
-    public Jogador getIdJogador() {
-        return idJogador;
+    public Jogador getIdPlayer() {
+        return idPlayer;
     }
 
-    /**
-     * Setter function for the player that played the game
-     * @param idJogador the player that played the game
-     */
-    public void setIdJogador(Jogador idJogador) {
-        this.idJogador = idJogador;
+    public void setIdPlayer(Jogador idPlayer) {
+        this.idPlayer = idPlayer;
     }
 
-    /**
-     * Getter function for the player's score
-     * @return the player's score
-     */
-    public Integer getPontuacao() {
-        return pontuacao;
+    public Integer getPoints() {
+        return points;
     }
 
-    /**
-     * Setter function for the player's score
-     * @param pontuacao the player's score
-     */
-    public void setPontuacao(Integer pontuacao) {
-        this.pontuacao = pontuacao;
+    public void setPoints(Integer points) {
+        this.points = points;
     }
+
 }

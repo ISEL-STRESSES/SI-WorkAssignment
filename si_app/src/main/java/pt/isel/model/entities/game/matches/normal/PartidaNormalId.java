@@ -8,64 +8,61 @@ import pt.isel.utils.Pair;
 import java.io.Serializable;
 import java.util.Objects;
 
-/**
- * Represents the primary key of the {@link PartidaNormal} entity.
- */
 @Embeddable
 public class PartidaNormalId implements Serializable {
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
-    private String idJogo;
+    private String gameId;
 
     @Column(name = "nr_partida", nullable = false)
-    private Integer nrPartida;
+    private Integer matchNr;
+
+    public Alphanumeric getGameId() {
+        return new Alphanumeric(gameId);
+    }
+
+    public void setGameId(Alphanumeric gameId) {
+        this.gameId = gameId.toString();
+    }
 
     /**
      * Getter function for the match id
+     *
      * @return the match id
      */
+
     public Pair<Alphanumeric, Integer> getMatchId() {
-        return new Pair<>(new Alphanumeric(idJogo), nrPartida);
-    }
-
-    /**
-     * Getter function for the game id
-     * @return the game id
-     */
-    public Alphanumeric getGameId() {
-        return new Alphanumeric(idJogo);
-    }
-
-    /**
-     * Getter function for the match number
-     * @return the match number
-     */
-    public Integer getMatchNumber() {
-        return nrPartida;
+        return new Pair<>(new Alphanumeric(gameId), matchNr);
     }
 
     /**
      * Setter function for the match id
+     *
      * @param matchId the match id
      */
+
     public void setMatchId(Pair<Alphanumeric, Integer> matchId) {
-        this.idJogo = matchId.first().toString();
-        this.nrPartida = matchId.second();
+        this.gameId = matchId.first().toString();
+        this.matchNr = matchId.second();
     }
 
     /**
-     * Setter function for the game id
-     * @param gameId the game id
+     * Getter function for the match number
+     *
+     * @return the match number
      */
-    public void setGameId(Alphanumeric gameId) {
-        this.idJogo = gameId.toString();
+
+    public Integer getMatchNumber() {
+        return matchNr;
     }
 
     /**
      * Setter function for the match number
+     *
      * @param matchNumber the match number
      */
+
     public void setMatchNumber(Integer matchNumber) {
-        this.nrPartida = matchNumber;
+        this.matchNr = matchNumber;
     }
 
     @Override
@@ -73,12 +70,12 @@ public class PartidaNormalId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PartidaNormalId entity = (PartidaNormalId) o;
-        return Objects.equals(this.idJogo, entity.idJogo) &&
-                Objects.equals(this.nrPartida, entity.nrPartida);
+        return Objects.equals(this.gameId, entity.gameId) &&
+                Objects.equals(this.matchNr, entity.matchNr);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idJogo, nrPartida);
+        return Objects.hash(gameId, matchNr);
     }
 }

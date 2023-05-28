@@ -3,14 +3,10 @@ package pt.isel.model.entities.game.badge;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import pt.isel.model.types.Alphanumeric;
-import pt.isel.utils.Pair;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-/**
- * Represents the primary key of the {@link Cracha} entity.
- */
 @Embeddable
 public class CrachaId implements Serializable {
     @Column(name = "nome", nullable = false, length = 50)
@@ -19,8 +15,17 @@ public class CrachaId implements Serializable {
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
     private String idJogo;
 
+    public CrachaId() {
+    }
+
+    public CrachaId(Alphanumeric idJogo, String nome) {
+        this.idJogo = idJogo.toString();
+        this.nome = nome;
+    }
+
     /**
      * Getter function for the badge id
+     *
      * @return the badge id
      */
     public CrachaId getId() {
@@ -29,6 +34,7 @@ public class CrachaId implements Serializable {
 
     /**
      * Getter function for the game id
+     *
      * @return the game id
      */
     public Alphanumeric getGameId() {
@@ -36,15 +42,8 @@ public class CrachaId implements Serializable {
     }
 
     /**
-     * Getter function for the badge name
-     * @return the badge name
-     */
-    public String getBadgeName() {
-        return nome;
-    }
-
-    /**
      * Setter function for the game id
+     *
      * @param gameId the game id
      */
     public void setGameId(Alphanumeric gameId) {
@@ -52,27 +51,21 @@ public class CrachaId implements Serializable {
     }
 
     /**
+     * Getter function for the badge name
+     *
+     * @return the badge name
+     */
+    public String getBadgeName() {
+        return nome;
+    }
+
+    /**
      * Setter function for the badge name
+     *
      * @param badgeName the badge name
      */
     public void setBadgeName(String badgeName) {
         nome = badgeName;
-    }
-
-    /**
-     * Empty constructor
-     */
-    public CrachaId() {
-    }
-
-    /**
-     * Constructor for the {@link CrachaId} entity
-     * @param idJogo the game id
-     * @param nome the badge name
-     */
-    public CrachaId(Alphanumeric idJogo, String nome) {
-        this.idJogo = idJogo.toString();
-        this.nome = nome;
     }
 
     @Override

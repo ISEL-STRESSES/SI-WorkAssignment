@@ -1,16 +1,24 @@
 package pt.isel.model.entities.player;
 
 import jakarta.persistence.*;
+import pt.isel.model.associacions.earns.Ganha;
+import pt.isel.model.associacions.friend.Amigo;
+import pt.isel.model.associacions.participates.Participa;
+import pt.isel.model.associacions.plays.Joga;
+import pt.isel.model.associacions.purchase.Compra;
 import pt.isel.model.entities.chat.Mensagem;
 import pt.isel.model.entities.chat.Message;
+import pt.isel.model.entities.region.Regiao;
+import pt.isel.model.entities.region.Region;
 import pt.isel.model.types.Email;
+import pt.isel.model.types.PlayerState;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 
 /**
- * Represents a player
+ * Mapping of table "Jogador" present in the database.
  */
 @Entity
 @NamedQuery(name = "Jogador.findByKey", query = "SELECT j FROM Jogador j where j.id = :id")
@@ -19,24 +27,24 @@ import java.util.Set;
 @NamedQuery(name = "Jogador.findAll", query = "SELECT j FROM Jogador j")
 @NamedStoredProcedureQueries({
         @NamedStoredProcedureQuery(
-            name="updatePlayerStatus",
-            procedureName = "update_estado_jogador",
-            parameters = {
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "id", type = String.class),
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_estado", type = String.class)
-            }
+                name = "updatePlayerStatus",
+                procedureName = "update_estado_jogador",
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "id", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_estado", type = String.class)
+                }
         ),
         @NamedStoredProcedureQuery(
-            name="createPlayer",
-            procedureName = "create_jogador",
-            parameters = {
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "regiao_nome", type = String.class),
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_username", type = String.class),
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_email", type = String.class),
-            }
+                name = "createPlayer",
+                procedureName = "create_jogador",
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "regiao_nome", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_username", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_email", type = String.class),
+                }
         ),
         @NamedStoredProcedureQuery(
-                name="createPlayerTransaction",
+                name = "createPlayerTransaction",
                 procedureName = "createJogadorTransaction",
                 parameters = {
                         @StoredProcedureParameter(mode = ParameterMode.IN, name = "regiao_nome", type = String.class),
@@ -46,7 +54,7 @@ import java.util.Set;
         )
 }
 )
-@Table(name="jogador", schema = "public")
+@Table(name = "jogador", schema = "public")
 public class Jogador implements Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,8 +70,9 @@ public class Jogador implements Player {
     @Column(name = "estado", columnDefinition = "VARCHAR(20) DEFAULT 'Ativo'")
     private String state;
 
-    @Column(name = "nome_regiao", nullable = false)
-    private String regionName;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "nome_regiao", referencedColumnName = "nome", nullable = false)
+    private Regiao region;
 
     @OneToOne(mappedBy = "player")
     private JogadorEstatistica stats;
@@ -71,64 +80,67 @@ public class Jogador implements Player {
     @OneToMany(mappedBy = "playerId", orphanRemoval = true)
     private Set<Mensagem> messages = new LinkedHashSet<>();
 
-    /**
-     * Getter function for the player id
-     * @return the player id
-     */
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    @JoinTable(
+            name = "amigo",
+            joinColumns = {
+                    @JoinColumn(name = "id_jogador1", referencedColumnName = "id"),
+                    @JoinColumn(name = "id_jogador2", referencedColumnName = "id")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "id_jogador1", referencedColumnName = "id"),
+                    @JoinColumn(name = "id_jogador2", referencedColumnName = "id")
+            }
+    )
+    private Set<Amigo> friends = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "idPlayer", orphanRemoval = true)
+    private Set<Ganha> badges = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "idPlayer", orphanRemoval = true)
+    private Set<Participa> chats = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "idPlayer", orphanRemoval = true)
+    private Set<Compra> purchases = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "idPlayer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Joga> playMatches = new LinkedHashSet<>();
+
+    // Constructors
+    public Jogador() {
+    }
+
+    public Jogador(String username, Email email, PlayerState estado, Region region) {
+        setUsername(username);
+        setEmail(email);
+        setState(estado);
+        setRegion(region);
+    }
+
+    public Jogador(String username, Email email, Region region) {
+        this(username, email, PlayerState.ACTIVE, region);
+    }
+
     @Override
     public Integer getId() {
         return this.id;
     }
 
-    /**
-     * Getter function for the player username
-     * @return the player username
-     */
     @Override
     public String getUsername() {
         return this.username;
     }
 
-    /**
-     * Getter function for the player email
-     * @return the player email
-     */
-    @Override
-    public Email getEmail() {
-        return new Email(this.email);
-    }
-
-    /**
-     * Getter function for the player state
-     * @return the player state
-     */
-    @Override
-    public String getState() {
-        return this.state;
-    }
-
-    /**
-     * Getter function for the player region name
-     * @return the player region name
-     */
-    @Override
-    public String getRegionName() {
-        return this.regionName;
-    }
-
-    /**
-     * Setter function for the player id
-     * @param id the player id
-     */
     @Override
     public void setUsername(String userName) {
         this.username = userName;
     }
 
-    /**
-     * Setter function for the player email
-     * @param email the player email
-     */
+    @Override
+    public Email getEmail() {
+        return new Email(this.email);
+    }
+
     @Override
     public void setEmail(Email email) {
         if (!email.isValid())
@@ -136,40 +148,45 @@ public class Jogador implements Player {
         this.email = email.toString();
     }
 
-    /**
-     * Setter function for the player state
-     * @param state the player state
-     */
     @Override
-    public void setState(String state) {
-        if(state.matches("^(ativo|banido|inativo)$"))
-            this.state = state;
-        else
-            throw new IllegalArgumentException("Estado inválido");
+    public PlayerState getState() {
+        return switch (this.state.toLowerCase()) {
+            case "ativo" -> PlayerState.ACTIVE;
+            case "inativo" -> PlayerState.INACTIVE;
+            case "banido" -> PlayerState.BANED;
+            default -> throw new IllegalStateException("Unexpected value: " + this.state);
+        };
     }
 
-    /**
-     * Setter function for the player region name
-     * @param regionName the player region name
-     */
     @Override
-    public void setRegionName(String regionName) {
-        this.regionName = regionName;
+    public void setState(PlayerState state) {
+        this.state = switch (state) {
+            case ACTIVE -> "Ativo";
+            case INACTIVE -> "Inativo";
+            case BANED -> "Banido";
+        };
     }
 
-    /**
-     * Getter function for the player stats
-     * @return the player stats
-     */
+    @Override
+    public Region getRegion() {
+        return this.region;
+    }
+
+    @Override
+    public void setRegion(Region region) {
+        this.region = (Regiao) region;
+    }
+
     @Override
     public PlayerStats getStats() {
         return this.stats;
     }
 
-    /**
-     * Getter function for the player messages
-     * @return the player messages
-     */
+    @Override
+    public void setStats(PlayerStats stats) {
+        this.stats = (JogadorEstatistica) stats;
+    }
+
     @Override
     public Set<Message> getMessages() {
         return this.messages.stream().collect(
@@ -179,54 +196,70 @@ public class Jogador implements Player {
         );
     }
 
-    /**
-     * Setter function for the player stats
-     * @param stats the player stats
-     */
-    @Override
-    public void setStats(PlayerStats stats) {
-        this.stats = (JogadorEstatistica) stats;
-    }
-
-    /**
-     * Setter function for the player messages
-     * @param messages the player messages
-     */
     @Override
     public void setMessages(Set<Message> messages) {
         this.messages = messages.stream().map(m -> (Mensagem) m).collect(LinkedHashSet::new, Set::add, Set::addAll);
     }
 
-    /**
-     * Empty constructor
-     */
-    public Jogador() {
+    @Override
+    public Set<Amigo> getFriends() {
+        return friends;
     }
 
-    /**
-     * Constructor
-     * @param username the player username
-     * @param email the player email
-     * @param estado the player state
-     * @param nomeRegiao the player region name
-     */
-    public Jogador(String username, Email email, String estado, String nomeRegiao) {
-        setUsername(username);
-        setEmail(email);
-        setState(estado);
-        setRegionName(nomeRegiao);
+    @Override
+    public void setFriends(Set<Amigo> friends) {
+        this.friends = friends;
     }
 
-    /**
-     * Constructor
-     * @param username the player username
-     * @param email the player email
-     * @param nomeRegiao the player region name
-     */
-    public Jogador(String username, Email email, String nomeRegiao) {
-        this(username, email, "ativo", nomeRegiao);
+    @Override
+    public Set<Ganha> getBadges() {
+        return badges;
     }
 
+    @Override
+    public void setBadges(Set<Ganha> badges) {
+        this.badges = badges;
+    }
+
+    @Override
+    public Set<Participa> getChats() {
+        return chats;
+    }
+
+    @Override
+    public void setChats(Set<Participa> chats) {
+        this.chats = chats;
+    }
+
+    @Override
+    public Set<Compra> getPurchases() {
+        return purchases;
+    }
+
+    @Override
+    public void setPurchases(Set<Compra> purchases) {
+        this.purchases = purchases;
+    }
+
+    @Override
+    public Set<Joga> getPlayMatches() {
+        return playMatches;
+    }
+
+    @Override
+    public void setPlayMatches(Set<Joga> playMatches) {
+        this.playMatches = playMatches;
+    }
+
+    @Override
+    public boolean addMessage(Message message) {
+        return this.messages.add((Mensagem) message);
+    }
+
+    @Override
+    public boolean removeMessage(Message message) {
+        return this.messages.remove((Mensagem) message);
+    }
 
     @Override
     public String toString() {
@@ -235,7 +268,7 @@ public class Jogador implements Player {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", estado='" + state + '\'' +
-                ", nomeRegiao='" + regionName + '\'' +
+                ", nomeRegiao='" + region.getId() + '\'' +
                 '}';
     }
 
@@ -251,4 +284,3 @@ public class Jogador implements Player {
         return username.hashCode() + email.hashCode();
     }
 }
-

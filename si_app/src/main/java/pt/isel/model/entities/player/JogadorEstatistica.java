@@ -2,9 +2,6 @@ package pt.isel.model.entities.player;
 
 import jakarta.persistence.*;
 
-/**
- * Represents a player stats
- */
 @Entity
 @NamedQuery(name = "JogadorEstatistica.findAll", query = "SELECT je FROM JogadorEstatistica je")
 @NamedQuery(name = "JogadorEstatistica.findByKey", query = "SELECT je FROM JogadorEstatistica je where je.id = :id")
@@ -27,91 +24,51 @@ public class JogadorEstatistica implements PlayerStats {
     @Column(name = "total_pontos")
     private Integer totalOfPoints;
 
-    /**
-     * Getter function for the player id
-     * @return the player id
-     */
     @Override
     public Integer getId() {
         return this.id;
     }
 
-    /**
-     * Getter function for the player
-     * @return the player
-     */
-    @Override
-    public Player getPlayer() {
-        return this.player;
-    }
-
-    /**
-     * Getter function for the number of matches
-     * @return the number of matches
-     */
-    @Override
-    public Integer getNrOfMatches() {
-        return this.nrOfMatches;
-    }
-
-    /**
-     * Getter function for the number of games
-     * @return the number of games
-     */
-    @Override
-    public Integer getNrOfGames() {
-        return this.nrOfGames;
-    }
-
-    /**
-     * Getter function for the total of points
-     * @return the total of points
-     */
-    @Override
-    public Integer getTotalOfPoints() {
-        return this.totalOfPoints;
-    }
-
-    /**
-     * Setter function for the player id
-     * @param playerId the player id
-     */
     @Override
     public void setId(Integer playerId) {
         this.id = playerId;
     }
 
-    /**
-     * Setter function for the player
-     * @param player the player
-     */
+    @Override
+    public Player getPlayer() {
+        return this.player;
+    }
+
     @Override
     public void setPlayer(Player player) {
         this.player = (Jogador) player;
     }
 
-    /**
-     * Setter function for the number of matches
-     * @param nrOfMatches the number of matches
-     */
+    @Override
+    public Integer getNrOfMatches() {
+        return this.nrOfMatches;
+    }
+
     @Override
     public void setNrOfMatches(Integer nrOfMatches) {
         this.nrOfMatches = nrOfMatches;
     }
 
-    /**
-     * Setter function for the number of games
-     * @param nrOfGames the number of games
-     */
+    @Override
+    public Integer getNrOfGames() {
+        return this.nrOfGames;
+    }
+
     @Override
     public void setNrOfGames(Integer nrOfGames) {
         this.nrOfGames = nrOfGames;
     }
 
-    /**
-     * Setter function for the total of points
-     * @param totalOfPoints the total of points
-     */
+    @Override
+    public Integer getTotalOfPoints() {
+        return this.totalOfPoints;
+    }
+
     @Override
     public void setTotalOfPoints(Integer totalOfPoints) {
         this.totalOfPoints = totalOfPoints;

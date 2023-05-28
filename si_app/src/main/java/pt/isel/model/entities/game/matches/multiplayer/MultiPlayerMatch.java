@@ -6,6 +6,7 @@ import pt.isel.model.types.MultiPlayerMatchState;
 
 /**
  * Represents a multiplayer match
+ * <p>
  * See {@link pt.isel.model.entities.game.matches.Match}
  */
 public interface MultiPlayerMatch {
