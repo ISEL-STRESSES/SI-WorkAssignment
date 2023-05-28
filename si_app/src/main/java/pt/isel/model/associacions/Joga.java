@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import pt.isel.model.entities.game.matches.Partida;
 import pt.isel.model.entities.player.Jogador;
 
+/**
+ * This class represents a player that has played a game.
+ */
 @Entity
 @Table(name = "joga", schema = "public")
 public class Joga {
@@ -26,36 +29,67 @@ public class Joga {
     @Column(name = "pontuacao")
     private Integer pontuacao;
 
+    /**
+     * Getter function for the player that played the game
+     * @return the player that played the game
+     */
     public JogaId getId() {
         return id;
     }
 
+    /**
+     * Setter function for the player that played the game
+     * @param id the player that played the game
+     */
     public void setId(JogaId id) {
         this.id = id;
     }
 
+    /**
+     * Getter function for the player that played the game
+     * @return the player that played the game
+     */
     public Partida getPartida() {
         return partida;
     }
 
+    /**
+     * Setter function for the player that played the game
+     * @param partida the player that played the game
+     */
     public void setPartida(Partida partida) {
         this.partida = partida;
     }
 
+    /**
+     * Getter function for the player that played the game
+     * @return the player that played the game
+     */
     public Jogador getIdJogador() {
         return idJogador;
     }
 
+    /**
+     * Setter function for the player that played the game
+     * @param idJogador the player that played the game
+     */
     public void setIdJogador(Jogador idJogador) {
         this.idJogador = idJogador;
     }
 
+    /**
+     * Getter function for the player's score
+     * @return the player's score
+     */
     public Integer getPontuacao() {
         return pontuacao;
     }
 
+    /**
+     * Setter function for the player's score
+     * @param pontuacao the player's score
+     */
     public void setPontuacao(Integer pontuacao) {
         this.pontuacao = pontuacao;
     }
-
 }

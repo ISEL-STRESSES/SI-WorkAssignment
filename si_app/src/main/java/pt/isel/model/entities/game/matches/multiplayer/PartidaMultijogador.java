@@ -6,6 +6,9 @@ import pt.isel.model.entities.game.matches.Match;
 import pt.isel.model.entities.game.matches.Partida;
 import pt.isel.model.types.Alphanumeric;
 
+/**
+ * Class that represents a multiplayer match
+ */
 @Entity
 @NamedQuery(name= "PartidaMultijogador.findByKey", query = "SELECT p FROM PartidaMultijogador p WHERE p.id = :key")
 @NamedQuery(name= "PartidaMultijogador.findAll", query = "SELECT p FROM PartidaMultijogador p")
@@ -27,7 +30,6 @@ public class PartidaMultijogador implements MultiPlayerMatch{
 
     /**
      * Getter function for the match id
-     *
      * @return the match id
      */
     @Override
@@ -37,7 +39,6 @@ public class PartidaMultijogador implements MultiPlayerMatch{
 
     /**
      * Getter function for the match number
-     *
      * @return the match number
      */
     @Override
@@ -47,7 +48,6 @@ public class PartidaMultijogador implements MultiPlayerMatch{
 
     /**
      * Getter function for the game id
-     *
      * @return the game id
      */
     @Override
@@ -57,7 +57,6 @@ public class PartidaMultijogador implements MultiPlayerMatch{
 
     /**
      * Getter function for the game status
-     *
      * @return the game status
      */
     @Override
@@ -67,7 +66,6 @@ public class PartidaMultijogador implements MultiPlayerMatch{
 
     /**
      * Getter function for the match
-     *
      * @return the match
      */
     @Override
@@ -77,7 +75,6 @@ public class PartidaMultijogador implements MultiPlayerMatch{
 
     /**
      * Setter function for the match id
-     *
      * @param id the match id
      */
     @Override
@@ -87,7 +84,6 @@ public class PartidaMultijogador implements MultiPlayerMatch{
 
     /**
      * Setter function for the match number
-     *
      * @param matchNumber the match number
      */
     @Override
@@ -97,7 +93,6 @@ public class PartidaMultijogador implements MultiPlayerMatch{
 
     /**
      * Setter function for the game id
-     *
      * @param gameId the game id
      */
     @Override
@@ -107,7 +102,6 @@ public class PartidaMultijogador implements MultiPlayerMatch{
 
     /**
      * Setter function for the game status
-     *
      * @param state the game status
      */
     @Override
@@ -117,7 +111,6 @@ public class PartidaMultijogador implements MultiPlayerMatch{
 
     /**
      * Setter function for the match
-     *
      * @param match the match
      */
     @Override

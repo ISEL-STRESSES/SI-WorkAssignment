@@ -6,6 +6,9 @@ import pt.isel.model.entities.player.Player;
 
 import java.time.LocalDate;
 
+/**
+ * This class represents a message entity
+ */
 @Entity
 @NamedQuery(name= "Mensagem.findByKey", query = "SELECT m FROM Mensagem m WHERE m.id = :key")
 @NamedQuery(name= "Mensagem.findAll", query = "SELECT m FROM Mensagem m")
@@ -34,7 +37,6 @@ public class Mensagem implements Message{
 
     /**
      * Getter function for the message id
-     *
      * @return the message id
      */
     @Override
@@ -44,7 +46,6 @@ public class Mensagem implements Message{
 
     /**
      * Getter function for the message number
-     *
      * @return the message number
      */
     @Override
@@ -54,7 +55,6 @@ public class Mensagem implements Message{
 
     /**
      * Getter function for the chat id
-     *
      * @return the chat id
      */
     @Override
@@ -64,7 +64,6 @@ public class Mensagem implements Message{
 
     /**
      * Getter function for the chat
-     *
      * @return the chat
      */
     @Override
@@ -74,7 +73,6 @@ public class Mensagem implements Message{
 
     /**
      * Getter function for the user id
-     *
      * @return the user id
      */
     @Override
@@ -84,7 +82,6 @@ public class Mensagem implements Message{
 
     /**
      * Getter function for the user
-     *
      * @return the user
      */
     @Override
@@ -94,7 +91,6 @@ public class Mensagem implements Message{
 
     /**
      * Getter function for the message
-     *
      * @return the message
      */
     @Override
@@ -104,7 +100,6 @@ public class Mensagem implements Message{
 
     /**
      * Getter function for the message date
-     *
      * @return the message date
      */
     @Override
@@ -114,7 +109,6 @@ public class Mensagem implements Message{
 
     /**
      * Setter function for the message id
-     *
      * @param id the message id
      */
     @Override
@@ -124,7 +118,6 @@ public class Mensagem implements Message{
 
     /**
      * Setter function for the message number
-     *
      * @param messageNumber the message number
      */
     @Override
@@ -134,7 +127,6 @@ public class Mensagem implements Message{
 
     /**
      * Setter function for the chat id
-     *
      * @param chatId the chat id
      */
     @Override
@@ -144,7 +136,6 @@ public class Mensagem implements Message{
 
     /**
      * Setter function for the chat
-     *
      * @param chat the chat
      */
     @Override
@@ -154,7 +145,6 @@ public class Mensagem implements Message{
 
     /**
      * Setter function for the user id
-     *
      * @param userId the user id
      */
     @Override
@@ -164,7 +154,6 @@ public class Mensagem implements Message{
 
     /**
      * Setter function for the user
-     *
      * @param player the user
      */
     @Override
@@ -174,7 +163,6 @@ public class Mensagem implements Message{
 
     /**
      * Setter function for the message
-     *
      * @param text the message
      */
     @Override
@@ -184,7 +172,6 @@ public class Mensagem implements Message{
 
     /**
      * Setter function for the message date
-     *
      * @param date the message date
      */
     @Override
@@ -199,7 +186,7 @@ public class Mensagem implements Message{
     }
 
     /**
-     * Constructor with all attributes except the id
+     * Constructor with all attributes
      *
      * @param id the message id
      * @param conversa the chat

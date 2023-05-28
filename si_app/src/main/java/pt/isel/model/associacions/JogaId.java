@@ -7,6 +7,9 @@ import pt.isel.model.types.Alphanumeric;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Represents the primary key of the {@link Joga} entity.
+ */
 @Embeddable
 public class JogaId implements Serializable {
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
@@ -18,26 +21,50 @@ public class JogaId implements Serializable {
     @Column(name = "id_jogador", nullable = false)
     private Integer idJogador;
 
+    /**
+     * Getter function for the game id
+     * @return the game id
+     */
     public Alphanumeric getIdJogo() {
         return new Alphanumeric(idJogo);
     }
 
+    /**
+     * Setter function for the game id
+     * @param idJogo the game id
+     */
     public void setIdJogo(Alphanumeric idJogo) {
         this.idJogo = idJogo.toString();
     }
 
+    /**
+     * Getter function for the game number
+     * @return the game number
+     */
     public Integer getNrPartida() {
         return nrPartida;
     }
 
+    /**
+     * Setter function for the game number
+     * @param nrPartida the game number
+     */
     public void setNrPartida(Integer nrPartida) {
         this.nrPartida = nrPartida;
     }
 
+    /**
+     * Getter function for the player id
+     * @return the player id
+     */
     public Integer getIdJogador() {
         return idJogador;
     }
 
+    /**
+     * Setter function for the player id
+     * @param idJogador the player id
+     */
     public void setIdJogador(Integer idJogador) {
         this.idJogador = idJogador;
     }

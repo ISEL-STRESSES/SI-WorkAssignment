@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * This class represents a chat entity
+ */
 @Entity
 @NamedQuery(name= "Conversa.findByKey", query = "SELECT c FROM Conversa c WHERE c.id = :key")
 @NamedQuery(name= "Conversa.findAll", query = "SELECT c FROM Conversa c")
@@ -21,10 +24,8 @@ public class Conversa implements Chat {
     @OneToMany(mappedBy = "chatId", orphanRemoval = true)
     private Set<Mensagem> messages = new LinkedHashSet<>();
 
-
     /**
      * Getter function for the chat id
-     *
      * @return the chat id
      */
     @Override
@@ -34,7 +35,6 @@ public class Conversa implements Chat {
 
     /**
      * Getter function for the chat name
-     *
      * @return the chat name
      */
     @Override
@@ -44,7 +44,6 @@ public class Conversa implements Chat {
 
     /**
      * Getter function for the chat messages
-     *
      * @return the chat messages
      */
     @Override
@@ -58,7 +57,6 @@ public class Conversa implements Chat {
 
     /**
      * Setter function for the chat id
-     *
      * @param id the chat id
      */
     @Override
@@ -68,7 +66,6 @@ public class Conversa implements Chat {
 
     /**
      * Setter function for the chat name
-     *
      * @param name the chat name
      */
     @Override
@@ -78,7 +75,6 @@ public class Conversa implements Chat {
 
     /**
      * Setter function for the chat messages
-     *
      * @param messages the chat messages
      */
     @Override

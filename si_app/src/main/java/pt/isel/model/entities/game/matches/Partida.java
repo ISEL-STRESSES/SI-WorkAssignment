@@ -13,6 +13,9 @@ import pt.isel.model.types.Alphanumeric;
 
 import java.time.LocalDate;
 
+/**
+ * Class that represents a match
+ */
 @Entity
 @NamedQuery(name= "Partida.findByKey", query = "SELECT p FROM Partida p WHERE p.id = :key")
 @NamedQuery(name= "Partida.findAll", query = "SELECT p FROM Partida p")
@@ -35,7 +38,6 @@ public class Partida implements Match {
     @JoinColumn(name = "nome_regiao", nullable = false)
     private Regiao region;
 
-    // TODO: 2020-11-10
     @OneToOne(orphanRemoval = true)
     @JoinColumns({
             @JoinColumn(name = "partida", referencedColumnName = "ID_JOGO"),
@@ -43,7 +45,6 @@ public class Partida implements Match {
     })
     private PartidaNormal normalMatch;
 
-    // TODO: 2020-11-10
     @OneToOne(orphanRemoval = true)
     @JoinColumns({
             @JoinColumn(name = "PARTIDA_MULTIJOGADOR_ID_JOGO", referencedColumnName = "ID_JOGO"),
@@ -58,7 +59,6 @@ public class Partida implements Match {
 
     /**
      * Getter function for the game
-     *
      * @return the game
      */
     @Override
@@ -68,7 +68,6 @@ public class Partida implements Match {
 
     /**
      * Getter function for the game id
-     *
      * @return the game id
      */
     @Override
@@ -78,7 +77,6 @@ public class Partida implements Match {
 
     /**
      * Getter function for the match number
-     *
      * @return the match number
      */
     @Override
@@ -88,7 +86,6 @@ public class Partida implements Match {
 
     /**
      * Getter function for the match start date
-     *
      * @return the match start date
      */
     @Override
@@ -98,7 +95,6 @@ public class Partida implements Match {
 
     /**
      * Getter function for the match end date
-     *
      * @return the match end date
      */
     @Override
@@ -108,7 +104,6 @@ public class Partida implements Match {
 
     /**
      * Getter function for the match region
-     *
      * @return the match region
      */
     @Override
@@ -118,7 +113,6 @@ public class Partida implements Match {
 
     /**
      * Getter function for the normal match
-     *
      * @return the match
      */
     @Override
@@ -128,7 +122,6 @@ public class Partida implements Match {
 
     /**
      * Getter function for the multiplayer match
-     *
      * @return the match
      */
     @Override
@@ -138,7 +131,6 @@ public class Partida implements Match {
 
     /**
      * Setter function for the match id
-     *
      * @param matchId the match id
      */
     @Override
@@ -148,7 +140,6 @@ public class Partida implements Match {
 
     /**
      * Setter function for the game
-     *
      * @param game the game
      */
     @Override
@@ -158,7 +149,6 @@ public class Partida implements Match {
 
     /**
      * Setter function for the game id
-     *
      * @param gameId the game id
      */
     @Override
@@ -168,7 +158,6 @@ public class Partida implements Match {
 
     /**
      * Setter function for the match number
-     *
      * @param matchNumber the match number
      */
     @Override
@@ -178,7 +167,6 @@ public class Partida implements Match {
 
     /**
      * Setter function for the match start date
-     *
      * @param startDate the match start date
      */
     @Override
@@ -188,7 +176,6 @@ public class Partida implements Match {
 
     /**
      * Setter function for the match end date
-     *
      * @param endDate the match end date
      */
     @Override
@@ -198,7 +185,6 @@ public class Partida implements Match {
 
     /**
      * Setter function for the match region
-     *
      * @param region the match region
      */
     @Override
@@ -208,7 +194,6 @@ public class Partida implements Match {
 
     /**
      * Setter function for the normal match
-     *
      * @param normalMatch the match
      */
     @Override
@@ -218,7 +203,6 @@ public class Partida implements Match {
 
     /**
      * Setter function for the multiplayer match
-     *
      * @param multiPlayerMatch the match
      */
     @Override

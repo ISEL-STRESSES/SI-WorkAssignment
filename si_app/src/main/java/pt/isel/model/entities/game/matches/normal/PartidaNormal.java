@@ -5,6 +5,10 @@ import pt.isel.model.entities.game.matches.Match;
 import pt.isel.model.entities.game.matches.Partida;
 import pt.isel.model.types.Alphanumeric;
 
+/**
+ * Class that represents a normal match
+ * See {@link pt.isel.model.entities.game.matches.Match}
+ */
 @Entity
 @NamedQuery(name= "PartidaNormal.findByKey", query = "SELECT p FROM PartidaNormal p WHERE p.id = :key")
 @NamedQuery(name= "PartidaNormal.findAll", query = "SELECT p FROM PartidaNormal p")
@@ -27,7 +31,6 @@ public class PartidaNormal implements NormalMatch {
 
     /**
      * Getter function for the match id
-     *
      * @return the match id
      */
     @Override
@@ -37,7 +40,6 @@ public class PartidaNormal implements NormalMatch {
 
     /**
      * Getter function for the match number
-     *
      * @return the match number
      */
     @Override
@@ -47,7 +49,6 @@ public class PartidaNormal implements NormalMatch {
 
     /**
      * Getter function for the game id
-     *
      * @return the game id
      */
     @Override
@@ -57,7 +58,6 @@ public class PartidaNormal implements NormalMatch {
 
     /**
      * Getter function for the match difficulty
-     *
      * @return the game status
      */
     @Override
@@ -67,7 +67,6 @@ public class PartidaNormal implements NormalMatch {
 
     /**
      * Getter function for the match
-     *
      * @return the match
      */
     @Override
@@ -77,7 +76,6 @@ public class PartidaNormal implements NormalMatch {
 
     /**
      * Setter function for the match id
-     *
      * @param normalMatchId the match id
      */
     @Override
@@ -87,7 +85,6 @@ public class PartidaNormal implements NormalMatch {
 
     /**
      * Setter function for the match number
-     *
      * @param matchNumber the match number
      */
     @Override
@@ -97,7 +94,6 @@ public class PartidaNormal implements NormalMatch {
 
     /**
      * Setter function for the game id
-     *
      * @param gameId the game id
      */
     @Override
@@ -107,7 +103,6 @@ public class PartidaNormal implements NormalMatch {
 
     /**
      * Setter function for the game status
-     *
      * @param difficulty the game status
      */
     @Override
@@ -117,7 +112,6 @@ public class PartidaNormal implements NormalMatch {
 
     /**
      * Setter function for the match
-     *
      * @param match the match
      */
     @Override

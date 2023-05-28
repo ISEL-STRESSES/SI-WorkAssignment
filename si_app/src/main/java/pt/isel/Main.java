@@ -7,6 +7,7 @@ import java.util.Map;
 
 import static pt.isel.ui.Prompts.promptCommand;
 
+
 class Main {
     public static void main(String[] args) {
          try {

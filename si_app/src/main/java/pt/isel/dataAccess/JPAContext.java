@@ -16,6 +16,11 @@ import pt.isel.model.entities.player.Player;
 
 import java.util.List;
 
+/**
+ * Class responsible for the connection to the database, and exercises.
+ * It is also responsible for the creation of the repositories and data mappers.
+ * It implements the Context interface.
+ */
 public class JPAContext implements Context {
 
     private final String persistentCtx;
@@ -38,9 +43,12 @@ public class JPAContext implements Context {
     private final Repositories.MessageRepository messageRepository;
 
     /* Data mappers */
-
     private final DataMappers.PlayerDataMapper playerDataMapper;
 
+    /**
+     * Begins a transaction.
+     * If there is no transaction, it creates one and increments the transaction counter.
+     */
     @Override
     public void beginTransaction() {
         if(tx == null || !tx.isActive()) {
@@ -51,6 +59,10 @@ public class JPAContext implements Context {
         ++txcount;
     }
 
+    /**
+     * Commits a transaction.
+     * If the transaction counter is 0, it commits the transaction and sets it to null.
+     */
     @Override
     public void commit() {
         --txcount;
@@ -60,11 +72,18 @@ public class JPAContext implements Context {
         }
     }
 
+    /**
+     * Flushes the entity manager.
+     */
     @Override
     public void flush() {
         em.flush();
     }
 
+    /**
+     * Rolls back a transaction.
+     * If the transaction counter is 0, it rolls back the transaction and sets it to null.
+     */
     @Override
     public void rollback(){
         if(txcount ==0 && tx != null) {
@@ -73,6 +92,9 @@ public class JPAContext implements Context {
         }
     }
 
+    /**
+     * Closes the entity manager, entity manager factory and rolls back the transaction if it is active.
+     */
     @Override
     public void close() {
         if(tx != null && tx.isActive()) tx.rollback();
@@ -80,6 +102,11 @@ public class JPAContext implements Context {
         if(emf != null && emf.isOpen()) emf.close();
     }
 
+    /**
+     * Connects to the database.
+     * If the entity manager factory is null or closed, it creates a new one.
+     * If the entity manager is null or closed, it creates a new one.
+     */
     @Override
     public void connect() {
         try {
@@ -94,8 +121,12 @@ public class JPAContext implements Context {
         }
     }
 
-
-
+    /**
+     * Executes a query.
+     * @param jpql The query to be executed.
+     * @param params The parameters of the query.
+     * @return The result of the query.
+     */
     protected List helperQueryImpl(String jpql, Object... params) {
         Query q = em.createQuery(jpql);
 
@@ -105,10 +136,18 @@ public class JPAContext implements Context {
         return q.getResultList();
     }
 
+    /**
+     * Constructor of the JPAContext class.
+     * The name of the persistence is set to "si-app".
+     */
     public JPAContext() {
         this("si-app");
     }
 
+    /**
+     * Constructor of the JPAContext class.
+     * @param persistentCtx The name of the persistence.
+     */
     public JPAContext(String persistentCtx) {
         super();
         this.persistentCtx = persistentCtx;
@@ -132,19 +171,26 @@ public class JPAContext implements Context {
 
     /* repos*/
     /**
-     * @return
+     * getter for the {@link RegionRepository}
+     * @return the {@link RegionRepository}
      */
     @Override
     public RegionRepository getRegions() {
         return regionRepository;
     }
+
+    /**
+     * getter for the {@link PlayerRepository}
+     * @return the {@link PlayerRepository}
+     */
     @Override
     public PlayerRepository getPlayers() {
         return playerRepository;
     }
 
     /**
-     * @return
+     * getter for the {@link PlayerStatsRepository}
+     * @return the {@link PlayerStatsRepository}
      */
     @Override
     public PlayerStatsRepository getPlayersStats() {
@@ -152,7 +198,8 @@ public class JPAContext implements Context {
     }
 
     /**
-     * @return
+     * getter for the {@link GameRepository}
+     * @return the {@link GameRepository}
      */
     @Override
     public GameRepository getGames() {
@@ -160,7 +207,8 @@ public class JPAContext implements Context {
     }
 
     /**
-     * @return
+     * getter for the {@link MatchRepository}
+     * @return the {@link MatchRepository}
      */
     @Override
     public MatchRepository getMatches() {
@@ -168,7 +216,8 @@ public class JPAContext implements Context {
     }
 
     /**
-     * @return
+     * getter for the {@link NormalMatchRepository}
+     * @return the {@link NormalMatchRepository}
      */
     @Override
     public NormalMatchRepository getNormalMatches() {
@@ -176,7 +225,8 @@ public class JPAContext implements Context {
     }
 
     /**
-     * @return
+     * getter for the {@link MultiPlayerMatchRepository}
+     * @return the {@link MultiPlayerMatchRepository}
      */
     @Override
     public MultiPlayerMatchRepository getMultiPlayerMatches() {
@@ -184,7 +234,8 @@ public class JPAContext implements Context {
     }
 
     /**
-     * @return
+     * getter for the {@link BadgeRepository}
+     * @return the {@link BadgeRepository}
      */
     @Override
     public BadgeRepository getBadges() {
@@ -192,7 +243,8 @@ public class JPAContext implements Context {
     }
 
     /**
-     * @return
+     * getter for the {@link ChatRepository}
+     * @return the {@link ChatRepository}
      */
     @Override
     public ChatRepository getChats() {
@@ -200,7 +252,8 @@ public class JPAContext implements Context {
     }
 
     /**
-     * @return
+     * getter for the {@link MessageRepository}
+     * @return the {@link MessageRepository}
      */
     @Override
     public MessageRepository getMessages() {

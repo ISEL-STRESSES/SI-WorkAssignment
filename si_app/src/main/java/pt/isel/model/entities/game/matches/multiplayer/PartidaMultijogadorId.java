@@ -8,6 +8,9 @@ import pt.isel.utils.Pair;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Represents the primary key of the {@link PartidaMultijogador} entity.
+ */
 @Embeddable
 public class PartidaMultijogadorId implements Serializable {
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
@@ -18,7 +21,6 @@ public class PartidaMultijogadorId implements Serializable {
 
     /**
      * Getter function for the match id
-     *
      * @return the match id
      */
     public Pair<Alphanumeric, Integer> getMatchId() {
@@ -27,7 +29,6 @@ public class PartidaMultijogadorId implements Serializable {
 
     /**
      * Getter function for the game id
-     *
      * @return the game id
      */
     public Alphanumeric getGameId() {
@@ -36,7 +37,6 @@ public class PartidaMultijogadorId implements Serializable {
 
     /**
      * Getter function for the match number
-     *
      * @return the match number
      */
     public Integer getMatchNumber() {
@@ -45,7 +45,6 @@ public class PartidaMultijogadorId implements Serializable {
 
     /**
      * Setter function for the match id
-     *
      * @param matchId the match id
      */
     public void setMatchId(Pair<Alphanumeric, Integer> matchId) {
@@ -55,7 +54,6 @@ public class PartidaMultijogadorId implements Serializable {
 
     /**
      * Setter function for the game id
-     *
      * @param gameId the game id
      */
     public void setGameId(Alphanumeric gameId) {
@@ -64,7 +62,6 @@ public class PartidaMultijogadorId implements Serializable {
 
     /**
      * Setter function for the match number
-     *
      * @param matchNumber the match number
      */
     public void setMatchNumber(Integer matchNumber) {

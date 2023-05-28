@@ -5,7 +5,6 @@ import pt.isel.model.types.Alphanumeric;
 
 /**
  * Represents a normal match
- * <p>
  * See {@link pt.isel.model.entities.game.matches.Match}
  */
 public interface NormalMatch{

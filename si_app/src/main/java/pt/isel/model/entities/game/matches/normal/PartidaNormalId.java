@@ -8,6 +8,9 @@ import pt.isel.utils.Pair;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Represents the primary key of the {@link PartidaNormal} entity.
+ */
 @Embeddable
 public class PartidaNormalId implements Serializable {
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
@@ -18,40 +21,32 @@ public class PartidaNormalId implements Serializable {
 
     /**
      * Getter function for the match id
-     *
      * @return the match id
      */
-
     public Pair<Alphanumeric, Integer> getMatchId() {
         return new Pair<>(new Alphanumeric(idJogo), nrPartida);
     }
 
     /**
      * Getter function for the game id
-     *
      * @return the game id
      */
-
     public Alphanumeric getGameId() {
         return new Alphanumeric(idJogo);
     }
 
     /**
      * Getter function for the match number
-     *
      * @return the match number
      */
-
     public Integer getMatchNumber() {
         return nrPartida;
     }
 
     /**
      * Setter function for the match id
-     *
      * @param matchId the match id
      */
-
     public void setMatchId(Pair<Alphanumeric, Integer> matchId) {
         this.idJogo = matchId.first().toString();
         this.nrPartida = matchId.second();
@@ -59,20 +54,16 @@ public class PartidaNormalId implements Serializable {
 
     /**
      * Setter function for the game id
-     *
      * @param gameId the game id
      */
-
     public void setGameId(Alphanumeric gameId) {
         this.idJogo = gameId.toString();
     }
 
     /**
      * Setter function for the match number
-     *
      * @param matchNumber the match number
      */
-
     public void setMatchNumber(Integer matchNumber) {
         this.nrPartida = matchNumber;
     }
