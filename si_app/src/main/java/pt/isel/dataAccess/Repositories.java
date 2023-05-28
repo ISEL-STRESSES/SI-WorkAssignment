@@ -1,13 +1,18 @@
 package pt.isel.dataAccess;
 
 import pt.isel.model.entities.chat.Chat;
+import pt.isel.model.entities.chat.MensagemId;
 import pt.isel.model.entities.chat.Message;
 import pt.isel.model.entities.game.Game;
 import pt.isel.model.entities.game.GameStats;
 import pt.isel.model.entities.game.badge.Badge;
+import pt.isel.model.entities.game.badge.CrachaId;
 import pt.isel.model.entities.game.matches.Match;
+import pt.isel.model.entities.game.matches.PartidaId;
 import pt.isel.model.entities.game.matches.multiplayer.MultiPlayerMatch;
+import pt.isel.model.entities.game.matches.multiplayer.PartidaMultijogadorId;
 import pt.isel.model.entities.game.matches.normal.NormalMatch;
+import pt.isel.model.entities.game.matches.normal.PartidaNormalId;
 import pt.isel.model.entities.player.Player;
 import pt.isel.model.entities.player.PlayerStats;
 import pt.isel.model.entities.region.Region;
@@ -30,6 +35,7 @@ public class Repositories {
                     .setParameter("key", key)
                     .getSingleResult();
         }
+
         @SuppressWarnings("unchecked")
         @Override
         public List<Region> find(String jpql, Object... params) {
@@ -50,6 +56,7 @@ public class Repositories {
                     .setParameter("key", key)
                     .getSingleResult();
         }
+
         @SuppressWarnings("unchecked")
         @Override
         public List<Player> find(String jpql, Object... params) {
@@ -77,9 +84,6 @@ public class Repositories {
         }
     }
 
-    /**
-     * TODO: Implement from here
-     */
     protected class PlayerStatsRepository implements pt.isel.logic.repositories.player.PlayerStatsRepository {
         @Override
         public PlayerStats findByKey(Integer key) {
@@ -87,6 +91,7 @@ public class Repositories {
                     .setParameter("key", key)
                     .getSingleResult();
         }
+
         @SuppressWarnings("unchecked")
         @Override
         public List<PlayerStats> find(String jpql, Object... params) {
@@ -144,7 +149,7 @@ public class Repositories {
 
     protected class MatchRepository implements pt.isel.logic.repositories.game.match.MatchRepository {
         @Override
-        public Match findByKey(Integer key) {
+        public Match findByKey(PartidaId key) {
             return context.em.createNamedQuery("Partida.findByKey", Match.class)
                     .setParameter("key", key)
                     .getSingleResult();
@@ -165,7 +170,7 @@ public class Repositories {
 
     protected class NormalMatchRepository implements pt.isel.logic.repositories.game.match.NormalMatchRepository {
         @Override
-        public NormalMatch findByKey(Integer key) {
+        public NormalMatch findByKey(PartidaNormalId key) {
             return context.em.createNamedQuery("PartidaNormal.findByKey", NormalMatch.class)
                     .setParameter("key", key)
                     .getSingleResult();
@@ -186,7 +191,7 @@ public class Repositories {
 
     protected class MultiPlayerMatchRepository implements pt.isel.logic.repositories.game.match.MultiPlayerMatchRepository {
         @Override
-        public MultiPlayerMatch findByKey(Integer key) {
+        public MultiPlayerMatch findByKey(PartidaMultijogadorId key) {
             return context.em.createNamedQuery("PartidaMultijogador.findByKey", MultiPlayerMatch.class)
                     .setParameter("key", key)
                     .getSingleResult();
@@ -207,7 +212,7 @@ public class Repositories {
 
     protected class BadgeRepository implements pt.isel.logic.repositories.game.badge.BadgeRepository {
         @Override
-        public Badge findByKey(String key) {
+        public Badge findByKey(CrachaId key) {
             return context.em.createNamedQuery("Cracha.findByKey", Badge.class)
                     .setParameter("key", key)
                     .getSingleResult();
@@ -251,7 +256,7 @@ public class Repositories {
     protected class MessageRepository implements pt.isel.logic.repositories.chat.MessageRepository {
 
         @Override
-        public Message findByKey(Integer key) {
+        public Message findByKey(MensagemId key) {
             return context.em.createNamedQuery("Mensagem.findByKey", Message.class)
                     .setParameter("key", key)
                     .getSingleResult();

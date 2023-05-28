@@ -1,13 +1,14 @@
 package pt.isel.model.entities.chat;
 
 import jakarta.persistence.*;
+import pt.isel.model.associacions.participates.Participa;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@NamedQuery(name= "Conversa.findByKey", query = "SELECT c FROM Conversa c WHERE c.id = :key")
-@NamedQuery(name= "Conversa.findAll", query = "SELECT c FROM Conversa c")
+@NamedQuery(name = "Conversa.findByKey", query = "SELECT c FROM Conversa c WHERE c.id = :key")
+@NamedQuery(name = "Conversa.findAll", query = "SELECT c FROM Conversa c")
 @Table(name = "conversa", schema = "public")
 public class Conversa implements Chat {
     @Id
@@ -21,6 +22,25 @@ public class Conversa implements Chat {
     @OneToMany(mappedBy = "chatId", orphanRemoval = true)
     private Set<Mensagem> messages = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "idChat", orphanRemoval = true)
+    private Set<Participa> players = new LinkedHashSet<>();
+
+    /**
+     * Default empty constructor
+     */
+    public Conversa() {
+    }
+
+    /**
+     * Constructor for the Conversa entity
+     *
+     * @param id   the chat id
+     * @param nome the chat name
+     */
+    public Conversa(Integer id, String nome) {
+        setId(id);
+        setName(nome);
+    }
 
     /**
      * Getter function for the chat id
@@ -33,6 +53,16 @@ public class Conversa implements Chat {
     }
 
     /**
+     * Setter function for the chat id
+     *
+     * @param id the chat id
+     */
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    /**
      * Getter function for the chat name
      *
      * @return the chat name
@@ -40,6 +70,16 @@ public class Conversa implements Chat {
     @Override
     public String getName() {
         return this.nome;
+    }
+
+    /**
+     * Setter function for the chat name
+     *
+     * @param name the chat name
+     */
+    @Override
+    public void setName(String name) {
+        this.nome = name;
     }
 
     /**
@@ -54,26 +94,6 @@ public class Conversa implements Chat {
                 Set::add,
                 Set::addAll
         );
-    }
-
-    /**
-     * Setter function for the chat id
-     *
-     * @param id the chat id
-     */
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    /**
-     * Setter function for the chat name
-     *
-     * @param name the chat name
-     */
-    @Override
-    public void setName(String name) {
-        this.nome = name;
     }
 
     /**
@@ -92,20 +112,13 @@ public class Conversa implements Chat {
         );
     }
 
-    /**
-     * Default empty constructor
-     */
-    public Conversa() {
+    @Override
+    public Set<Participa> getPlayers() {
+        return players;
     }
 
-    /**
-     * Constructor for the Conversa entity
-     *
-     * @param id the chat id
-     * @param nome the chat name
-     */
-    public Conversa(Integer id, String nome) {
-        setId(id);
-        setName(nome);
+    @Override
+    public void setPlayers(Set<Participa> players) {
+        this.players = players;
     }
 }

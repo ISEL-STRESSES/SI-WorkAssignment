@@ -26,56 +26,6 @@ public class JogoEstatistica implements GameStats {
     @JoinColumn(name = "id_jogo", nullable = false)
     private Jogo game;
 
-    @Override
-    public Alphanumeric getId() {
-        return new Alphanumeric(this.id);
-    }
-
-    @Override
-    public Game getGame() {
-        return this.game;
-    }
-
-    @Override
-    public Integer getNrOfMatches() {
-        return this.nrOfMatches;
-    }
-
-    @Override
-    public Integer getNrOfPlayers() {
-        return this.nrOfPlayers;
-    }
-
-    @Override
-    public Integer getTotalOfPoints() {
-        return this.totalOfPoints;
-    }
-
-    @Override
-    public void setId(Alphanumeric id) {
-        this.id = id.toString();
-    }
-
-    @Override
-    public void setGame(Game game) {
-        this.game = (Jogo) game;
-    }
-
-    @Override
-    public void setNrOfMatches(Integer nrOfMatches) {
-        this.nrOfMatches = nrOfMatches;
-    }
-
-    @Override
-    public void setNrOfPlayers(Integer nrOfPlayers) {
-        this.nrOfPlayers = nrOfPlayers;
-    }
-
-    @Override
-    public void setTotalOfPoints(Integer totalOfPoints) {
-        this.totalOfPoints = totalOfPoints;
-    }
-
     public JogoEstatistica() {
         // for ORM only
     }
@@ -86,5 +36,55 @@ public class JogoEstatistica implements GameStats {
         setNrOfMatches(nrOfMatches);
         setNrOfPlayers(nrOfPlayers);
         setTotalOfPoints(totalOfPoints);
+    }
+
+    @Override
+    public Alphanumeric getId() {
+        return new Alphanumeric(this.id);
+    }
+
+    @Override
+    public void setId(Alphanumeric id) {
+        this.id = id.toString();
+    }
+
+    @Override
+    public Game getGame() {
+        return this.game;
+    }
+
+    @Override
+    public void setGame(Game game) {
+        this.game = (Jogo) game;
+    }
+
+    @Override
+    public Integer getNrOfMatches() {
+        return this.nrOfMatches;
+    }
+
+    @Override
+    public void setNrOfMatches(Integer nrOfMatches) {
+        this.nrOfMatches = nrOfMatches;
+    }
+
+    @Override
+    public Integer getNrOfPlayers() {
+        return this.nrOfPlayers;
+    }
+
+    @Override
+    public void setNrOfPlayers(Integer nrOfPlayers) {
+        this.nrOfPlayers = nrOfPlayers;
+    }
+
+    @Override
+    public Integer getTotalOfPoints() {
+        return this.totalOfPoints;
+    }
+
+    @Override
+    public void setTotalOfPoints(Integer totalOfPoints) {
+        this.totalOfPoints = totalOfPoints;
     }
 }

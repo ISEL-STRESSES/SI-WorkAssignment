@@ -6,12 +6,15 @@ import pt.isel.model.entities.player.Player;
 import java.util.Set;
 
 public interface Region {
-
     String getId();
-    Set<Player> getPlayers();
-    Set<Match> getMatches();
 
     void setId(String name);
+
+    Set<Player> getPlayers();
+
     void setPlayers(Set<Player> players);
+
+    Set<Match> getMatches();
+
     void setMatches(Set<Match> matches);
 }

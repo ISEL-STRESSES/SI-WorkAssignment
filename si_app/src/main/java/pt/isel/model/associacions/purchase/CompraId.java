@@ -1,4 +1,4 @@
-package pt.isel.model.associacions;
+package pt.isel.model.associacions.purchase;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -10,25 +10,25 @@ import java.util.Objects;
 @Embeddable
 public class CompraId implements Serializable {
     @Column(name = "id_jogador", nullable = false)
-    private Integer idJogador;
+    private Integer idPlayer;
 
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
-    private String idJogo;
+    private String idGame;
 
-    public Integer getIdJogador() {
-        return idJogador;
+    public Integer getIdPlayer() {
+        return idPlayer;
     }
 
-    public void setIdJogador(Integer idJogador) {
-        this.idJogador = idJogador;
+    public void setIdPlayer(Integer idPlayer) {
+        this.idPlayer = idPlayer;
     }
 
-    public Alphanumeric getIdJogo() {
-        return new Alphanumeric(idJogo);
+    public Alphanumeric getIdGame() {
+        return new Alphanumeric(idGame);
     }
 
-    public void setIdJogo(Alphanumeric idJogo) {
-        this.idJogo = idJogo.toString();
+    public void setIdGame(Alphanumeric idGame) {
+        this.idGame = idGame.toString();
     }
 
     @Override
@@ -36,13 +36,12 @@ public class CompraId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CompraId entity = (CompraId) o;
-        return Objects.equals(this.idJogo, entity.idJogo) &&
-                Objects.equals(this.idJogador, entity.idJogador);
+        return Objects.equals(this.idGame, entity.idGame) &&
+                Objects.equals(this.idPlayer, entity.idPlayer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idJogo, idJogador);
+        return Objects.hash(idGame, idPlayer);
     }
-
 }

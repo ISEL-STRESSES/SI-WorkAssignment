@@ -3,6 +3,7 @@ package pt.isel.logic;
 import pt.isel.logic.repositories.chat.ChatRepository;
 import pt.isel.logic.repositories.chat.MessageRepository;
 import pt.isel.logic.repositories.game.GameRepository;
+import pt.isel.logic.repositories.game.GameStatsRepository;
 import pt.isel.logic.repositories.game.badge.BadgeRepository;
 import pt.isel.logic.repositories.game.match.MatchRepository;
 import pt.isel.logic.repositories.game.match.MultiPlayerMatchRepository;
@@ -50,6 +51,8 @@ public interface Context extends AutoCloseable {
     PlayerStatsRepository getPlayersStats();
 
     GameRepository getGames();
+
+    GameStatsRepository getGamesStats();
 
     MatchRepository getMatches();
 

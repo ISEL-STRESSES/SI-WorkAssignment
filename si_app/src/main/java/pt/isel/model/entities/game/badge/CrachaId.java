@@ -3,7 +3,6 @@ package pt.isel.model.entities.game.badge;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import pt.isel.model.types.Alphanumeric;
-import pt.isel.utils.Pair;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -15,6 +14,14 @@ public class CrachaId implements Serializable {
 
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
     private String idJogo;
+
+    public CrachaId() {
+    }
+
+    public CrachaId(Alphanumeric idJogo, String nome) {
+        this.idJogo = idJogo.toString();
+        this.nome = nome;
+    }
 
     /**
      * Getter function for the badge id
@@ -35,15 +42,6 @@ public class CrachaId implements Serializable {
     }
 
     /**
-     * Getter function for the badge name
-     *
-     * @return the badge name
-     */
-    public String getBadgeName() {
-        return nome;
-    }
-
-    /**
      * Setter function for the game id
      *
      * @param gameId the game id
@@ -53,20 +51,21 @@ public class CrachaId implements Serializable {
     }
 
     /**
+     * Getter function for the badge name
+     *
+     * @return the badge name
+     */
+    public String getBadgeName() {
+        return nome;
+    }
+
+    /**
      * Setter function for the badge name
      *
      * @param badgeName the badge name
      */
     public void setBadgeName(String badgeName) {
         nome = badgeName;
-    }
-
-    public CrachaId() {
-    }
-
-    public CrachaId(Alphanumeric idJogo, String nome) {
-        this.idJogo = idJogo.toString();
-        this.nome = nome;
     }
 
     @Override

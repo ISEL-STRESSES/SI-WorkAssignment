@@ -1,6 +1,7 @@
 package pt.isel.model.entities.game;
 
 import jakarta.persistence.*;
+import pt.isel.model.associacions.purchase.Compra;
 import pt.isel.model.entities.game.badge.Badge;
 import pt.isel.model.entities.game.badge.Cracha;
 import pt.isel.model.entities.game.matches.Match;
@@ -37,9 +38,26 @@ public class Jogo implements Game {
     @OneToMany(mappedBy = "game", orphanRemoval = true)
     private Set<Partida> matches = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "idGame", orphanRemoval = true)
+    private Set<Compra> purchases = new LinkedHashSet<>();
+
+    public Jogo() {
+    }
+
+    public Jogo(Alphanumeric id, String name, URL url) {
+        setId(id);
+        setName(name);
+        setUrl(url);
+    }
+
     @Override
     public Alphanumeric getId() {
         return new Alphanumeric(id);
+    }
+
+    @Override
+    public void setId(Alphanumeric id) {
+        this.id = id.toString();
     }
 
     @Override
@@ -48,8 +66,18 @@ public class Jogo implements Game {
     }
 
     @Override
+    public void setName(String nome) {
+        this.name = nome;
+    }
+
+    @Override
     public URL getUrl() {
         return new URL(url);
+    }
+
+    @Override
+    public void setUrl(URL url) {
+        this.url = url.toString();
     }
 
     @Override
@@ -58,8 +86,22 @@ public class Jogo implements Game {
     }
 
     @Override
+    public void setStats(GameStats stats) {
+        this.stats = (JogoEstatistica) stats;
+    }
+
+    @Override
     public Set<Badge> getBadges() {
         return this.badges.stream().collect(
+                LinkedHashSet::new,
+                Set::add,
+                Set::addAll
+        );
+    }
+
+    @Override
+    public void setBadges(Set<Badge> badges) {
+        this.badges = badges.stream().map(b -> (Cracha) b).collect(
                 LinkedHashSet::new,
                 Set::add,
                 Set::addAll
@@ -76,33 +118,6 @@ public class Jogo implements Game {
     }
 
     @Override
-    public void setId(Alphanumeric id) {
-        this.id = id.toString();
-    }
-
-    public void setName(String nome) {
-        this.name = nome;
-    }
-
-    public void setUrl(URL url) {
-        this.url = url.toString();
-    }
-
-    @Override
-    public void setStats(GameStats stats) {
-        this.stats = (JogoEstatistica) stats;
-    }
-
-    @Override
-    public void setBadges(Set<Badge> badges) {
-        this.badges = badges.stream().map(b -> (Cracha) b).collect(
-                LinkedHashSet::new,
-                Set::add,
-                Set::addAll
-        );
-    }
-
-    @Override
     public void setMatches(Set<Match> matches) {
         this.matches = matches.stream().map(m -> (Partida) m).collect(
                 LinkedHashSet::new,
@@ -111,12 +126,13 @@ public class Jogo implements Game {
         );
     }
 
-    public Jogo() {
+    @Override
+    public Set<Compra> getPurchases() {
+        return purchases;
     }
 
-    public Jogo(Alphanumeric id, String name, URL url) {
-        setId(id);
-        setName(name);
-        setUrl(url);
+    @Override
+    public void setPurchases(Set<Compra> purchases) {
+        this.purchases = purchases;
     }
 }

@@ -4,14 +4,22 @@ import pt.isel.model.types.Alphanumeric;
 
 public interface GameStats {
     Alphanumeric getId();
-    Game getGame();
-    Integer getNrOfMatches();
-    Integer getNrOfPlayers();
-    Integer getTotalOfPoints();
 
     void setId(Alphanumeric id);
+
+    Game getGame();
+
     void setGame(Game game);
+
+    Integer getNrOfMatches();
+
     void setNrOfMatches(Integer nrOfMatches);
+
+    Integer getNrOfPlayers();
+
     void setNrOfPlayers(Integer nrOfPlayers);
+
+    Integer getTotalOfPoints();
+
     void setTotalOfPoints(Integer totalOfPoints);
 }

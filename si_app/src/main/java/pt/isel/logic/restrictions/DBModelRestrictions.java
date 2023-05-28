@@ -7,11 +7,11 @@ public class DBModelRestrictions {
     public static class PlayerRestrictions implements Restrictions<Player> {
         @Override
         public Boolean checkDBRestrictions(Player entity) throws RestrictionException {
-            if (!entity.getEmail().isValid())
-                throw new RestrictionException("Email is not valid");
-
-            if (!entity.getState().matches("^(ativo|banido|inativo)$"))
-                throw new RestrictionException("Estado is not valid");
+//            if (!entity.getEmail().isValid())
+//                throw new RestrictionException("Email is not valid");
+//
+//            if (!entity.getState().matches("^(ativo|banido|inativo)$"))
+//                throw new RestrictionException("Estado is not valid");
 
             return true;
         }

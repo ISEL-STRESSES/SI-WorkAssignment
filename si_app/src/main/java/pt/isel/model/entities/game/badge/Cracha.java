@@ -10,7 +10,7 @@ import pt.isel.model.types.URL;
 @NamedQuery(name = "Cracha.findAll", query = "SELECT c FROM Cracha c")
 @NamedQuery(name = "Cracha.findByKey", query = "SELECT c FROM Cracha c where c.id = :id")
 @Table(name = "cracha", schema = "public")
-public class Cracha implements Badge{
+public class Cracha implements Badge {
     @EmbeddedId
     private CrachaId id;
 
@@ -37,56 +37,6 @@ public class Cracha implements Badge{
     }
 
     /**
-     * Getter function for the badge name
-     *
-     * @return the badge name
-     */
-    @Override
-    public String getName() {
-        return this.id.getBadgeName();
-    }
-
-    /**
-     * Getter function for the game id
-     *
-     * @return the game id
-     */
-    @Override
-    public Alphanumeric getGameId() {
-        return this.id.getGameId();
-    }
-
-    /**
-     * Getter function for the badge image
-     *
-     * @return the badge url image
-     */
-    @Override
-    public URL getImage() {
-        return new URL(this.imagem);
-    }
-
-    /**
-     * Getter function for the badge points
-     *
-     * @return the badge points
-     */
-    @Override
-    public Integer getPoints() {
-        return this.limitePontos;
-    }
-
-    /**
-     * Getter function for the game
-     *
-     * @return the game
-     */
-    @Override
-    public Game getGame() {
-        return this.idJogo;
-    }
-
-    /**
      * Setter function for the badge id
      *
      * @param id the badge id
@@ -94,6 +44,16 @@ public class Cracha implements Badge{
     @Override
     public void setId(CrachaId id) {
         this.id = id;
+    }
+
+    /**
+     * Getter function for the badge name
+     *
+     * @return the badge name
+     */
+    @Override
+    public String getName() {
+        return this.id.getBadgeName();
     }
 
     /**
@@ -107,6 +67,16 @@ public class Cracha implements Badge{
     }
 
     /**
+     * Getter function for the game id
+     *
+     * @return the game id
+     */
+    @Override
+    public Alphanumeric getGameId() {
+        return this.id.getGameId();
+    }
+
+    /**
      * Setter function for the game id
      *
      * @param gameId the game id
@@ -114,6 +84,16 @@ public class Cracha implements Badge{
     @Override
     public void setGameId(Alphanumeric gameId) {
         this.id.setGameId(gameId);
+    }
+
+    /**
+     * Getter function for the badge image
+     *
+     * @return the badge url image
+     */
+    @Override
+    public URL getImage() {
+        return new URL(this.imagem);
     }
 
     /**
@@ -127,6 +107,16 @@ public class Cracha implements Badge{
     }
 
     /**
+     * Getter function for the badge points
+     *
+     * @return the badge points
+     */
+    @Override
+    public Integer getPoints() {
+        return this.limitePontos;
+    }
+
+    /**
      * Setter function for the badge points
      *
      * @param points the badge points
@@ -134,6 +124,16 @@ public class Cracha implements Badge{
     @Override
     public void setPoints(Integer points) {
         this.limitePontos = points;
+    }
+
+    /**
+     * Getter function for the game
+     *
+     * @return the game
+     */
+    @Override
+    public Game getGame() {
+        return this.idJogo;
     }
 
     /**

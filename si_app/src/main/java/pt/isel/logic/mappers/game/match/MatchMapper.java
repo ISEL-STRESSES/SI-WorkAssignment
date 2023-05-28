@@ -5,7 +5,7 @@ import pt.isel.model.entities.game.matches.Match;
 import pt.isel.model.entities.game.matches.PartidaId;
 
 /**
- * TODO check the key
+ * Interface to access the matches repository
  */
 public interface MatchMapper extends DataMapper<Match, PartidaId> {
 }

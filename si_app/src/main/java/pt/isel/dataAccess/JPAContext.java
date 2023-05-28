@@ -5,6 +5,7 @@ import pt.isel.logic.Context;
 import pt.isel.logic.repositories.chat.ChatRepository;
 import pt.isel.logic.repositories.chat.MessageRepository;
 import pt.isel.logic.repositories.game.GameRepository;
+import pt.isel.logic.repositories.game.GameStatsRepository;
 import pt.isel.logic.repositories.game.badge.BadgeRepository;
 import pt.isel.logic.repositories.game.match.MatchRepository;
 import pt.isel.logic.repositories.game.match.MultiPlayerMatchRepository;
@@ -19,11 +20,6 @@ import java.util.List;
 public class JPAContext implements Context {
 
     private final String persistentCtx;
-    private EntityManagerFactory emf;
-    protected EntityManager em;
-    private EntityTransaction tx;
-    private int txcount;
-
     /*repos*/
     private final Repositories.RegionRepository regionRepository;
     private final Repositories.PlayerRepository playerRepository;
@@ -37,73 +33,25 @@ public class JPAContext implements Context {
     private final Repositories.ChatRepository chatRepository;
     private final Repositories.MessageRepository messageRepository;
 
-    /* Data mappers */
-
+    /* data mappers */
+    private final DataMappers.RegionDataMapper regionDataMapper;
     private final DataMappers.PlayerDataMapper playerDataMapper;
+    private final DataMappers.PlayerStatsDataMapper playerStatsDataMapper;
+    private final DataMappers.GameDataMapper gameDataMapper;
+    private final DataMappers.GameStatsDataMapper gameStatsDataMapper;
+    private final DataMappers.MatchDataMapper matchDataMapper;
+    private final DataMappers.NormalMatchDataMapper normalMatchDataMapper;
+    private final DataMappers.MultiPlayerMatchDataMapper multiPlayerMatchDataMapper;
+    private final DataMappers.BadgeDataMapper badgeDataMapper;
+    private final DataMappers.ChatDataMapper chatDataMapper;
+    private final DataMappers.MessageDataMapper messageDataMapper;
 
-    @Override
-    public void beginTransaction() {
-        if(tx == null || !tx.isActive()) {
-            tx = em.getTransaction();
-            tx.begin();
-            txcount =0;
-        }
-        ++txcount;
-    }
+    protected EntityManager em;
+    private EntityManagerFactory emf;
+    private EntityTransaction tx;
 
-    @Override
-    public void commit() {
-        --txcount;
-        if(txcount ==0 && tx != null) {
-            tx.commit();
-            tx = null;
-        }
-    }
-
-    @Override
-    public void flush() {
-        em.flush();
-    }
-
-    @Override
-    public void rollback(){
-        if(txcount ==0 && tx != null) {
-            tx.rollback();
-            tx = null;
-        }
-    }
-
-    @Override
-    public void close() {
-        if(tx != null && tx.isActive()) tx.rollback();
-        if(em != null && em.isOpen()) em.close();
-        if(emf != null && emf.isOpen()) emf.close();
-    }
-
-    @Override
-    public void connect() {
-        try {
-            if(emf == null || !emf.isOpen()) this.emf = Persistence.createEntityManagerFactory(persistentCtx);
-            if(em == null || !em.isOpen()) this.em = emf.createEntityManager();
-        } catch (PersistenceException exception) {
-            System.out.println(exception.getMessage() + ".");
-            System.out.println("Please check the name of the persistence in the Persistence.xml file located in resources/META-INF!");
-            System.out.println("The name of the persistence in there should match the name for the Factory instance to run!");
-            System.out.println("If that doesn't work, delete the target folder and rebuild the project!");
-            System.exit(1);
-        }
-    }
-
-
-
-    protected List helperQueryImpl(String jpql, Object... params) {
-        Query q = em.createQuery(jpql);
-
-        for(int i = 0; i < params.length; ++i)
-            q.setParameter(i+1, params[i]);
-
-        return q.getResultList();
-    }
+    /* Data mappers */
+    private int txcount;
 
     public JPAContext() {
         this("si-app");
@@ -127,81 +75,133 @@ public class JPAContext implements Context {
         this.messageRepository = repositories.new MessageRepository();
         //data mappers init
         DataMappers dataMappers = new DataMappers(this);
+        this.regionDataMapper = dataMappers.new RegionDataMapper();
         this.playerDataMapper = dataMappers.new PlayerDataMapper();
+        this.playerStatsDataMapper = dataMappers.new PlayerStatsDataMapper();
+        this.gameDataMapper = dataMappers.new GameDataMapper();
+        this.gameStatsDataMapper = dataMappers.new GameStatsDataMapper();
+        this.matchDataMapper = dataMappers.new MatchDataMapper();
+        this.normalMatchDataMapper = dataMappers.new NormalMatchDataMapper();
+        this.multiPlayerMatchDataMapper = dataMappers.new MultiPlayerMatchDataMapper();
+        this.badgeDataMapper = dataMappers.new BadgeDataMapper();
+        this.chatDataMapper = dataMappers.new ChatDataMapper();
+        this.messageDataMapper = dataMappers.new MessageDataMapper();
+    }
+
+    @Override
+    public void beginTransaction() {
+        if (tx == null || !tx.isActive()) {
+            tx = em.getTransaction();
+            tx.begin();
+            txcount = 0;
+        }
+        ++txcount;
+    }
+
+    @Override
+    public void commit() {
+        --txcount;
+        if (txcount == 0 && tx != null) {
+            tx.commit();
+            tx = null;
+        }
+    }
+
+    @Override
+    public void flush() {
+        em.flush();
+    }
+
+    @Override
+    public void rollback() {
+        if (txcount == 0 && tx != null) {
+            tx.rollback();
+            tx = null;
+        }
+    }
+
+    @Override
+    public void close() {
+        if (tx != null && tx.isActive()) tx.rollback();
+        if (em != null && em.isOpen()) em.close();
+        if (emf != null && emf.isOpen()) emf.close();
+    }
+
+    @Override
+    public void connect() {
+        try {
+            if (emf == null || !emf.isOpen()) this.emf = Persistence.createEntityManagerFactory(persistentCtx);
+            if (em == null || !em.isOpen()) this.em = emf.createEntityManager();
+        } catch (PersistenceException exception) {
+            System.out.println(exception.getMessage() + ".");
+            System.out.println("Please check the name of the persistence in the Persistence.xml file located in resources/META-INF!");
+            System.out.println("The name of the persistence in there should match the name for the Factory instance to run!");
+            System.out.println("If that doesn't work, delete the target folder and rebuild the project!");
+            System.exit(1);
+        }
+    }
+
+
+    protected List helperQueryImpl(String jpql, Object... params) {
+        Query q = em.createQuery(jpql);
+
+        for (int i = 0; i < params.length; ++i)
+            q.setParameter(i + 1, params[i]);
+
+        return q.getResultList();
     }
 
     /* repos*/
-    /**
-     * @return
-     */
     @Override
     public RegionRepository getRegions() {
         return regionRepository;
     }
+
     @Override
     public PlayerRepository getPlayers() {
         return playerRepository;
     }
 
-    /**
-     * @return
-     */
     @Override
     public PlayerStatsRepository getPlayersStats() {
         return playerStatsRepository;
     }
 
-    /**
-     * @return
-     */
     @Override
     public GameRepository getGames() {
         return gameRepository;
     }
 
-    /**
-     * @return
-     */
+    @Override
+    public GameStatsRepository getGamesStats() {
+        return gameStatsRepository;
+    }
+
     @Override
     public MatchRepository getMatches() {
         return matchRepository;
     }
 
-    /**
-     * @return
-     */
     @Override
     public NormalMatchRepository getNormalMatches() {
         return normalMatchRepository;
     }
 
-    /**
-     * @return
-     */
     @Override
     public MultiPlayerMatchRepository getMultiPlayerMatches() {
         return multiPlayerMatchRepository;
     }
 
-    /**
-     * @return
-     */
     @Override
     public BadgeRepository getBadges() {
         return badgeRepository;
     }
 
-    /**
-     * @return
-     */
     @Override
     public ChatRepository getChats() {
         return chatRepository;
     }
 
-    /**
-     * @return
-     */
     @Override
     public MessageRepository getMessages() {
         return messageRepository;
@@ -212,7 +212,7 @@ public class JPAContext implements Context {
     public void createPlayer(Player player) {
         beginTransaction();
         Query q = em.createNativeQuery("call create_jogador(?, ?, ?)")
-                .setParameter(1, player.getRegionName())
+                .setParameter(1, player.getRegion().getId())
                 .setParameter(2, player.getUsername())
                 .setParameter(3, player.getEmail().toString());
         q.executeUpdate();

@@ -28,32 +28,25 @@ public class JogadorEstatistica implements PlayerStats {
     public Integer getId() {
         return this.id;
     }
-    @Override
-    public Player getPlayer() {
-        return this.player;
-    }
-    @Override
-    public Integer getNrOfMatches() {
-        return this.nrOfMatches;
-    }
-
-    @Override
-    public Integer getNrOfGames() {
-        return this.nrOfGames;
-    }
-
-    @Override
-    public Integer getTotalOfPoints() {
-        return this.totalOfPoints;
-    }
 
     @Override
     public void setId(Integer playerId) {
         this.id = playerId;
     }
+
+    @Override
+    public Player getPlayer() {
+        return this.player;
+    }
+
     @Override
     public void setPlayer(Player player) {
         this.player = (Jogador) player;
+    }
+
+    @Override
+    public Integer getNrOfMatches() {
+        return this.nrOfMatches;
     }
 
     @Override
@@ -62,8 +55,18 @@ public class JogadorEstatistica implements PlayerStats {
     }
 
     @Override
+    public Integer getNrOfGames() {
+        return this.nrOfGames;
+    }
+
+    @Override
     public void setNrOfGames(Integer nrOfGames) {
         this.nrOfGames = nrOfGames;
+    }
+
+    @Override
+    public Integer getTotalOfPoints() {
+        return this.totalOfPoints;
     }
 
     @Override
