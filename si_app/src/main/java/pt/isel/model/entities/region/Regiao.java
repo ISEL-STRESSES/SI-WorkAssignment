@@ -11,10 +11,6 @@ import java.util.Set;
 
 /**
  * Class that represents the region.
- *
- * @property nome - name of the region.
- * @property players - set of players that belong to the region.
- * @property matches - set of matches that belong to the region.
  */
 @Entity
 @NamedQuery(name = "Regiao.findByKey", query = "SELECT r FROM Regiao r WHERE r.name = :key")
@@ -31,16 +27,31 @@ public class Regiao implements Region {
     @OneToMany(mappedBy = "region")
     private Set<Partida> matches = new LinkedHashSet<>();
 
+    /**
+     * Getter function for the region name
+     *
+     * @return the region name
+     */
     @Override
     public String getId() {
         return this.name;
     }
 
+    /**
+     * Setter function for the region name
+     *
+     * @param name the region name
+     */
     @Override
     public void setId(String name) {
         this.name = name;
     }
 
+    /**
+     * Getter function for the region players
+     *
+     * @return the region players
+     */
     @Override
     public Set<Player> getPlayers() {
         return players.stream().collect(
@@ -50,6 +61,11 @@ public class Regiao implements Region {
         );
     }
 
+    /**
+     * Setter function for the region players
+     *
+     * @param players the region players
+     */
     @Override
     public void setPlayers(Set<Player> players) {
         this.players = players.stream().map(
@@ -61,6 +77,11 @@ public class Regiao implements Region {
         );
     }
 
+    /**
+     * Getter function for the region matches
+     *
+     * @return the region matches
+     */
     @Override
     public Set<Match> getMatches() {
         return matches.stream().collect(
@@ -70,6 +91,11 @@ public class Regiao implements Region {
         );
     }
 
+    /**
+     * Setter function for the region matches
+     *
+     * @param Matches the region matches
+     */
     @Override
     public void setMatches(Set<Match> Matches) {
         this.matches = Matches.stream().map(

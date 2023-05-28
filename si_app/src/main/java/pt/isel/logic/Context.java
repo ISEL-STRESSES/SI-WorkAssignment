@@ -14,8 +14,7 @@ import pt.isel.logic.repositories.region.RegionRepository;
 
 /**
  * Interface that represents a context
- *
- * @see AutoCloseable
+ * Extends {@link AutoCloseable}
  */
 public interface Context extends AutoCloseable {
 
@@ -44,26 +43,80 @@ public interface Context extends AutoCloseable {
      */
     void connect();
 
+    /**
+     * Getter for the {@link RegionRepository}
+     *
+     * @return the {@link RegionRepository}
+     */
     RegionRepository getRegions();
 
+    /**
+     * Getter for the {@link PlayerRepository}
+     *
+     * @return the {@link PlayerRepository}
+     */
     PlayerRepository getPlayers();
 
+    /**
+     * Getter for the {@link PlayerStatsRepository}
+     *
+     * @return the {@link PlayerStatsRepository}
+     */
     PlayerStatsRepository getPlayersStats();
 
+    /**
+     * Getter for the {@link GameRepository}
+     *
+     * @return the {@link GameRepository}
+     */
     GameRepository getGames();
 
+    /**
+     * Getter for the {@link GameStatsRepository}
+     *
+     * @return the {@link GameStatsRepository}
+     */
     GameStatsRepository getGamesStats();
 
+    /**
+     * Getter for the {@link MatchRepository}
+     *
+     * @return the {@link MatchRepository}
+     */
     MatchRepository getMatches();
 
+    /**
+     * Getter for the {@link NormalMatchRepository}
+     *
+     * @return the {@link NormalMatchRepository}
+     */
     NormalMatchRepository getNormalMatches();
 
+    /**
+     * Getter for the {@link MultiPlayerMatchRepository}
+     *
+     * @return the {@link MultiPlayerMatchRepository}
+     */
     MultiPlayerMatchRepository getMultiPlayerMatches();
 
+    /**
+     * Getter for the {@link BadgeRepository}
+     *
+     * @return the {@link BadgeRepository}
+     */
     BadgeRepository getBadges();
 
+    /**
+     * Getter for the {@link ChatRepository}
+     *
+     * @return the {@link ChatRepository}
+     */
     ChatRepository getChats();
 
+    /**
+     * Getter for the {@link MessageRepository}
+     *
+     * @return the {@link MessageRepository}
+     */
     MessageRepository getMessages();
-
 }

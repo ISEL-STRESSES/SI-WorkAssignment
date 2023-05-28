@@ -7,7 +7,7 @@ import pt.isel.model.entities.game.matches.PartidaId;
 import java.util.List;
 
 /**
- * Interface to access the matches repository
+ * {@link Match} repository interface.
  */
 public interface MatchRepository extends Repository<Match, List<Match>, PartidaId> {
 }

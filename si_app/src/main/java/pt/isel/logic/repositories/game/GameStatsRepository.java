@@ -6,5 +6,8 @@ import pt.isel.model.types.Alphanumeric;
 
 import java.util.List;
 
+/**
+ * {@link GameStats} repository interface.
+ */
 public interface GameStatsRepository extends Repository<GameStats, List<GameStats>, Alphanumeric> {
 }

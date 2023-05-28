@@ -5,7 +5,7 @@ import pt.isel.model.entities.game.matches.Match;
 import pt.isel.model.entities.game.matches.PartidaId;
 
 /**
- * Interface to access the matches repository
+ * {@link Match} mapper interface to be used by the data mappers.
  */
 public interface MatchMapper extends DataMapper<Match, PartidaId> {
 }

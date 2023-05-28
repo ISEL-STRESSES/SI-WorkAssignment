@@ -7,6 +7,9 @@ import pt.isel.model.types.Alphanumeric;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Represents the primary key of the {@link Cracha} entity.
+ */
 @Embeddable
 public class CrachaId implements Serializable {
     @Column(name = "nome", nullable = false, length = 50)
@@ -15,9 +18,18 @@ public class CrachaId implements Serializable {
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
     private String idJogo;
 
+    /**
+     * Empty constructor
+     */
     public CrachaId() {
     }
 
+    /**
+     * Constructor for the {@link CrachaId} entity
+     *
+     * @param idJogo the game id
+     * @param nome   the badge name
+     */
     public CrachaId(Alphanumeric idJogo, String nome) {
         this.idJogo = idJogo.toString();
         this.nome = nome;

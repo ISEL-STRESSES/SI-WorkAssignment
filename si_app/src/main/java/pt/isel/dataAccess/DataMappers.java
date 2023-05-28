@@ -31,21 +31,32 @@ import pt.isel.model.entities.player.PlayerStats;
 import pt.isel.model.entities.region.Region;
 import pt.isel.model.types.Alphanumeric;
 
+/**
+ * Class responsible for creating the data mappers.
+ */
 public class DataMappers {
 
     private final JPAContext context;
 
+    /**
+     * Creates a new instance of the {@link DataMappers} class.
+     *
+     * @param context The JPA context
+     */
     public DataMappers(JPAContext context) {
         this.context = context;
     }
 
+    /**
+     * Creates the data mapper for the {@link Region} entity.
+     */
     protected class RegionDataMapper implements RegionMapper {
 
         /**
-         * Creates a new entity in the database.
+         * Creates a new region in the database.
          *
-         * @param entity Entity to be created
-         * @return The key of the created entity
+         * @param entity region to be created
+         * @return The key of the created region
          */
         @Override
         public String create(Region entity) {
@@ -56,10 +67,10 @@ public class DataMappers {
         }
 
         /**
-         * Reads an entity from the database.
+         * Reads a region from the database.
          *
-         * @param id Key of the entity to be read
-         * @return The entity with the given key
+         * @param id Key of the region to be read
+         * @return The region with the given key
          */
         @Override
         public Region read(String id) {
@@ -67,10 +78,10 @@ public class DataMappers {
         }
 
         /**
-         * Updates an entity in the database.
+         * Updates a region in the database.
          *
-         * @param entity Entity to be updated
-         * @return The key of the updated entity
+         * @param entity region to be updated
+         * @return The key of the updated region
          */
         @Override
         public String update(Region entity) {
@@ -86,9 +97,9 @@ public class DataMappers {
         }
 
         /**
-         * Deletes an entity from the database.
+         * Deletes a region from the database.
          *
-         * @param id Key of the entity to be deleted
+         * @param id Key of the region to be deleted
          */
         @Override
         public void delete(String id) {
@@ -102,13 +113,16 @@ public class DataMappers {
         }
     }
 
+    /**
+     * Creates the data mapper for the {@link Player} entity.
+     */
     protected class PlayerDataMapper implements PlayerMapper {
 
         /**
-         * Creates a new entity in the database.
+         * Creates a new player in the database.
          *
-         * @param entity Entity to be created
-         * @return The key of the created entity
+         * @param entity player to be created
+         * @return The key of the created player
          */
         @Override
         public Integer create(Player entity) {
@@ -119,10 +133,10 @@ public class DataMappers {
         }
 
         /**
-         * Reads an entity from the database.
+         * Reads a player from the database.
          *
-         * @param id Key of the entity to be read
-         * @return The entity with the given key
+         * @param id Key of the player to be read
+         * @return The player with the given key
          */
         @Override
         public Player read(Integer id) {
@@ -130,10 +144,10 @@ public class DataMappers {
         }
 
         /**
-         * Updates an entity in the database.
+         * Updates a player in the database.
          *
-         * @param entity Entity to be updated
-         * @return The key of the updated entity
+         * @param entity Player to be updated
+         * @return The key of the updated player
          */
         @Override
         public Integer update(Player entity) {
@@ -153,9 +167,9 @@ public class DataMappers {
         }
 
         /**
-         * Deletes an entity from the database.
+         * Deletes a player from the database.
          *
-         * @param id Key of the entity to be deleted
+         * @param id Key of the player to be deleted
          */
         @Override
         public void delete(Integer id) {
@@ -171,13 +185,16 @@ public class DataMappers {
         }
     }
 
+    /**
+     * Creates the data mapper for the {@link PlayerStats} entity.
+     */
     protected class PlayerStatsDataMapper implements PlayerStatsMapper {
 
         /**
-         * Creates a new entity in the database.
+         * Creates a new player stats in the database.
          *
-         * @param entity Entity to be created
-         * @return The key of the created entity
+         * @param entity PlayerStats to be created
+         * @return The key of the created player stats
          */
         @Override
         public Integer create(PlayerStats entity) {
@@ -188,10 +205,10 @@ public class DataMappers {
         }
 
         /**
-         * Reads an entity from the database.
+         * Reads a player stats from the database.
          *
-         * @param id Key of the entity to be read
-         * @return The entity with the given key
+         * @param id Key of the PlayerStats to be read
+         * @return The player stats with the given key
          */
         @Override
         public PlayerStats read(Integer id) {
@@ -199,10 +216,10 @@ public class DataMappers {
         }
 
         /**
-         * Updates an entity in the database.
+         * Updates a player stats in the database.
          *
-         * @param entity Entity to be updated
-         * @return The key of the updated entity
+         * @param entity PlayerStats to be updated
+         * @return The key of the updated player stats
          */
         @Override
         public Integer update(PlayerStats entity) {
@@ -220,9 +237,9 @@ public class DataMappers {
         }
 
         /**
-         * Deletes an entity from the database.
+         * Deletes a player stats from the database.
          *
-         * @param id Key of the entity to be deleted
+         * @param id Key of the PlayerStats to be deleted
          */
         @Override
         public void delete(Integer id) {
@@ -230,13 +247,16 @@ public class DataMappers {
         }
     }
 
+    /**
+     * Creates the data mapper for the {@link Game} entity.
+     */
     protected class GameDataMapper implements GameMapper {
 
         /**
-         * Creates a new entity in the database.
+         * Creates a new game in the database.
          *
-         * @param entity Entity to be created
-         * @return The key of the created entity
+         * @param entity Game to be created
+         * @return The key of the created game
          */
         @Override
         public Alphanumeric create(Game entity) {
@@ -247,10 +267,10 @@ public class DataMappers {
         }
 
         /**
-         * Reads an entity from the database.
+         * Reads a game from the database.
          *
-         * @param id Key of the entity to be read
-         * @return The entity with the given key
+         * @param id Key of the game to be read
+         * @return The game with the given key
          */
         @Override
         public Game read(Alphanumeric id) {
@@ -258,10 +278,10 @@ public class DataMappers {
         }
 
         /**
-         * Updates an entity in the database.
+         * Updates a game in the database.
          *
-         * @param entity Entity to be updated
-         * @return The key of the updated entity
+         * @param entity game to be updated
+         * @return The key of the updated game
          */
         @Override
         public Alphanumeric update(Game entity) {
@@ -278,9 +298,9 @@ public class DataMappers {
         }
 
         /**
-         * Deletes an entity from the database.
+         * Deletes a game from the database.
          *
-         * @param id Key of the entity to be deleted
+         * @param id Key of the game to be deleted
          */
         @Override
         public void delete(Alphanumeric id) {
@@ -296,13 +316,16 @@ public class DataMappers {
         }
     }
 
+    /**
+     * Creates the data mapper for the {@link GameStats} entity.
+     */
     protected class GameStatsDataMapper implements GameStatsMapper {
 
         /**
-         * Creates a new entity in the database.
+         * Creates a new game stats in the database.
          *
-         * @param entity Entity to be created
-         * @return The key of the created entity
+         * @param entity GameStats to be created
+         * @return The key of the created game stats
          */
         @Override
         public Alphanumeric create(GameStats entity) {
@@ -313,10 +336,10 @@ public class DataMappers {
         }
 
         /**
-         * Reads an entity from the database.
+         * Reads a game stats from the database.
          *
-         * @param id Key of the entity to be read
-         * @return The entity with the given key
+         * @param id Key of the game stats to be read
+         * @return The game stats with the given key
          */
         @Override
         public GameStats read(Alphanumeric id) {
@@ -324,10 +347,10 @@ public class DataMappers {
         }
 
         /**
-         * Updates an entity in the database.
+         * Updates a game stats in the database.
          *
-         * @param entity Entity to be updated
-         * @return The key of the updated entity
+         * @param entity game stats to be updated
+         * @return The key of the updated game stats
          */
         @Override
         public Alphanumeric update(GameStats entity) {
@@ -346,9 +369,9 @@ public class DataMappers {
         }
 
         /**
-         * Deletes an entity from the database.
+         * Deletes a game stats from the database.
          *
-         * @param id Key of the entity to be deleted
+         * @param id Key of the game stats to be deleted
          */
         @Override
         public void delete(Alphanumeric id) {
@@ -356,13 +379,16 @@ public class DataMappers {
         }
     }
 
+    /**
+     * Creates the data mapper for the {@link Match} entity.
+     */
     protected class MatchDataMapper implements MatchMapper {
 
         /**
-         * Creates a new entity in the database.
+         * Creates a new match in the database.
          *
-         * @param entity Entity to be created
-         * @return The key of the created entity
+         * @param entity match to be created
+         * @return The key of the created match
          */
         @Override
         public PartidaId create(Match entity) {
@@ -373,10 +399,10 @@ public class DataMappers {
         }
 
         /**
-         * Reads an entity from the database.
+         * Reads a match from the database.
          *
-         * @param id Key of the entity to be read
-         * @return The entity with the given key
+         * @param id Key of the match to be read
+         * @return The match with the given key
          */
         @Override
         public Match read(PartidaId id) {
@@ -384,10 +410,10 @@ public class DataMappers {
         }
 
         /**
-         * Updates an entity in the database.
+         * Updates a match in the database.
          *
-         * @param entity Entity to be updated
-         * @return The key of the updated entity
+         * @param entity match to be updated
+         * @return The key of the updated match
          */
         @Override
         public PartidaId update(Match entity) {
@@ -395,9 +421,9 @@ public class DataMappers {
         }
 
         /**
-         * Deletes an entity from the database.
+         * Deletes a match from the database.
          *
-         * @param id Key of the entity to be deleted
+         * @param id Key of the match to be deleted
          */
         @Override
         public void delete(PartidaId id) {
@@ -405,13 +431,16 @@ public class DataMappers {
         }
     }
 
+    /**
+     * Creates the data mapper for the {@link NormalMatch} entity.
+     */
     protected class NormalMatchDataMapper implements NormalMatchMapper {
 
         /**
-         * Creates a new entity in the database.
+         * Creates a new normal match in the database.
          *
-         * @param entity Entity to be created
-         * @return The key of the created entity
+         * @param entity normal match to be created
+         * @return The key of the created normal match
          */
         @Override
         public PartidaNormalId create(NormalMatch entity) {
@@ -422,10 +451,10 @@ public class DataMappers {
         }
 
         /**
-         * Reads an entity from the database.
+         * Reads a normal match from the database.
          *
-         * @param id Key of the entity to be read
-         * @return The entity with the given key
+         * @param id Key of the normal match to be read
+         * @return The normal match with the given key
          */
         @Override
         public NormalMatch read(PartidaNormalId id) {
@@ -433,10 +462,10 @@ public class DataMappers {
         }
 
         /**
-         * Updates an entity in the database.
+         * Updates a normal match in the database.
          *
-         * @param entity Entity to be updated
-         * @return The key of the updated entity
+         * @param entity normal match to be updated
+         * @return The key of the updated normal match
          */
         @Override
         public PartidaNormalId update(NormalMatch entity) {
@@ -455,9 +484,9 @@ public class DataMappers {
         }
 
         /**
-         * Deletes an entity from the database.
+         * Deletes a normal match from the database.
          *
-         * @param id Key of the entity to be deleted
+         * @param id Key of the normal match to be deleted
          */
         @Override
         public void delete(PartidaNormalId id) {
@@ -471,10 +500,13 @@ public class DataMappers {
         }
     }
 
+    /**
+     * Creates the data mapper for the {@link MultiPlayerMatch} entity.
+     */
     protected class MultiPlayerMatchDataMapper implements MultiplayerMatchMapper {
 
         /**
-         * Creates a new entity in the database.
+         * Creates a new multiplayer match in the database.
          *
          * @param entity Entity to be created
          * @return The key of the created entity
@@ -488,10 +520,10 @@ public class DataMappers {
         }
 
         /**
-         * Reads an entity from the database.
+         * Reads a multiplayer match from the database.
          *
-         * @param id Key of the entity to be read
-         * @return The entity with the given key
+         * @param id Key of the multiplayer match to be read
+         * @return The multiplayer match with the given key
          */
         @Override
         public MultiPlayerMatch read(PartidaMultijogadorId id) {
@@ -499,10 +531,10 @@ public class DataMappers {
         }
 
         /**
-         * Updates an entity in the database.
+         * Updates a multiplayer match in the database.
          *
-         * @param entity Entity to be updated
-         * @return The key of the updated entity
+         * @param entity multiplayer match to be updated
+         * @return The key of the updated multiplayer match
          */
         @Override
         public PartidaMultijogadorId update(MultiPlayerMatch entity) {
@@ -521,9 +553,9 @@ public class DataMappers {
         }
 
         /**
-         * Deletes an entity from the database.
+         * Deletes a multiplayer match from the database.
          *
-         * @param id Key of the entity to be deleted
+         * @param id Key of the multiplayer match to be deleted
          */
         @Override
         public void delete(PartidaMultijogadorId id) {
@@ -537,13 +569,16 @@ public class DataMappers {
         }
     }
 
+    /**
+     * Creates the data mapper for the {@link Badge} entity.
+     */
     protected class BadgeDataMapper implements BadgeMapper {
 
         /**
-         * Creates a new entity in the database.
+         * Creates a new badge in the database.
          *
-         * @param entity Entity to be created
-         * @return The key of the created entity
+         * @param entity badge to be created
+         * @return The key of the created badge
          */
         @Override
         public CrachaId create(Badge entity) {
@@ -554,10 +589,10 @@ public class DataMappers {
         }
 
         /**
-         * Reads an entity from the database.
+         * Reads a badge from the database.
          *
-         * @param id Key of the entity to be read
-         * @return The entity with the given key
+         * @param id Key of the badge to be read
+         * @return The badge with the given key
          */
         @Override
         public Badge read(CrachaId id) {
@@ -565,10 +600,10 @@ public class DataMappers {
         }
 
         /**
-         * Updates an entity in the database.
+         * Updates a badge in the database.
          *
-         * @param entity Entity to be updated
-         * @return The key of the updated entity
+         * @param entity badge to be updated
+         * @return The key of the updated badge
          */
         @Override
         public CrachaId update(Badge entity) {
@@ -588,9 +623,9 @@ public class DataMappers {
         }
 
         /**
-         * Deletes an entity from the database.
+         * Deletes a badge from the database.
          *
-         * @param id Key of the entity to be deleted
+         * @param id Key of the badge to be deleted
          */
         @Override
         public void delete(CrachaId id) {
@@ -604,13 +639,16 @@ public class DataMappers {
         }
     }
 
+    /**
+     * Creates the data mapper for the {@link Chat} entity.
+     */
     protected class ChatDataMapper implements ChatMapper {
 
         /**
-         * Creates a new entity in the database.
+         * Creates a new chat in the database.
          *
-         * @param entity Entity to be created
-         * @return The key of the created entity
+         * @param entity chat to be created
+         * @return The key of the created chat
          */
         @Override
         public Integer create(Chat entity) {
@@ -621,10 +659,10 @@ public class DataMappers {
         }
 
         /**
-         * Reads an entity from the database.
+         * Reads a chat from the database.
          *
-         * @param id Key of the entity to be read
-         * @return The entity with the given key
+         * @param id Key of the chat to be read
+         * @return The chat with the given key
          */
         @Override
         public Chat read(Integer id) {
@@ -632,10 +670,10 @@ public class DataMappers {
         }
 
         /**
-         * Updates an entity in the database.
+         * Updates a chat in the database.
          *
-         * @param entity Entity to be updated
-         * @return The key of the updated entity
+         * @param entity chat to be updated
+         * @return The key of the updated chat
          */
         @Override
         public Integer update(Chat entity) {
@@ -652,9 +690,9 @@ public class DataMappers {
         }
 
         /**
-         * Deletes an entity from the database.
+         * Deletes a chat from the database.
          *
-         * @param id Key of the entity to be deleted
+         * @param id Key of the chat to be deleted
          */
         @Override
         public void delete(Integer id) {
@@ -668,13 +706,16 @@ public class DataMappers {
         }
     }
 
+    /**
+     * Creates the data mapper for the {@link Message} entity.
+     */
     protected class MessageDataMapper implements MessageMapper {
 
         /**
-         * Creates a new entity in the database.
+         * Creates a new message in the database.
          *
-         * @param entity Entity to be created
-         * @return The key of the created entity
+         * @param entity message to be created
+         * @return The key of the created message
          */
         @Override
         public MensagemId create(Message entity) {
@@ -685,10 +726,10 @@ public class DataMappers {
         }
 
         /**
-         * Reads an entity from the database.
+         * Reads a message from the database.
          *
-         * @param id Key of the entity to be read
-         * @return The entity with the given key
+         * @param id Key of the message to be read
+         * @return The message with the given key
          */
         @Override
         public Message read(MensagemId id) {
@@ -696,10 +737,10 @@ public class DataMappers {
         }
 
         /**
-         * Updates an entity in the database.
+         * Updates a message in the database.
          *
-         * @param entity Entity to be updated
-         * @return The key of the updated entity
+         * @param entity message to be updated
+         * @return The key of the updated message
          */
         @Override
         public MensagemId update(Message entity) {
@@ -721,9 +762,9 @@ public class DataMappers {
         }
 
         /**
-         * Deletes an entity from the database.
+         * Deletes a message from the database.
          *
-         * @param id Key of the entity to be deleted
+         * @param id Key of the message to be deleted
          */
         @Override
         public void delete(MensagemId id) {

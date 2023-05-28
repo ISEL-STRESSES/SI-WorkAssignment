@@ -16,9 +16,8 @@ import pt.isel.model.types.PlayerState;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-
 /**
- * Mapping of table "Jogador" present in the database.
+ * Represents a player
  */
 @Entity
 @NamedQuery(name = "Jogador.findByKey", query = "SELECT j FROM Jogador j where j.id = :id")
@@ -106,41 +105,83 @@ public class Jogador implements Player {
     @OneToMany(mappedBy = "idPlayer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Joga> playMatches = new LinkedHashSet<>();
 
-    // Constructors
+    /**
+     * Empty constructor
+     */
     public Jogador() {
     }
 
-    public Jogador(String username, Email email, PlayerState estado, Region region) {
+    /**
+     * Constructor
+     *
+     * @param username the player username
+     * @param email    the player email
+     * @param state    the player state
+     * @param region   the player region name
+     */
+    public Jogador(String username, Email email, PlayerState state, Region region) {
         setUsername(username);
         setEmail(email);
-        setState(estado);
+        setState(state);
         setRegion(region);
     }
 
+    /**
+     * Constructor
+     *
+     * @param username the player username
+     * @param email    the player email
+     * @param region   the player region name
+     */
     public Jogador(String username, Email email, Region region) {
         this(username, email, PlayerState.ACTIVE, region);
     }
 
+    /**
+     * Getter function for the player id
+     *
+     * @return the player id
+     */
     @Override
     public Integer getId() {
         return this.id;
     }
 
+    /**
+     * Getter function for the player username
+     *
+     * @return the player username
+     */
     @Override
     public String getUsername() {
         return this.username;
     }
 
+    /**
+     * Setter function for the player username
+     *
+     * @param userName the player username
+     */
     @Override
     public void setUsername(String userName) {
         this.username = userName;
     }
 
+    /**
+     * Getter function for the player email
+     *
+     * @return the player email
+     */
     @Override
     public Email getEmail() {
         return new Email(this.email);
     }
 
+    /**
+     * Setter function for the player email
+     *
+     * @param email the player email
+     */
     @Override
     public void setEmail(Email email) {
         if (!email.isValid())
@@ -148,6 +189,11 @@ public class Jogador implements Player {
         this.email = email.toString();
     }
 
+    /**
+     * Getter function for the player state
+     *
+     * @return the player state
+     */
     @Override
     public PlayerState getState() {
         return switch (this.state.toLowerCase()) {
@@ -158,6 +204,11 @@ public class Jogador implements Player {
         };
     }
 
+    /**
+     * Setter function for the player state
+     *
+     * @param state the player state
+     */
     @Override
     public void setState(PlayerState state) {
         this.state = switch (state) {
@@ -167,26 +218,51 @@ public class Jogador implements Player {
         };
     }
 
+    /**
+     * Getter function for the player region
+     *
+     * @return the player region
+     */
     @Override
     public Region getRegion() {
         return this.region;
     }
 
+    /**
+     * Setter function for the player region
+     *
+     * @param region the player region
+     */
     @Override
     public void setRegion(Region region) {
         this.region = (Regiao) region;
     }
 
+    /**
+     * Getter function for the player stats
+     *
+     * @return the player stats
+     */
     @Override
     public PlayerStats getStats() {
         return this.stats;
     }
 
+    /**
+     * Setter function for the player stats
+     *
+     * @param stats the player stats
+     */
     @Override
     public void setStats(PlayerStats stats) {
         this.stats = (JogadorEstatistica) stats;
     }
 
+    /**
+     * Getter function for the player messages
+     *
+     * @return the player messages
+     */
     @Override
     public Set<Message> getMessages() {
         return this.messages.stream().collect(
@@ -196,66 +272,131 @@ public class Jogador implements Player {
         );
     }
 
+    /**
+     * Setter function for the player messages
+     *
+     * @param messages the player messages
+     */
     @Override
     public void setMessages(Set<Message> messages) {
         this.messages = messages.stream().map(m -> (Mensagem) m).collect(LinkedHashSet::new, Set::add, Set::addAll);
     }
 
+    /**
+     * Getter function for the player friends
+     *
+     * @return the player friends
+     */
     @Override
     public Set<Amigo> getFriends() {
         return friends;
     }
 
+    /**
+     * Setter function for the player friends
+     *
+     * @param friends the player friends
+     */
     @Override
     public void setFriends(Set<Amigo> friends) {
         this.friends = friends;
     }
 
+    /**
+     * Getter function for the player badges
+     *
+     * @return the player badges
+     */
     @Override
     public Set<Ganha> getBadges() {
         return badges;
     }
 
+    /**
+     * Setter function for the player badges
+     *
+     * @param badges the player badges
+     */
     @Override
     public void setBadges(Set<Ganha> badges) {
         this.badges = badges;
     }
 
+    /**
+     * Getter function for the player chats
+     *
+     * @return the player chats
+     */
     @Override
     public Set<Participa> getChats() {
         return chats;
     }
 
+    /**
+     * Setter function for the player chats
+     *
+     * @param chats the player chats
+     */
     @Override
     public void setChats(Set<Participa> chats) {
         this.chats = chats;
     }
 
+    /**
+     * Getter function for the player purchases
+     *
+     * @return the player purchases
+     */
     @Override
     public Set<Compra> getPurchases() {
         return purchases;
     }
 
+    /**
+     * Setter function for the player purchases
+     *
+     * @param purchases the player purchases
+     */
     @Override
     public void setPurchases(Set<Compra> purchases) {
         this.purchases = purchases;
     }
 
+    /**
+     * Getter function for the player play matches
+     *
+     * @return the player play matches
+     */
     @Override
     public Set<Joga> getPlayMatches() {
         return playMatches;
     }
 
+    /**
+     * Setter function for the player play matches
+     *
+     * @param playMatches the player play matches
+     */
     @Override
     public void setPlayMatches(Set<Joga> playMatches) {
         this.playMatches = playMatches;
     }
 
+    /**
+     * Getter function for the player messages
+     *
+     * @return the player messages
+     */
     @Override
     public boolean addMessage(Message message) {
         return this.messages.add((Mensagem) message);
     }
 
+    /**
+     * Setter function for the player messages
+     *
+     * @param message the player messages
+     */
     @Override
     public boolean removeMessage(Message message) {
         return this.messages.remove((Mensagem) message);

@@ -7,7 +7,7 @@ import pt.isel.model.entities.game.matches.normal.PartidaNormalId;
 import java.util.List;
 
 /**
- * Interface to access the normal matches repository
+ * {@link NormalMatch} repository interface.
  */
 public interface NormalMatchRepository extends Repository<NormalMatch, List<NormalMatch>, PartidaNormalId> {
 }

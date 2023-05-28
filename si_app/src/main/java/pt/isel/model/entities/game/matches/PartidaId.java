@@ -8,6 +8,9 @@ import pt.isel.utils.Pair;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Represents the primary key of the {@link Partida} entity.
+ */
 @Embeddable
 public class PartidaId implements Serializable {
     @Column(name = "nr", nullable = false)
@@ -18,20 +21,6 @@ public class PartidaId implements Serializable {
 
     public String getIdJogo() {
         return idJogo;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PartidaId entity = (PartidaId) o;
-        return Objects.equals(this.nr, entity.nr) &&
-                Objects.equals(this.idJogo, entity.idJogo);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(nr, idJogo);
     }
 
     /**
@@ -88,4 +77,19 @@ public class PartidaId implements Serializable {
     public void setMatchNumber(Integer matchNumber) {
         this.nr = matchNumber;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PartidaId entity = (PartidaId) o;
+        return Objects.equals(this.nr, entity.nr) &&
+                Objects.equals(this.idJogo, entity.idJogo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nr, idJogo);
+    }
+
 }

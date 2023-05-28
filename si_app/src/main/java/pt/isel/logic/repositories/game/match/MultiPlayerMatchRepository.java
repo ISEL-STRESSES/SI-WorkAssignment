@@ -7,7 +7,7 @@ import pt.isel.model.entities.game.matches.multiplayer.PartidaMultijogadorId;
 import java.util.List;
 
 /**
- * Interface to access the multiplayer matches repository
+ * {@link MultiPlayerMatch} repository interface.
  */
 public interface MultiPlayerMatchRepository extends Repository<MultiPlayerMatch, List<MultiPlayerMatch>, PartidaMultijogadorId> {
 }

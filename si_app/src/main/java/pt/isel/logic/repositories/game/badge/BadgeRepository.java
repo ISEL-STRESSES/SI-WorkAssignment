@@ -7,7 +7,7 @@ import pt.isel.model.entities.game.badge.CrachaId;
 import java.util.List;
 
 /**
- * Interface to access the badges repository
+ * {@link Badge} repository interface.
  */
 public interface BadgeRepository extends Repository<Badge, List<Badge>, CrachaId> {
 }

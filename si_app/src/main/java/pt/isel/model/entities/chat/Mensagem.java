@@ -6,6 +6,9 @@ import pt.isel.model.entities.player.Player;
 
 import java.time.LocalDate;
 
+/**
+ * This class represents a message entity
+ */
 @Entity
 @NamedQuery(name = "Mensagem.findByKey", query = "SELECT m FROM Mensagem m WHERE m.id = :key")
 @NamedQuery(name = "Mensagem.findAll", query = "SELECT m FROM Mensagem m")
@@ -31,7 +34,6 @@ public class Mensagem implements Message {
     @Column(name = "data", nullable = false)
     private LocalDate date;
 
-
     /**
      * Default empty constructor
      */
@@ -39,7 +41,7 @@ public class Mensagem implements Message {
     }
 
     /**
-     * Constructor with all attributes except the id
+     * Constructor with all attributes
      *
      * @param id       the message id
      * @param conversa the chat

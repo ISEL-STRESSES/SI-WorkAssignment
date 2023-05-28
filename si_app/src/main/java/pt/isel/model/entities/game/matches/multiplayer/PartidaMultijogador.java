@@ -6,6 +6,9 @@ import pt.isel.model.entities.game.matches.Partida;
 import pt.isel.model.types.Alphanumeric;
 import pt.isel.model.types.MultiPlayerMatchState;
 
+/**
+ * Class that represents a multiplayer match
+ */
 @Entity
 @NamedQuery(name = "PartidaMultijogador.findByKey", query = "SELECT p FROM PartidaMultijogador p WHERE p.id = :key")
 @NamedQuery(name = "PartidaMultijogador.findAll", query = "SELECT p FROM PartidaMultijogador p")

@@ -6,6 +6,9 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Represents the primary key of the {@link Mensagem} entity.
+ */
 @Embeddable
 public class MensagemId implements Serializable {
     @Column(name = "nr_ordem", nullable = false)

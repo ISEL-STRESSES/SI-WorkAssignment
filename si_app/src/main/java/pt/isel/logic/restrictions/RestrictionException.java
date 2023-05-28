@@ -1,9 +1,8 @@
 package pt.isel.logic.restrictions;
 
 /**
- * This class is used only to represent an exception that is used only when one of the restrictions isn´t verified.
- *
- * @see Exception
+ * Exception thrown when a restriction is violated.
+ * Extends {@link Exception}.
  */
 public class RestrictionException extends Exception {
     public RestrictionException(String message) {

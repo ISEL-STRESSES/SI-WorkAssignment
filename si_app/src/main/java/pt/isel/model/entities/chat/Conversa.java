@@ -6,6 +6,9 @@ import pt.isel.model.associacions.participates.Participa;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * This class represents a chat entity
+ */
 @Entity
 @NamedQuery(name = "Conversa.findByKey", query = "SELECT c FROM Conversa c WHERE c.id = :key")
 @NamedQuery(name = "Conversa.findAll", query = "SELECT c FROM Conversa c")
@@ -112,11 +115,21 @@ public class Conversa implements Chat {
         );
     }
 
+    /**
+     * Getter function for the chat players
+     *
+     * @return the chat players
+     */
     @Override
     public Set<Participa> getPlayers() {
         return players;
     }
 
+    /**
+     * Setter function for the chat players
+     *
+     * @param players the chat players
+     */
     @Override
     public void setPlayers(Set<Participa> players) {
         this.players = players;

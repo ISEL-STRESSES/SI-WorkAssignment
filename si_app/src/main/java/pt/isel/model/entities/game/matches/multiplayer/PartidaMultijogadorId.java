@@ -8,6 +8,9 @@ import pt.isel.utils.Pair;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Represents the primary key of the {@link PartidaMultijogador} entity.
+ */
 @Embeddable
 public class PartidaMultijogadorId implements Serializable {
     @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")

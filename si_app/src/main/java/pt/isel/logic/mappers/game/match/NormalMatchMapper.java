@@ -4,5 +4,8 @@ import pt.isel.logic.mappers.DataMapper;
 import pt.isel.model.entities.game.matches.normal.NormalMatch;
 import pt.isel.model.entities.game.matches.normal.PartidaNormalId;
 
+/**
+ * {@link NormalMatch} mapper interface to be used by the data mappers.
+ */
 public interface NormalMatchMapper extends DataMapper<NormalMatch, PartidaNormalId> {
 }

@@ -6,6 +6,9 @@ import pt.isel.model.entities.game.Jogo;
 import pt.isel.model.types.Alphanumeric;
 import pt.isel.model.types.URL;
 
+/**
+ * class that represents a badge
+ */
 @Entity
 @NamedQuery(name = "Cracha.findAll", query = "SELECT c FROM Cracha c")
 @NamedQuery(name = "Cracha.findByKey", query = "SELECT c FROM Cracha c where c.id = :id")
@@ -24,7 +27,6 @@ public class Cracha implements Badge {
 
     @Column(name = "imagem", columnDefinition = "url(0, 0) not null")
     private String imagem;
-
 
     /**
      * Getter function for the badge id

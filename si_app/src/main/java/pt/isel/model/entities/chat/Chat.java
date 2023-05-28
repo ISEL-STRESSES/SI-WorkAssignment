@@ -50,7 +50,17 @@ public interface Chat {
      */
     void setMessages(Set<Message> messages);
 
+    /**
+     * Getter function for the chat players
+     *
+     * @return the chat players
+     */
     Set<Participa> getPlayers();
 
+    /**
+     * Setter function for the chat players
+     *
+     * @param players the chat players
+     */
     void setPlayers(Set<Participa> players);
 }

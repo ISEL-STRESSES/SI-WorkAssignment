@@ -5,7 +5,7 @@ import pt.isel.model.entities.chat.MensagemId;
 import pt.isel.model.entities.chat.Message;
 
 /**
- * Interface to be implemented by the data mappers that perform operations on the {@link Message} entity type.
+ * {@link Message} mapper interface to be used by the data mappers.
  */
 public interface MessageMapper extends DataMapper<Message, MensagemId> {
 }

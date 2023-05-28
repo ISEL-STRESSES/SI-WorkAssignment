@@ -2,10 +2,14 @@ package pt.isel.model.associacions.friend;
 
 import jakarta.persistence.*;
 import pt.isel.model.entities.player.Jogador;
+import pt.isel.model.entities.player.Player;
 
+/**
+ * This class represents a friendship between two players.
+ */
 @Entity
 @Table(name = "amigo", schema = "public")
-public class Amigo {
+public class Amigo implements Friend {
     @EmbeddedId
     private AmigoId id;
 
@@ -17,28 +21,63 @@ public class Amigo {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Jogador idPlayer2;
 
+    /**
+     * Getter function for the friendship id
+     *
+     * @return the friendship id
+     */
+    @Override
     public AmigoId getId() {
         return id;
     }
 
+    /**
+     * Setter function for the friendship id
+     *
+     * @param id the friendship id
+     */
+    @Override
     public void setId(AmigoId id) {
         this.id = id;
     }
 
-    public Jogador getIdPlayer1() {
+    /**
+     * Getter function for the first player in the friendship
+     *
+     * @return the first player
+     */
+    @Override
+    public Player getIdPlayer1() {
         return idPlayer1;
     }
 
-    public void setIdPlayer1(Jogador idPlayer1) {
-        this.idPlayer1 = idPlayer1;
+    /**
+     * Setter function for the first player in the friendship
+     *
+     * @param idPlayer1 the first player
+     */
+    @Override
+    public void setIdPlayer1(Player idPlayer1) {
+        this.idPlayer1 = (Jogador) idPlayer1;
     }
 
-    public Jogador getIdPlayer2() {
+    /**
+     * Getter function for the second player in the friendship
+     *
+     * @return the second player
+     */
+    @Override
+    public Player getIdPlayer2() {
         return idPlayer2;
     }
 
-    public void setIdPlayer2(Jogador idPlayer2) {
-        this.idPlayer2 = idPlayer2;
+    /**
+     * Setter function for the second player in the friendship
+     *
+     * @param idPlayer2 the second player
+     */
+    @Override
+    public void setIdPlayer2(Player idPlayer2) {
+        this.idPlayer2 = (Jogador) idPlayer2;
     }
-
 }
