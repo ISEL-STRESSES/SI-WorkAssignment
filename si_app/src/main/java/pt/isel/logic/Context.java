@@ -123,9 +123,9 @@ public interface Context extends AutoCloseable {
     MessageRepository getMessages();
 
     /**
-     * Getter for the {@link Repositories.PlayerTotalInfoRepository}
+     * Getter for the {@link PlayerTotalInfoRepository}
      *
-     * @return the {@link Repositories.PlayerTotalInfoRepository}
+     * @return the {@link PlayerTotalInfoRepository}
      */
     PlayerTotalInfoRepository getPlayerTotalInfo();
 }
