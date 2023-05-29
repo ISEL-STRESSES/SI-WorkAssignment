@@ -1,15 +1,14 @@
 package pt.isel.model.views;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import pt.isel.model.types.Email;
 
 /**
  * Mapping for DB view
  */
 @Entity
+@NamedQuery(name = "Jogadortotalinfo.findByKey", query = "SELECT j FROM Jogadortotalinfo j WHERE j.id = :key")
+@NamedQuery(name = "Jogadortotalinfo.findAll", query = "SELECT j FROM Jogadortotalinfo j")
 @Table(name = "jogadortotalinfo", schema = "public")
 public class Jogadortotalinfo {
     @Id

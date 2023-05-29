@@ -26,15 +26,16 @@ import java.util.Set;
 public class Partida implements Match {
     @EmbeddedId
     private PartidaId id;
+
     @Column(name = "data_inicio", nullable = false)
     private LocalDate startDate;
 
     @Column(name = "data_fim")
     private LocalDate endDate;
 
-    @MapsId("idJogo")
+    @MapsId("gameId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_jogo", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "id_jogo", nullable = false)
     private Jogo game;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

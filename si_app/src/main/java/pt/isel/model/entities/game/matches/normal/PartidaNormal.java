@@ -7,7 +7,7 @@ import pt.isel.model.types.Alphanumeric;
 
 /**
  * Class that represents a normal match
- * See {@link pt.isel.model.entities.game.matches.Match}
+ * See {@link Match}
  */
 @Entity
 @NamedQuery(name = "PartidaNormal.findByKey", query = "SELECT p FROM PartidaNormal p WHERE p.id = :key")

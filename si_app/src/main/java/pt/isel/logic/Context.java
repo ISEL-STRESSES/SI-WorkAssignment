@@ -1,5 +1,6 @@
 package pt.isel.logic;
 
+import pt.isel.dataAccess.Repositories;
 import pt.isel.logic.repositories.chat.ChatRepository;
 import pt.isel.logic.repositories.chat.MessageRepository;
 import pt.isel.logic.repositories.game.GameRepository;
@@ -11,6 +12,7 @@ import pt.isel.logic.repositories.game.match.NormalMatchRepository;
 import pt.isel.logic.repositories.player.PlayerRepository;
 import pt.isel.logic.repositories.player.PlayerStatsRepository;
 import pt.isel.logic.repositories.region.RegionRepository;
+import pt.isel.logic.repositories.view.PlayerTotalInfoRepository;
 
 /**
  * Interface that represents a context
@@ -119,4 +121,11 @@ public interface Context extends AutoCloseable {
      * @return the {@link MessageRepository}
      */
     MessageRepository getMessages();
+
+    /**
+     * Getter for the {@link Repositories.PlayerTotalInfoRepository}
+     *
+     * @return the {@link Repositories.PlayerTotalInfoRepository}
+     */
+    PlayerTotalInfoRepository getPlayerTotalInfo();
 }

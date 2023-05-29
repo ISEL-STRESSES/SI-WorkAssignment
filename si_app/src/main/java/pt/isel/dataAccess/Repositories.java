@@ -18,6 +18,7 @@ import pt.isel.model.entities.player.PlayerStats;
 import pt.isel.model.entities.region.Region;
 import pt.isel.model.types.Alphanumeric;
 import pt.isel.model.types.Email;
+import pt.isel.model.views.Jogadortotalinfo;
 
 import java.util.List;
 
@@ -521,6 +522,47 @@ public class Repositories {
         public List<Message> findAll() {
             return context.em.createNamedQuery("Mensagem.findAll", Message.class)
                     .getResultList();
+        }
+    }
+
+    /**
+     * Creates a repository for the view {@link Jogadortotalinfo}
+     */
+    protected class PlayerTotalInfoRepository implements pt.isel.logic.repositories.view.PlayerTotalInfoRepository {
+
+        /**
+         * Finds the Player total info by its key
+         *
+         * @param key Key of the Player
+         * @return PLayer total info
+         */
+        @Override
+        public Jogadortotalinfo findByKey(Integer key) {
+            return context.em.createNamedQuery("Jogadortotalinfo.findByKey", Jogadortotalinfo.class)
+                    .setParameter("key", key)
+                    .getSingleResult();
+        }
+
+        /**
+         * Finds a Collection of Players total info by the given query
+         *
+         * @param jpql   query to be executed
+         * @param params parameters of the query
+         * @return Collection of Players total info
+         */
+        @Override
+        public List<Jogadortotalinfo> find(String jpql, Object... params) {
+            return context.helperQueryImpl(jpql, params);
+        }
+
+        /**
+         * Finds all Players total info
+         *
+         * @return Collection of Players total info
+         */
+        @Override
+        public List<Jogadortotalinfo> findAll() {
+            return null;
         }
     }
 }

@@ -3,7 +3,6 @@ package pt.isel.model.entities.game.matches;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import pt.isel.model.types.Alphanumeric;
-import pt.isel.utils.Pair;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -13,14 +12,18 @@ import java.util.Objects;
  */
 @Embeddable
 public class PartidaId implements Serializable {
-    @Column(name = "nr", nullable = false)
+    @Column(name = "nr", nullable = false, insertable = false, updatable = false)
     private Integer nr;
 
-    @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null")
-    private String idJogo;
+    @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null", insertable = false, updatable = false)
+    private String gameId;
 
-    public String getIdJogo() {
-        return idJogo;
+    public PartidaId() {
+    }
+
+    private PartidaId(Integer nr, Alphanumeric gameId) {
+        this.nr = nr;
+        this.gameId = gameId.toString();
     }
 
     /**
@@ -28,18 +31,19 @@ public class PartidaId implements Serializable {
      *
      * @return the match id
      */
-    public Pair<Alphanumeric, Integer> getId() {
-        return new Pair<>(new Alphanumeric(idJogo), nr);
+    PartidaId getId() {
+        return new PartidaId(nr, new Alphanumeric(gameId));
     }
 
     /**
      * Setter function for the match id
      *
-     * @param matchId the match id
+     * @param nr     the match id
+     * @param gameId the game id
      */
-    public void setId(Pair<Alphanumeric, Integer> matchId) {
-        this.idJogo = matchId.first().toString();
-        this.nr = matchId.second();
+    public void setId(Integer nr, Alphanumeric gameId) {
+        this.gameId = gameId.toString();
+        this.nr = nr;
     }
 
     /**
@@ -48,7 +52,7 @@ public class PartidaId implements Serializable {
      * @return the game id
      */
     public Alphanumeric getGameId() {
-        return new Alphanumeric(idJogo);
+        return new Alphanumeric(gameId);
     }
 
     /**
@@ -57,7 +61,7 @@ public class PartidaId implements Serializable {
      * @param gameId the game id
      */
     public void setGameId(Alphanumeric gameId) {
-        this.idJogo = gameId.toString();
+        this.gameId = gameId.toString();
     }
 
     /**
@@ -84,12 +88,11 @@ public class PartidaId implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         PartidaId entity = (PartidaId) o;
         return Objects.equals(this.nr, entity.nr) &&
-                Objects.equals(this.idJogo, entity.idJogo);
+                Objects.equals(this.gameId, entity.gameId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nr, idJogo);
+        return Objects.hash(nr, gameId);
     }
-
 }

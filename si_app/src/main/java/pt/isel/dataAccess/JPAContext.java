@@ -13,11 +13,10 @@ import pt.isel.logic.repositories.game.match.NormalMatchRepository;
 import pt.isel.logic.repositories.player.PlayerRepository;
 import pt.isel.logic.repositories.player.PlayerStatsRepository;
 import pt.isel.logic.repositories.region.RegionRepository;
+import pt.isel.model.entities.chat.Chat;
 import pt.isel.model.entities.game.Game;
 import pt.isel.model.entities.game.badge.Badge;
-import pt.isel.model.entities.game.matches.multiplayer.PartidaMultijogadorId;
 import pt.isel.model.entities.player.Player;
-import pt.isel.model.entities.chat.Chat;
 import pt.isel.model.types.PlayerState;
 import pt.isel.model.views.Jogadortotalinfo;
 import pt.isel.utils.Pair;
@@ -44,6 +43,7 @@ public class JPAContext implements Context {
     private final Repositories.BadgeRepository badgeRepository;
     private final Repositories.ChatRepository chatRepository;
     private final Repositories.MessageRepository messageRepository;
+    private final Repositories.PlayerTotalInfoRepository playerTotalInfoRepository;
     /* data mappers */
     private final DataMappers.RegionDataMapper regionDataMapper;
     private final DataMappers.PlayerDataMapper playerDataMapper;
@@ -66,7 +66,7 @@ public class JPAContext implements Context {
      * The name of the persistence is set to "si-app.g17".
      */
     public JPAContext() {
-        this("si-app.g17");
+        this("si-app");
     }
 
     /**
@@ -90,6 +90,7 @@ public class JPAContext implements Context {
         this.badgeRepository = repositories.new BadgeRepository();
         this.chatRepository = repositories.new ChatRepository();
         this.messageRepository = repositories.new MessageRepository();
+        this.playerTotalInfoRepository = repositories.new PlayerTotalInfoRepository();
         //data mappers init
         DataMappers dataMappers = new DataMappers(this);
         this.regionDataMapper = dataMappers.new RegionDataMapper();
@@ -309,6 +310,16 @@ public class JPAContext implements Context {
         return messageRepository;
     }
 
+    /**
+     * getter for the {@link Repositories.PlayerTotalInfoRepository}
+     *
+     * @return the {@link Repositories.PlayerTotalInfoRepository}
+     */
+    @Override
+    public Repositories.PlayerTotalInfoRepository getPlayerTotalInfo() {
+        return playerTotalInfoRepository;
+    }
+
     /* exercises */
     /* 2d1 */
 
@@ -326,6 +337,7 @@ public class JPAContext implements Context {
     }
 
     /* 2d2 */
+
     /**
      * TODO
      */
@@ -340,6 +352,7 @@ public class JPAContext implements Context {
     }
 
     /* 2e */
+
     /**
      * TODO
      */
@@ -353,6 +366,7 @@ public class JPAContext implements Context {
     }
 
     /* 2f */
+
     /**
      * TODO
      */
@@ -366,6 +380,7 @@ public class JPAContext implements Context {
     }
 
     /* 2g */
+
     /**
      * TODO
      */
@@ -379,6 +394,7 @@ public class JPAContext implements Context {
     }
 
     /* 2h */
+
     /**
      * TODO
      */
@@ -393,6 +409,7 @@ public class JPAContext implements Context {
     }
 
     /* 2i */
+
     /**
      * TODO
      */
@@ -401,14 +418,15 @@ public class JPAContext implements Context {
         Integer chatId;
         Query q = em.createNativeQuery("call iniciarConversa(?, ?, ?)")
                 .setParameter(1, player1.getId())
-                .setParameter(2, player2.getId())
-                .setParameter(3, chatId);
+                .setParameter(2, player2.getId());
+        //.setParameter(3, chatId);
         q.executeUpdate();
         commit();
-        return chatId;
+        return null;
     }
 
     /* 2j */
+
     /**
      * TODO
      */
@@ -422,6 +440,7 @@ public class JPAContext implements Context {
     }
 
     /* 2k */
+
     /**
      * TODO
      */
@@ -437,7 +456,11 @@ public class JPAContext implements Context {
 
     /* 2l */
     // view
-    public List<Jogadortotalinfo> getPlayerTotalInfo() {
+
+    /**
+     * TODO
+     */
+    public List<Jogadortotalinfo> getPlayersTotalInfoFromDB() {
         beginTransaction();
         Query q = em.createNativeQuery("CREATE OR REPLACE VIEW jogadorTotalInfo AS" +
                 " SELECT j.id, j.estado, j.email, " +
@@ -449,7 +472,7 @@ public class JPAContext implements Context {
         commit();
 
         beginTransaction();
-        List<Jogadortotalinfo> result; // = viewRepository.findAll();
+        List<Jogadortotalinfo> result = playerTotalInfoRepository.findAll();
         commit();
         return result;
     }
