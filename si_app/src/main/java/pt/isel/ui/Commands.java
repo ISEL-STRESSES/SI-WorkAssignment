@@ -70,11 +70,13 @@ public class Commands {
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
                     Region region = ctx.getRegions().findByKey(regionName);
-                    if (region == null)
-                        throw new Exception("Region not found.");
-
+                    if (region == null) {
+                        System.out.println("Region not found.");
+                        return;
+                    }
                     Player player = new Jogador(username, email, region);
                     ctx.createPlayer(player);
+                    ctx.commit();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

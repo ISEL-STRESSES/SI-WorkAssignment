@@ -13,7 +13,14 @@ import pt.isel.logic.repositories.game.match.NormalMatchRepository;
 import pt.isel.logic.repositories.player.PlayerRepository;
 import pt.isel.logic.repositories.player.PlayerStatsRepository;
 import pt.isel.logic.repositories.region.RegionRepository;
+import pt.isel.model.entities.game.Game;
+import pt.isel.model.entities.game.badge.Badge;
+import pt.isel.model.entities.game.matches.multiplayer.PartidaMultijogadorId;
 import pt.isel.model.entities.player.Player;
+import pt.isel.model.entities.chat.Chat;
+import pt.isel.model.types.PlayerState;
+import pt.isel.model.views.Jogadortotalinfo;
+import pt.isel.utils.Pair;
 
 import java.util.List;
 
@@ -52,7 +59,7 @@ public class JPAContext implements Context {
     protected EntityManager em;
     private EntityManagerFactory emf;
     private EntityTransaction tx;
-    private int txcount;
+    private int tx_count;
 
     /**
      * Constructor of the JPAContext class.
@@ -107,9 +114,9 @@ public class JPAContext implements Context {
         if (tx == null || !tx.isActive()) {
             tx = em.getTransaction();
             tx.begin();
-            txcount = 0;
+            tx_count = 0;
         }
-        ++txcount;
+        ++tx_count;
     }
 
     /**
@@ -118,8 +125,8 @@ public class JPAContext implements Context {
      */
     @Override
     public void commit() {
-        --txcount;
-        if (txcount == 0 && tx != null) {
+        --tx_count;
+        if (tx_count == 0 && tx != null) {
             tx.commit();
             tx = null;
         }
@@ -139,7 +146,7 @@ public class JPAContext implements Context {
      */
     @Override
     public void rollback() {
-        if (txcount == 0 && tx != null) {
+        if (tx_count == 0 && tx != null) {
             tx.rollback();
             tx = null;
         }
@@ -303,7 +310,7 @@ public class JPAContext implements Context {
     }
 
     /* exercises */
-    /*2d1*/
+    /* 2d1 */
 
     /**
      * TODO
@@ -317,6 +324,137 @@ public class JPAContext implements Context {
         q.executeUpdate();
         commit();
     }
-    /*2d2*/
 
+    /* 2d2 */
+    /**
+     * TODO
+     */
+    public Player updatePlayerStatus(Player player, PlayerState newState) {
+        beginTransaction();
+        Query q = em.createNativeQuery("call update_estado_jogador(?, ?)")
+                .setParameter(1, player.getId())
+                .setParameter(2, newState.toString());
+        q.executeUpdate();
+        commit();
+        return playerRepository.findByKey(player.getId());
+    }
+
+    /* 2e */
+    /**
+     * TODO
+     */
+    public Integer playerTotalPoints(Player player) {
+        beginTransaction();
+        Query q = em.createNativeQuery("call totalPontosJogador(?)")
+                .setParameter(1, player.getId());
+        Integer result = (Integer) q.getSingleResult();
+        commit();
+        return result;
+    }
+
+    /* 2f */
+    /**
+     * TODO
+     */
+    public Integer playerTotalGames(Player player) {
+        beginTransaction();
+        Query q = em.createNativeQuery("call totalJogosJogador(?)")
+                .setParameter(1, player.getId());
+        Integer result = (Integer) q.getSingleResult();
+        commit();
+        return result;
+    }
+
+    /* 2g */
+    /**
+     * TODO
+     */
+    public List<Pair<Player, Integer>> gamePointsByPlayer(Game game) {
+        beginTransaction();
+        Query q = em.createNativeQuery("call PontosJogoPorJogador(?)")
+                .setParameter(1, game.getId());
+        List<Pair<Player, Integer>> result = q.getResultList();
+        commit();
+        return result;
+    }
+
+    /* 2h */
+    /**
+     * TODO
+     */
+    public void giveBadgeToPlayer(Player player, Game game, Badge badge) {
+        beginTransaction();
+        Query q = em.createNativeQuery("call associarCracha(?, ?, ?)")
+                .setParameter(1, player.getId())
+                .setParameter(2, game.getId())
+                .setParameter(3, badge.getId());
+        q.executeUpdate();
+        commit();
+    }
+
+    /* 2i */
+    /**
+     * TODO
+     */
+    public Integer initiateChat(Player player1, Player player2) {
+        beginTransaction();
+        Integer chatId;
+        Query q = em.createNativeQuery("call iniciarConversa(?, ?, ?)")
+                .setParameter(1, player1.getId())
+                .setParameter(2, player2.getId())
+                .setParameter(3, chatId);
+        q.executeUpdate();
+        commit();
+        return chatId;
+    }
+
+    /* 2j */
+    /**
+     * TODO
+     */
+    public void addPlayerToChat(Player player, Chat chat) {
+        beginTransaction();
+        Query q = em.createNativeQuery("call juntarConversa(?, ?)")
+                .setParameter(1, player.getId())
+                .setParameter(2, chat.getId());
+        q.executeUpdate();
+        commit();
+    }
+
+    /* 2k */
+    /**
+     * TODO
+     */
+    public void sendMessage(Player player, Chat chat, String message) {
+        beginTransaction();
+        Query q = em.createNativeQuery("call enviarMensagem(?, ?, ?)")
+                .setParameter(1, player.getId())
+                .setParameter(2, chat.getId())
+                .setParameter(3, message);
+        q.executeUpdate();
+        commit();
+    }
+
+    /* 2l */
+    // view
+    public List<Jogadortotalinfo> getPlayerTotalInfo() {
+        beginTransaction();
+        Query q = em.createNativeQuery("CREATE OR REPLACE VIEW jogadorTotalInfo AS" +
+                " SELECT j.id, j.estado, j.email, " +
+                "totaljogosjogador(?) AS totalJogos, " +
+                "totalpartidasjogador(?) AS totalPartidas, " +
+                "totalpontosjogador(?) AS totalPontos " +
+                "FROM jogador j WHERE j.estado <>'BANIDO'");
+        q.executeUpdate();
+        commit();
+
+        beginTransaction();
+        List<Jogadortotalinfo> result; // = viewRepository.findAll();
+        commit();
+        return result;
+    }
+    /* 2m */
+    // trigger
+    /* 2n */
+    // trigger
 }
