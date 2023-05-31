@@ -6,8 +6,8 @@ import jakarta.persistence.*;
  * Represents a player stats
  */
 @Entity
-@NamedQuery(name = "JogadorEstatistica.findAll", query = "SELECT je FROM JogadorEstatistica je")
-@NamedQuery(name = "JogadorEstatistica.findByKey", query = "SELECT je FROM JogadorEstatistica je where je.id = :id")
+@NamedQuery(name = "Jogador_Estatistica.findAll", query = "SELECT je FROM JogadorEstatistica je")
+@NamedQuery(name = "Jogador_Estatistica.findByKey", query = "SELECT je FROM JogadorEstatistica je where je.id = :id")
 @Table(name = "jogador_estatistica", schema = "public")
 public class JogadorEstatistica implements PlayerStats {
     @Id

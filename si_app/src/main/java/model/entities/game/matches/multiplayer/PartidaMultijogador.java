@@ -3,6 +3,7 @@ package model.entities.game.matches.multiplayer;
 import jakarta.persistence.*;
 import model.entities.game.matches.Match;
 import model.entities.game.matches.Partida;
+import model.entities.game.matches.PartidaId;
 import model.types.Alphanumeric;
 import model.types.MultiPlayerMatchState;
 
@@ -10,19 +11,18 @@ import model.types.MultiPlayerMatchState;
  * Class that represents a multiplayer match
  */
 @Entity
-@NamedQuery(name = "PartidaMultijogador.findByKey", query = "SELECT p FROM PartidaMultijogador p WHERE p.id = :key")
-@NamedQuery(name = "PartidaMultijogador.findAll", query = "SELECT p FROM PartidaMultijogador p")
+@NamedQuery(name = "Partida_multijogador.findByKey", query = "SELECT p FROM PartidaMultijogador p WHERE p.id = :key")
+@NamedQuery(name = "Partida_multijogador.findAll", query = "SELECT p FROM PartidaMultijogador p")
 @Table(name = "partida_multijogador", schema = "public")
 public class PartidaMultijogador implements MultiPlayerMatch {
     @EmbeddedId
-    private PartidaMultijogadorId id;
+    private PartidaId id;
 
-    //@MapsId("nrMatch")
-    //@MapsId("idGame")
+//    @MapsId("nrMatch")
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumns({
-            @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo", nullable = false),
-            @JoinColumn(name = "nr_partida", referencedColumnName = "nr", nullable = false)
+            @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo", nullable = false, insertable = false, updatable = false),
+            @JoinColumn(name = "nr_partida", referencedColumnName = "nr", nullable = false, insertable = false, updatable = false)
     })
     private Partida match;
 
@@ -35,7 +35,7 @@ public class PartidaMultijogador implements MultiPlayerMatch {
      * @return the match id
      */
     @Override
-    public PartidaMultijogadorId getId() {
+    public PartidaId getId() {
         return id;
     }
 
@@ -45,7 +45,7 @@ public class PartidaMultijogador implements MultiPlayerMatch {
      * @param id the match id
      */
     @Override
-    public void setId(PartidaMultijogadorId id) {
+    public void setId(PartidaId id) {
         this.id = id;
     }
 

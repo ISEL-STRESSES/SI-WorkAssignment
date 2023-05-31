@@ -45,18 +45,18 @@ public class Partida implements Match {
     @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Joga> plays = new LinkedHashSet<>();
 
-    @OneToOne(orphanRemoval = true)
-    @JoinColumns({
-            @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo"),
-            @JoinColumn(name = "nr", referencedColumnName = "nr_partida")
-    })
+    @OneToOne(mappedBy = "match", orphanRemoval = true)
+//    @JoinColumns({
+//            @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo"),
+//            @JoinColumn(name = "nr", referencedColumnName = "nr_partida")
+//    })
     private PartidaNormal normalMatch;
 
-    @OneToOne(orphanRemoval = true)
-    @JoinColumns({
-            @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo"),
-            @JoinColumn(name = "nr", referencedColumnName = "nr_partida")
-    })
+    @OneToOne(mappedBy = "match", orphanRemoval = true)
+//    @JoinColumns({
+//            @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo"),
+//            @JoinColumn(name = "nr", referencedColumnName = "nr_partida")
+//    })
     private PartidaMultijogador multiplayerMatch;
 
     /**

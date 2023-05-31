@@ -13,21 +13,29 @@ import logic.mappers.game.match.NormalMatchMapper;
 import logic.mappers.player.PlayerMapper;
 import logic.mappers.player.PlayerStatsMapper;
 import logic.mappers.region.RegionMapper;
-import model.entities.chat.Chat;
+import model.entities.chat.Conversa;
+import model.entities.chat.Mensagem;
 import model.entities.chat.MensagemId;
 import model.entities.chat.Message;
 import model.entities.game.Game;
 import model.entities.game.GameStats;
+import model.entities.game.Jogo;
+import model.entities.game.JogoEstatistica;
 import model.entities.game.badge.Badge;
+import model.entities.game.badge.Cracha;
 import model.entities.game.badge.CrachaId;
 import model.entities.game.matches.Match;
+import model.entities.game.matches.Partida;
 import model.entities.game.matches.PartidaId;
 import model.entities.game.matches.multiplayer.MultiPlayerMatch;
-import model.entities.game.matches.multiplayer.PartidaMultijogadorId;
+import model.entities.game.matches.multiplayer.PartidaMultijogador;
 import model.entities.game.matches.normal.NormalMatch;
-import model.entities.game.matches.normal.PartidaNormalId;
+import model.entities.game.matches.normal.PartidaNormal;
+import model.entities.player.Jogador;
+import model.entities.player.JogadorEstatistica;
 import model.entities.player.Player;
 import model.entities.player.PlayerStats;
+import model.entities.region.Regiao;
 import model.entities.region.Region;
 import model.types.Alphanumeric;
 
@@ -59,9 +67,9 @@ public class DataMappers {
          * @return The key of the created region
          */
         @Override
-        public String create(Region entity) {
+        public String create(Regiao entity) {
             context.beginTransaction();
-            context._em.persist(entity);
+            context.em.persist(entity);
             context.commit();
             return entity.getId();
         }
@@ -73,8 +81,8 @@ public class DataMappers {
          * @return The region with the given key
          */
         @Override
-        public Region read(String id) {
-            return context._em.find(Region.class, id);
+        public Regiao read(String id) {
+            return context.em.find(Regiao.class, id);
         }
 
         /**
@@ -84,14 +92,13 @@ public class DataMappers {
          * @return The key of the updated region
          */
         @Override
-        public String update(Region entity) {
+        public String update(Regiao entity) {
             context.beginTransaction();
-            Region region = context._em.find(Region.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            Regiao region = context.em.find(Regiao.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (region == null) {
                 throw new EntityNotFoundException("Region with id " + entity.getId() + " not found");
             }
             region.setId(entity.getId());
-            //region.setDescricao(entity.getDescricao());
             context.commit();
             return entity.getId();
         }
@@ -104,11 +111,11 @@ public class DataMappers {
         @Override
         public void delete(String id) {
             context.beginTransaction();
-            Region region = context._em.find(Region.class, id, LockModeType.PESSIMISTIC_WRITE);
+            Regiao region = context.em.find(Regiao.class, id, LockModeType.PESSIMISTIC_WRITE);
             if (region == null) {
                 throw new EntityNotFoundException("Region with id " + id + " not found");
             }
-            context._em.remove(region);
+            context.em.remove(region);
             context.commit();
         }
     }
@@ -125,9 +132,9 @@ public class DataMappers {
          * @return The key of the created player
          */
         @Override
-        public Integer create(Player entity) {
+        public Integer create(Jogador entity) {
             context.beginTransaction();
-            context._em.persist(entity);
+            context.em.persist(entity);
             context.commit();
             return entity.getId();
         }
@@ -139,8 +146,8 @@ public class DataMappers {
          * @return The player with the given key
          */
         @Override
-        public Player read(Integer id) {
-            return context._em.find(Player.class, id);
+        public Jogador read(Integer id) {
+            return context.em.find(Jogador.class, id);
         }
 
         /**
@@ -150,9 +157,9 @@ public class DataMappers {
          * @return The key of the updated player
          */
         @Override
-        public Integer update(Player entity) {
+        public Integer update(Jogador entity) {
             context.beginTransaction();
-            Player player = context._em.find(Player.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            Jogador player = context.em.find(Jogador.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (player == null) {
                 throw new EntityNotFoundException("Player with id " + entity.getId() + " not found");
             }
@@ -174,13 +181,13 @@ public class DataMappers {
         @Override
         public void delete(Integer id) {
             context.beginTransaction();
-            Player player = context._em.find(Player.class, id, LockModeType.PESSIMISTIC_WRITE);
-            PlayerStats playerStats = context._em.find(PlayerStats.class, id, LockModeType.PESSIMISTIC_WRITE);
+            Jogador player = context.em.find(Jogador.class, id, LockModeType.PESSIMISTIC_WRITE);
+            JogadorEstatistica playerStats = context.em.find(JogadorEstatistica.class, id, LockModeType.PESSIMISTIC_WRITE);
             if (player == null) {
                 throw new EntityNotFoundException("Player with id " + id + " not found");
             }
-            context._em.remove(playerStats);
-            context._em.remove(player);
+            context.em.remove(playerStats);
+            context.em.remove(player);
             context.commit();
         }
     }
@@ -197,9 +204,9 @@ public class DataMappers {
          * @return The key of the created player stats
          */
         @Override
-        public Integer create(PlayerStats entity) {
+        public Integer create(JogadorEstatistica entity) {
             context.beginTransaction();
-            context._em.persist(entity);
+            context.em.persist(entity);
             context.commit();
             return entity.getId();
         }
@@ -211,8 +218,8 @@ public class DataMappers {
          * @return The player stats with the given key
          */
         @Override
-        public PlayerStats read(Integer id) {
-            return context._em.find(PlayerStats.class, id);
+        public JogadorEstatistica read(Integer id) {
+            return context.em.find(JogadorEstatistica.class, id);
         }
 
         /**
@@ -222,9 +229,9 @@ public class DataMappers {
          * @return The key of the updated player stats
          */
         @Override
-        public Integer update(PlayerStats entity) {
+        public Integer update(JogadorEstatistica entity) {
             context.beginTransaction();
-            PlayerStats playerStats = context._em.find(PlayerStats.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            JogadorEstatistica playerStats = context.em.find(JogadorEstatistica.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (playerStats == null) {
                 throw new EntityNotFoundException("PlayerStats with id " + entity.getId() + " not found");
             }
@@ -259,9 +266,9 @@ public class DataMappers {
          * @return The key of the created game
          */
         @Override
-        public Alphanumeric create(Game entity) {
+        public Alphanumeric create(Jogo entity) {
             context.beginTransaction();
-            context._em.persist(entity);
+            context.em.persist(entity);
             context.commit();
             return entity.getId();
         }
@@ -273,8 +280,8 @@ public class DataMappers {
          * @return The game with the given key
          */
         @Override
-        public Game read(Alphanumeric id) {
-            return context._em.find(Game.class, id);
+        public Jogo read(Alphanumeric id) {
+            return context.em.find(Jogo.class, id);
         }
 
         /**
@@ -284,9 +291,9 @@ public class DataMappers {
          * @return The key of the updated game
          */
         @Override
-        public Alphanumeric update(Game entity) {
+        public Alphanumeric update(Jogo entity) {
             context.beginTransaction();
-            Game game = context._em.find(Game.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            Jogo game = context.em.find(Jogo.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (game == null) {
                 throw new EntityNotFoundException("Game with id " + entity.getId() + " not found");
             }
@@ -305,13 +312,13 @@ public class DataMappers {
         @Override
         public void delete(Alphanumeric id) {
             context.beginTransaction();
-            Game game = context._em.find(Game.class, id, LockModeType.PESSIMISTIC_WRITE);
+            Jogo game = context.em.find(Jogo.class, id, LockModeType.PESSIMISTIC_WRITE);
             if (game == null) {
                 throw new EntityNotFoundException("Game with id " + id + " not found");
             }
-            GameStats gameStats = context._em.find(GameStats.class, id, LockModeType.PESSIMISTIC_WRITE);
-            context._em.remove(gameStats);
-            context._em.remove(game);
+            JogoEstatistica gameStats = context.em.find(JogoEstatistica.class, id, LockModeType.PESSIMISTIC_WRITE);
+            context.em.remove(gameStats);
+            context.em.remove(game);
             context.commit();
         }
     }
@@ -328,9 +335,9 @@ public class DataMappers {
          * @return The key of the created game stats
          */
         @Override
-        public Alphanumeric create(GameStats entity) {
+        public Alphanumeric create(JogoEstatistica entity) {
             context.beginTransaction();
-            context._em.persist(entity);
+            context.em.persist(entity);
             context.commit();
             return entity.getId();
         }
@@ -342,8 +349,8 @@ public class DataMappers {
          * @return The game stats with the given key
          */
         @Override
-        public GameStats read(Alphanumeric id) {
-            return context._em.find(GameStats.class, id);
+        public JogoEstatistica read(Alphanumeric id) {
+            return context.em.find(JogoEstatistica.class, id);
         }
 
         /**
@@ -353,9 +360,9 @@ public class DataMappers {
          * @return The key of the updated game stats
          */
         @Override
-        public Alphanumeric update(GameStats entity) {
+        public Alphanumeric update(JogoEstatistica entity) {
             context.beginTransaction();
-            GameStats gameStats = context._em.find(GameStats.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            JogoEstatistica gameStats = context.em.find(JogoEstatistica.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (gameStats == null) {
                 throw new EntityNotFoundException("GameStats with id " + entity.getId() + " not found");
             }
@@ -391,9 +398,9 @@ public class DataMappers {
          * @return The key of the created match
          */
         @Override
-        public PartidaId create(Match entity) {
+        public PartidaId create(Partida entity) {
             context.beginTransaction();
-            context._em.persist(entity);
+            context.em.persist(entity);
             context.commit();
             return entity.getId();
         }
@@ -405,8 +412,8 @@ public class DataMappers {
          * @return The match with the given key
          */
         @Override
-        public Match read(PartidaId id) {
-            return null;
+        public Partida read(PartidaId id) {
+            return context.em.find(Partida.class, id);
         }
 
         /**
@@ -416,8 +423,8 @@ public class DataMappers {
          * @return The key of the updated match
          */
         @Override
-        public PartidaId update(Match entity) {
-            return null;
+        public PartidaId update(Partida entity) {
+            throw new UnsupportedOperationException("Not possible to update Match");
         }
 
         /**
@@ -427,7 +434,7 @@ public class DataMappers {
          */
         @Override
         public void delete(PartidaId id) {
-
+            throw new UnsupportedOperationException("Not possible to update Match");
         }
     }
 
@@ -443,9 +450,9 @@ public class DataMappers {
          * @return The key of the created normal match
          */
         @Override
-        public PartidaNormalId create(NormalMatch entity) {
+        public PartidaId create(PartidaNormal entity) {
             context.beginTransaction();
-            context._em.persist(entity);
+            context.em.persist(entity);
             context.commit();
             return entity.getId();
         }
@@ -457,8 +464,8 @@ public class DataMappers {
          * @return The normal match with the given key
          */
         @Override
-        public NormalMatch read(PartidaNormalId id) {
-            return context._em.find(NormalMatch.class, id);
+        public PartidaNormal read(PartidaId id) {
+            return context.em.find(PartidaNormal.class, id);
         }
 
         /**
@@ -468,9 +475,9 @@ public class DataMappers {
          * @return The key of the updated normal match
          */
         @Override
-        public PartidaNormalId update(NormalMatch entity) {
+        public PartidaId update(PartidaNormal entity) {
             context.beginTransaction();
-            NormalMatch normalMatch = context._em.find(NormalMatch.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            NormalMatch normalMatch = context.em.find(NormalMatch.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (normalMatch == null) {
                 throw new EntityNotFoundException("NormalMatch with id " + entity.getId() + " not found");
             }
@@ -489,13 +496,13 @@ public class DataMappers {
          * @param id Key of the normal match to be deleted
          */
         @Override
-        public void delete(PartidaNormalId id) {
+        public void delete(PartidaId id) {
             context.beginTransaction();
-            NormalMatch normalMatch = context._em.find(NormalMatch.class, id, LockModeType.PESSIMISTIC_WRITE);
+            NormalMatch normalMatch = context.em.find(NormalMatch.class, id, LockModeType.PESSIMISTIC_WRITE);
             if (normalMatch == null) {
                 throw new EntityNotFoundException("NormalMatch with id " + id + " not found");
             }
-            context._em.remove(normalMatch);
+            context.em.remove(normalMatch);
             context.commit();
         }
     }
@@ -512,9 +519,9 @@ public class DataMappers {
          * @return The key of the created entity
          */
         @Override
-        public PartidaMultijogadorId create(MultiPlayerMatch entity) {
+        public PartidaId create(PartidaMultijogador entity) {
             context.beginTransaction();
-            context._em.persist(entity);
+            context.em.persist(entity);
             context.commit();
             return entity.getId();
         }
@@ -526,8 +533,8 @@ public class DataMappers {
          * @return The multiplayer match with the given key
          */
         @Override
-        public MultiPlayerMatch read(PartidaMultijogadorId id) {
-            return context._em.find(MultiPlayerMatch.class, id);
+        public PartidaMultijogador read(PartidaId id) {
+            return context.em.find(PartidaMultijogador.class, id);
         }
 
         /**
@@ -537,9 +544,9 @@ public class DataMappers {
          * @return The key of the updated multiplayer match
          */
         @Override
-        public PartidaMultijogadorId update(MultiPlayerMatch entity) {
+        public PartidaId update(PartidaMultijogador entity) {
             context.beginTransaction();
-            MultiPlayerMatch multiPlayerMatch = context._em.find(MultiPlayerMatch.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            PartidaMultijogador multiPlayerMatch = context.em.find(PartidaMultijogador.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (multiPlayerMatch == null) {
                 throw new EntityNotFoundException("MultiPlayerMatch with id " + entity.getId() + " not found");
             }
@@ -558,13 +565,13 @@ public class DataMappers {
          * @param id Key of the multiplayer match to be deleted
          */
         @Override
-        public void delete(PartidaMultijogadorId id) {
+        public void delete(PartidaId id) {
             context.beginTransaction();
-            MultiPlayerMatch multiPlayerMatch = context._em.find(MultiPlayerMatch.class, id, LockModeType.PESSIMISTIC_WRITE);
+            PartidaMultijogador multiPlayerMatch = context.em.find(PartidaMultijogador.class, id, LockModeType.PESSIMISTIC_WRITE);
             if (multiPlayerMatch == null) {
                 throw new EntityNotFoundException("MultiPlayerMatch with id " + id + " not found");
             }
-            context._em.remove(multiPlayerMatch);
+            context.em.remove(multiPlayerMatch);
             context.commit();
         }
     }
@@ -581,9 +588,9 @@ public class DataMappers {
          * @return The key of the created badge
          */
         @Override
-        public CrachaId create(Badge entity) {
+        public CrachaId create(Cracha entity) {
             context.beginTransaction();
-            context._em.persist(entity);
+            context.em.persist(entity);
             context.commit();
             return entity.getId();
         }
@@ -595,8 +602,8 @@ public class DataMappers {
          * @return The badge with the given key
          */
         @Override
-        public Badge read(CrachaId id) {
-            return context._em.find(Badge.class, id);
+        public Cracha read(CrachaId id) {
+            return context.em.find(Cracha.class, id);
         }
 
         /**
@@ -606,9 +613,9 @@ public class DataMappers {
          * @return The key of the updated badge
          */
         @Override
-        public CrachaId update(Badge entity) {
+        public CrachaId update(Cracha entity) {
             context.beginTransaction();
-            Badge badge = context._em.find(Badge.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            Cracha badge = context.em.find(Cracha.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (badge == null) {
                 throw new EntityNotFoundException("Badge with id " + entity.getId() + " not found");
             }
@@ -630,17 +637,17 @@ public class DataMappers {
         @Override
         public void delete(CrachaId id) {
             context.beginTransaction();
-            Badge badge = context._em.find(Badge.class, id, LockModeType.PESSIMISTIC_WRITE);
+            Cracha badge = context.em.find(Cracha.class, id, LockModeType.PESSIMISTIC_WRITE);
             if (badge == null) {
                 throw new EntityNotFoundException("Badge with id " + id + " not found");
             }
-            context._em.remove(badge);
+            context.em.remove(badge);
             context.commit();
         }
     }
 
     /**
-     * Creates the data mapper for the {@link Chat} entity.
+     * Creates the data mapper for the {@link model.entities.chat.Conversa} entity.
      */
     protected class ChatDataMapper implements ChatMapper {
 
@@ -651,9 +658,9 @@ public class DataMappers {
          * @return The key of the created chat
          */
         @Override
-        public Integer create(Chat entity) {
+        public Integer create(Conversa entity) {
             context.beginTransaction();
-            context._em.persist(entity);
+            context.em.persist(entity);
             context.commit();
             return entity.getId();
         }
@@ -665,8 +672,8 @@ public class DataMappers {
          * @return The chat with the given key
          */
         @Override
-        public Chat read(Integer id) {
-            return context._em.find(Chat.class, id);
+        public Conversa read(Integer id) {
+            return context.em.find(Conversa.class, id);
         }
 
         /**
@@ -676,9 +683,9 @@ public class DataMappers {
          * @return The key of the updated chat
          */
         @Override
-        public Integer update(Chat entity) {
+        public Integer update(Conversa entity) {
             context.beginTransaction();
-            Chat chat = context._em.find(Chat.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            Conversa chat = context.em.find(Conversa.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (chat == null) {
                 throw new EntityNotFoundException("Chat with id " + entity.getId() + " not found");
             }
@@ -697,11 +704,11 @@ public class DataMappers {
         @Override
         public void delete(Integer id) {
             context.beginTransaction();
-            Chat chat = context._em.find(Chat.class, id, LockModeType.PESSIMISTIC_WRITE);
+            Conversa chat = context.em.find(Conversa.class, id, LockModeType.PESSIMISTIC_WRITE);
             if (chat == null) {
                 throw new EntityNotFoundException("Chat with id " + id + " not found");
             }
-            context._em.remove(chat);
+            context.em.remove(chat);
             context.commit();
         }
     }
@@ -718,9 +725,9 @@ public class DataMappers {
          * @return The key of the created message
          */
         @Override
-        public MensagemId create(Message entity) {
+        public MensagemId create(Mensagem entity) {
             context.beginTransaction();
-            context._em.persist(entity);
+            context.em.persist(entity);
             context.commit();
             return entity.getId();
         }
@@ -732,8 +739,8 @@ public class DataMappers {
          * @return The message with the given key
          */
         @Override
-        public Message read(MensagemId id) {
-            return context._em.find(Message.class, id);
+        public Mensagem read(MensagemId id) {
+            return context.em.find(Mensagem.class, id);
         }
 
         /**
@@ -743,9 +750,9 @@ public class DataMappers {
          * @return The key of the updated message
          */
         @Override
-        public MensagemId update(Message entity) {
+        public MensagemId update(Mensagem entity) {
             context.beginTransaction();
-            Message message = context._em.find(Message.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            Mensagem message = context.em.find(Mensagem.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (message == null) {
                 throw new EntityNotFoundException("Message with id " + entity.getId() + " not found");
             }
@@ -769,11 +776,11 @@ public class DataMappers {
         @Override
         public void delete(MensagemId id) {
             context.beginTransaction();
-            Message message = context._em.find(Message.class, id, LockModeType.PESSIMISTIC_WRITE);
+            Mensagem message = context.em.find(Mensagem.class, id, LockModeType.PESSIMISTIC_WRITE);
             if (message == null) {
                 throw new EntityNotFoundException("Message with id " + id + " not found");
             }
-            context._em.remove(message);
+            context.em.remove(message);
             context.commit();
         }
     }

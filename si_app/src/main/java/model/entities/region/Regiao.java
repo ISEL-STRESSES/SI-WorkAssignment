@@ -13,9 +13,9 @@ import java.util.Set;
  * Class that represents the region.
  */
 @Entity
-@NamedQuery(name = "Regiao.findByKey", query = "SELECT r FROM Regiao r WHERE r.name = :key")
-@NamedQuery(name = "Regiao.findAll", query = "SELECT r FROM Regiao r")
 @Table(name = "regiao", schema = "public")
+@NamedQuery(name = "Regiao.findAll", query = "SELECT r FROM Regiao r")
+@NamedQuery(name = "Regiao.findByKey", query = "SELECT r FROM Regiao r WHERE r.name = :key")
 public class Regiao implements Region {
     @Id
     @Column(name = "nome", nullable = false, length = 50)

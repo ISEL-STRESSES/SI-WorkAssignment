@@ -3,6 +3,7 @@ package model.entities.game.matches.normal;
 import jakarta.persistence.*;
 import model.entities.game.matches.Match;
 import model.entities.game.matches.Partida;
+import model.entities.game.matches.PartidaId;
 import model.types.Alphanumeric;
 
 /**
@@ -10,20 +11,20 @@ import model.types.Alphanumeric;
  * See {@link Match}
  */
 @Entity
-@NamedQuery(name = "PartidaNormal.findByKey", query = "SELECT p FROM PartidaNormal p WHERE p.id = :key")
-@NamedQuery(name = "PartidaNormal.findAll", query = "SELECT p FROM PartidaNormal p")
+@NamedQuery(name = "Partida_Normal.findByKey", query = "SELECT p FROM PartidaNormal p WHERE p.id = :key")
+@NamedQuery(name = "Partida_Normal.findAll", query = "SELECT p FROM PartidaNormal p")
 @Table(name = "partida_normal", schema = "public")
 public class PartidaNormal implements NormalMatch {
     @EmbeddedId
-    private PartidaNormalId id;
+    private PartidaId id;
 
-    @MapsId("matchNr")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    //@MapsId("matchNr")
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumns({
-            @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo", nullable = false),
-            @JoinColumn(name = "nr_partida", referencedColumnName = "nr", nullable = false)
+            @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo", nullable = false, insertable = false, updatable = false),
+            @JoinColumn(name = "nr_partida", referencedColumnName = "nr", nullable = false, insertable = false, updatable = false)
     })
-    private Partida partida;
+    private Partida match;
 
     @Column(name = "dificuldade", nullable = false)
     private Integer difficulty;
@@ -35,7 +36,7 @@ public class PartidaNormal implements NormalMatch {
      * @return the match id
      */
     @Override
-    public PartidaNormalId getId() {
+    public PartidaId getId() {
         return this.id;
     }
 
@@ -45,7 +46,7 @@ public class PartidaNormal implements NormalMatch {
      * @param normalMatchId the match id
      */
     @Override
-    public void setId(PartidaNormalId normalMatchId) {
+    public void setId(PartidaId normalMatchId) {
         this.id = normalMatchId;
     }
 
@@ -116,7 +117,7 @@ public class PartidaNormal implements NormalMatch {
      */
     @Override
     public Match getMatch() {
-        return this.partida;
+        return this.match;
     }
 
     /**
@@ -126,6 +127,6 @@ public class PartidaNormal implements NormalMatch {
      */
     @Override
     public void setMatch(Match match) {
-        this.partida = (Partida) match;
+        this.match = (Partida) match;
     }
 }

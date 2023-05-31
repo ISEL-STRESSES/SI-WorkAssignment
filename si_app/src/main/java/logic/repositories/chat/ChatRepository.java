@@ -1,12 +1,12 @@
 package logic.repositories.chat;
 
 import logic.repositories.Repository;
-import model.entities.chat.Chat;
+import model.entities.chat.Conversa;
 
 import java.util.List;
 
 /**
- * {@link Chat} repository interface.
+ * {@link model.entities.chat.Conversa} repository interface.
  */
-public interface ChatRepository extends Repository<Chat, List<Chat>, Integer> {
+public interface ChatRepository extends Repository<Conversa, List<Conversa>, Integer> {
 }

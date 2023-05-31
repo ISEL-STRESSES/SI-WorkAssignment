@@ -22,6 +22,7 @@ import model.types.PlayerState;
 import model.views.Jogadortotalinfo;
 import utils.Pair;
 
+import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -57,17 +58,17 @@ public class JPAContext implements Context {
     private final DataMappers.BadgeDataMapper badgeDataMapper;
     private final DataMappers.ChatDataMapper chatDataMapper;
     private final DataMappers.MessageDataMapper messageDataMapper;
-    protected EntityManager _em;
-    private EntityManagerFactory _emf;
-    private EntityTransaction _tx;
-    private int _tx_count;
+    protected EntityManager em;
+    private EntityManagerFactory emf;
+    private EntityTransaction tx;
+    private int tx_count;
 
     /**
      * Constructor of the JPAContext class.
      * The name of the persistence is set to "si-app.g17".
      */
     public JPAContext() {
-        this("JPAExemplo");
+        this("si-app.g17");
     }
 
     /**
@@ -113,12 +114,12 @@ public class JPAContext implements Context {
      */
     @Override
     public void beginTransaction() {
-        if (_tx == null || !_tx.isActive()) {
-            _tx = _em.getTransaction();
-            _tx.begin();
-            _tx_count = 0;
+        if (tx == null || !tx.isActive()) {
+            tx = em.getTransaction();
+            tx.begin();
+            tx_count = 0;
         }
-        ++_tx_count;
+        ++tx_count;
     }
 
     /**
@@ -127,10 +128,10 @@ public class JPAContext implements Context {
      */
     @Override
     public void commit() {
-        --_tx_count;
-        if (_tx_count == 0 && _tx != null) {
-            _tx.commit();
-            _tx = null;
+        --tx_count;
+        if (tx_count == 0 && tx != null) {
+            tx.commit();
+            tx = null;
         }
     }
 
@@ -139,7 +140,7 @@ public class JPAContext implements Context {
      */
     @Override
     public void flush() {
-        _em.flush();
+        em.flush();
     }
 
     /**
@@ -148,9 +149,9 @@ public class JPAContext implements Context {
      */
     @Override
     public void rollback() {
-        if (_tx_count == 0 && _tx != null) {
-            _tx.rollback();
-            _tx = null;
+        if (tx_count == 0 && tx != null) {
+            tx.rollback();
+            tx = null;
         }
     }
 
@@ -159,9 +160,9 @@ public class JPAContext implements Context {
      */
     @Override
     public void close() {
-        if (_tx != null && _tx.isActive()) _tx.rollback();
-        if (_em != null && _em.isOpen()) _em.close();
-        if (_emf != null && _emf.isOpen()) _emf.close();
+        if (tx != null && tx.isActive()) tx.rollback();
+        if (em != null && em.isOpen()) em.close();
+        if (emf != null && emf.isOpen()) emf.close();
     }
 
     /**
@@ -172,11 +173,11 @@ public class JPAContext implements Context {
     @Override
     public void connect() {
         try {
-            if (_emf == null || !_emf.isOpen())
-                this._emf = Persistence.createEntityManagerFactory(persistentCtx);
-            if (_em == null || !_em.isOpen()) {
-                this._em = _emf.createEntityManager();
-                System.out.println(_em);
+            if (emf == null || !emf.isOpen())
+                this.emf = Persistence.createEntityManagerFactory(persistentCtx);
+            if (em == null || !em.isOpen()) {
+                this.em = emf.createEntityManager();
+                System.out.println(em);
             }
         } catch (PersistenceException exception) {
             System.out.println(exception.getMessage() + ".");
@@ -195,7 +196,7 @@ public class JPAContext implements Context {
      * @return The result of the query.
      */
     protected List helperQueryImpl(String jpql, Object... params) {
-        Query q = _em.createQuery(jpql);
+        Query q = em.createQuery(jpql);
 
         for (int i = 0; i < params.length; ++i)
             q.setParameter(i + 1, params[i]);
@@ -333,7 +334,7 @@ public class JPAContext implements Context {
      */
     public void createPlayer(Player player) {
         beginTransaction();
-        Query q = _em.createNativeQuery("call create_jogador(?, ?, ?)")
+        Query q = em.createNativeQuery("call create_jogador(?, ?, ?)")
                 .setParameter(1, player.getRegion().getId())
                 .setParameter(2, player.getUsername())
                 .setParameter(3, player.getEmail().toString());
@@ -348,7 +349,7 @@ public class JPAContext implements Context {
      */
     public Player updatePlayerStatus(Player player, PlayerState newState) {
         beginTransaction();
-        Query q = _em.createNativeQuery("call update_estado_jogador(?, ?)")
+        Query q = em.createNativeQuery("call update_estado_jogador(?, ?)")
                 .setParameter(1, player.getId())
                 .setParameter(2, newState.toString());
         q.executeUpdate();
@@ -363,7 +364,7 @@ public class JPAContext implements Context {
      */
     public Integer playerTotalPoints(Player player) {
         beginTransaction();
-        Query q = _em.createNativeQuery("call totalPontosJogador(?)")
+        Query q = em.createNativeQuery("call totalPontosJogador(?)")
                 .setParameter(1, player.getId());
         Integer result = (Integer) q.getSingleResult();
         commit();
@@ -377,7 +378,7 @@ public class JPAContext implements Context {
      */
     public Integer playerTotalGames(Player player) {
         beginTransaction();
-        Query q = _em.createNativeQuery("call totalJogosJogador(?)")
+        Query q = em.createNativeQuery("call totalJogosJogador(?)")
                 .setParameter(1, player.getId());
         Integer result = (Integer) q.getSingleResult();
         commit();
@@ -391,7 +392,7 @@ public class JPAContext implements Context {
      */
     public List<Pair<Player, Integer>> gamePointsByPlayer(Game game) {
         beginTransaction();
-        Query q = _em.createNativeQuery("call PontosJogoPorJogador(?)")
+        Query q = em.createNativeQuery("call PontosJogoPorJogador(?)")
                 .setParameter(1, game.getId());
         List<Pair<Player, Integer>> result = q.getResultList();
         commit();
@@ -405,7 +406,7 @@ public class JPAContext implements Context {
      */
     public void giveBadgeToPlayer(Player player, Game game, Badge badge) {
         beginTransaction();
-        Query q = _em.createNativeQuery("call associarCracha(?, ?, ?)")
+        Query q = em.createNativeQuery("call associarCracha(?, ?, ?)")
                 .setParameter(1, player.getId())
                 .setParameter(2, game.getId())
                 .setParameter(3, badge.getId());
@@ -421,7 +422,7 @@ public class JPAContext implements Context {
     public Integer initiateChat(Player player1, Player player2) {
         beginTransaction();
         Integer chatId;
-        Query q = _em.createNativeQuery("call iniciarConversa(?, ?, ?)")
+        Query q = em.createNativeQuery("call iniciarConversa(?, ?, ?)")
                 .setParameter(1, player1.getId())
                 .setParameter(2, player2.getId());
         //.setParameter(3, chatId);
@@ -437,7 +438,7 @@ public class JPAContext implements Context {
      */
     public void addPlayerToChat(Player player, Chat chat) {
         beginTransaction();
-        Query q = _em.createNativeQuery("call juntarConversa(?, ?)")
+        Query q = em.createNativeQuery("call juntarConversa(?, ?)")
                 .setParameter(1, player.getId())
                 .setParameter(2, chat.getId());
         q.executeUpdate();
@@ -451,7 +452,7 @@ public class JPAContext implements Context {
      */
     public void sendMessage(Player player, Chat chat, String message) {
         beginTransaction();
-        Query q = _em.createNativeQuery("call enviarMensagem(?, ?, ?)")
+        Query q = em.createNativeQuery("call enviarMensagem(?, ?, ?)")
                 .setParameter(1, player.getId())
                 .setParameter(2, chat.getId())
                 .setParameter(3, message);
@@ -467,7 +468,7 @@ public class JPAContext implements Context {
      */
     public List<Jogadortotalinfo> getPlayersTotalInfoFromDB() {
         beginTransaction();
-        Query q = _em.createNativeQuery("CREATE OR REPLACE VIEW jogadorTotalInfo AS" +
+        Query q = em.createNativeQuery("CREATE OR REPLACE VIEW jogadorTotalInfo AS" +
                 " SELECT j.id, j.estado, j.email, " +
                 "totaljogosjogador(?) AS totalJogos, " +
                 "totalpartidasjogador(?) AS totalPartidas, " +
@@ -484,12 +485,14 @@ public class JPAContext implements Context {
 
     public void test() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPAExemplo");
+        System.out.println("EMF: " + emf);
         EntityManager em = emf.createEntityManager();
+        System.out.println("EM: " + em);
         try {
             Jogador j = em.find(Jogador.class, 1);
             System.out.println(j.getId());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace(new PrintStream(System.out));
         } finally {
             em.close();
             emf.close();

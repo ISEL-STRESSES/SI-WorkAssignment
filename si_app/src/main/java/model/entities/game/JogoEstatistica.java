@@ -7,8 +7,8 @@ import model.types.Alphanumeric;
  * Represents a game stats
  */
 @Entity
-@NamedQuery(name = "JogoEstatistica.findAll", query = "SELECT j FROM JogoEstatistica j")
-@NamedQuery(name = "JogoEstatistica.findByKey", query = "SELECT j FROM JogoEstatistica j where j.id = :id")
+@NamedQuery(name = "Jogo_Estatistica.findAll", query = "SELECT j FROM JogoEstatistica j")
+@NamedQuery(name = "Jogo_Estatistica.findByKey", query = "SELECT j FROM JogoEstatistica j where j.id = :id")
 @Table(name = "jogo_estatistica", schema = "public")
 public class JogoEstatistica implements GameStats {
     @Id

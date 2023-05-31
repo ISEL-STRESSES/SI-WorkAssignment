@@ -1,20 +1,25 @@
 package dataAccess;
 
-import model.entities.chat.Chat;
-import model.entities.chat.MensagemId;
-import model.entities.chat.Message;
+import model.entities.chat.*;
 import model.entities.game.Game;
 import model.entities.game.GameStats;
+import model.entities.game.Jogo;
+import model.entities.game.JogoEstatistica;
 import model.entities.game.badge.Badge;
+import model.entities.game.badge.Cracha;
 import model.entities.game.badge.CrachaId;
 import model.entities.game.matches.Match;
+import model.entities.game.matches.Partida;
 import model.entities.game.matches.PartidaId;
 import model.entities.game.matches.multiplayer.MultiPlayerMatch;
-import model.entities.game.matches.multiplayer.PartidaMultijogadorId;
+import model.entities.game.matches.multiplayer.PartidaMultijogador;
 import model.entities.game.matches.normal.NormalMatch;
-import model.entities.game.matches.normal.PartidaNormalId;
+import model.entities.game.matches.normal.PartidaNormal;
+import model.entities.player.Jogador;
+import model.entities.player.JogadorEstatistica;
 import model.entities.player.Player;
 import model.entities.player.PlayerStats;
+import model.entities.region.Regiao;
 import model.entities.region.Region;
 import model.types.Alphanumeric;
 import model.types.Email;
@@ -48,8 +53,8 @@ public class Repositories {
          * @return The region.
          */
         @Override
-        public Region findByKey(String key) {
-            return context._em.createNamedQuery("Regiao.findByKey", Region.class)
+        public Regiao findByKey(String key) {
+            return context.em.createNamedQuery("Regiao.findByKey", Regiao.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -63,7 +68,7 @@ public class Repositories {
          */
         @SuppressWarnings("unchecked")
         @Override
-        public List<Region> find(String jpql, Object... params) {
+        public List<Regiao> find(String jpql, Object... params) {
             return context.helperQueryImpl(jpql, params);
         }
 
@@ -73,8 +78,8 @@ public class Repositories {
          * @return The list of regions.
          */
         @Override
-        public List<Region> findAll() {
-            return context._em.createNamedQuery("Regiao.findAll", Region.class)
+        public List<Regiao> findAll() {
+            return context.em.createNamedQuery("Regiao.findAll", Regiao.class)
                     .getResultList();
         }
     }
@@ -90,8 +95,8 @@ public class Repositories {
          * @return The player.
          */
         @Override
-        public Player findByKey(Integer key) {
-            return context._em.createNamedQuery("Jogador.findByKey", Player.class)
+        public Jogador findByKey(Integer key) {
+            return context.em.createNamedQuery("Jogador.findByKey", Jogador.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -105,7 +110,7 @@ public class Repositories {
          */
         @SuppressWarnings("unchecked")
         @Override
-        public List<Player> find(String jpql, Object... params) {
+        public List<Jogador> find(String jpql, Object... params) {
             return context.helperQueryImpl(jpql, params);
         }
 
@@ -115,8 +120,8 @@ public class Repositories {
          * @return The list of players.
          */
         @Override
-        public List<Player> findAll() {
-            return context._em.createNamedQuery("Jogador.findAll", Player.class)
+        public List<Jogador> findAll() {
+            return context.em.createNamedQuery("Jogador.findAll", Jogador.class)
                     .getResultList();
         }
 
@@ -127,8 +132,8 @@ public class Repositories {
          * @return The player.
          */
         @Override
-        public Player findByUsername(String username) {
-            return context._em.createNamedQuery("Jogador.findByUsername", Player.class)
+        public Jogador findByUsername(String username) {
+            return context.em.createNamedQuery("Jogador.findByUsername", Jogador.class)
                     .setParameter("username", username)
                     .getSingleResult();
         }
@@ -140,8 +145,8 @@ public class Repositories {
          * @return The player.
          */
         @Override
-        public Player findByEmail(Email email) {
-            return context._em.createNamedQuery("Jogador.findByEmail", Player.class)
+        public Jogador findByEmail(Email email) {
+            return context.em.createNamedQuery("Jogador.findByEmail", Jogador.class)
                     .setParameter("email", email.toString())
                     .getSingleResult();
         }
@@ -158,8 +163,8 @@ public class Repositories {
          * @return The player stats.
          */
         @Override
-        public PlayerStats findByKey(Integer key) {
-            return context._em.createNamedQuery("JogadorEstatistica.findByKey", PlayerStats.class)
+        public JogadorEstatistica findByKey(Integer key) {
+            return context.em.createNamedQuery("Jogador_Estatistica.findByKey", JogadorEstatistica.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -173,7 +178,7 @@ public class Repositories {
          */
         @SuppressWarnings("unchecked")
         @Override
-        public List<PlayerStats> find(String jpql, Object... params) {
+        public List<JogadorEstatistica> find(String jpql, Object... params) {
             return context.helperQueryImpl(jpql, params);
         }
 
@@ -183,8 +188,8 @@ public class Repositories {
          * @return The list of player stats.
          */
         @Override
-        public List<PlayerStats> findAll() {
-            return context._em.createNamedQuery("JogadorEstatistica.findAll", PlayerStats.class)
+        public List<JogadorEstatistica> findAll() {
+            return context.em.createNamedQuery("Jogador_Estatistica.findAll", JogadorEstatistica.class)
                     .getResultList();
         }
     }
@@ -200,8 +205,8 @@ public class Repositories {
          * @return The game.
          */
         @Override
-        public Game findByKey(Alphanumeric key) {
-            return context._em.createNamedQuery("Jogo.findByKey", Game.class)
+        public Jogo findByKey(Alphanumeric key) {
+            return context.em.createNamedQuery("Jogo.findByKey", Jogo.class)
                     .setParameter("key", key.alphanumeric())
                     .getSingleResult();
         }
@@ -215,7 +220,7 @@ public class Repositories {
          */
         @SuppressWarnings("unchecked")
         @Override
-        public List<Game> find(String jpql, Object... params) {
+        public List<Jogo> find(String jpql, Object... params) {
             return context.helperQueryImpl(jpql, params);
         }
 
@@ -225,8 +230,8 @@ public class Repositories {
          * @return The list of games.
          */
         @Override
-        public List<Game> findAll() {
-            return context._em.createNamedQuery("Jogo.findAll", Game.class)
+        public List<Jogo> findAll() {
+            return context.em.createNamedQuery("Jogo.findAll", Jogo.class)
                     .getResultList();
         }
     }
@@ -242,8 +247,8 @@ public class Repositories {
          * @return The game stats.
          */
         @Override
-        public GameStats findByKey(Alphanumeric key) {
-            return context._em.createNamedQuery("JogoEstatistica.findByKey", GameStats.class)
+        public JogoEstatistica findByKey(Alphanumeric key) {
+            return context.em.createNamedQuery("Jogo_Estatistica.findByKey", JogoEstatistica.class)
                     .setParameter("key", key.alphanumeric())
                     .getSingleResult();
         }
@@ -257,7 +262,7 @@ public class Repositories {
          */
         @SuppressWarnings("unchecked")
         @Override
-        public List<GameStats> find(String jpql, Object... params) {
+        public List<JogoEstatistica> find(String jpql, Object... params) {
             return context.helperQueryImpl(jpql, params);
         }
 
@@ -267,8 +272,8 @@ public class Repositories {
          * @return The list of game stats.
          */
         @Override
-        public List<GameStats> findAll() {
-            return context._em.createNamedQuery("JogoEstatistica.findAll", GameStats.class)
+        public List<JogoEstatistica> findAll() {
+            return context.em.createNamedQuery("Jogo_Estatistica.findAll", JogoEstatistica.class)
                     .getResultList();
         }
     }
@@ -284,8 +289,8 @@ public class Repositories {
          * @return The match.
          */
         @Override
-        public Match findByKey(PartidaId key) {
-            return context._em.createNamedQuery("Partida.findByKey", Match.class)
+        public Partida findByKey(PartidaId key) {
+            return context.em.createNamedQuery("Partida.findByKey", Partida.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -299,7 +304,7 @@ public class Repositories {
          */
         @SuppressWarnings("unchecked")
         @Override
-        public List<Match> find(String jpql, Object... params) {
+        public List<Partida> find(String jpql, Object... params) {
             return context.helperQueryImpl(jpql, params);
         }
 
@@ -309,8 +314,8 @@ public class Repositories {
          * @return The list of matches.
          */
         @Override
-        public List<Match> findAll() {
-            return context._em.createNamedQuery("Partida.findAll", Match.class)
+        public List<Partida> findAll() {
+            return context.em.createNamedQuery("Partida.findAll", Partida.class)
                     .getResultList();
         }
     }
@@ -326,8 +331,8 @@ public class Repositories {
          * @return The normal match.
          */
         @Override
-        public NormalMatch findByKey(PartidaNormalId key) {
-            return context._em.createNamedQuery("PartidaNormal.findByKey", NormalMatch.class)
+        public PartidaNormal findByKey(PartidaId key) {
+            return context.em.createNamedQuery("Partida_Normal.findByKey", PartidaNormal.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -341,7 +346,7 @@ public class Repositories {
          */
         @SuppressWarnings("unchecked")
         @Override
-        public List<NormalMatch> find(String jpql, Object... params) {
+        public List<PartidaNormal> find(String jpql, Object... params) {
             return context.helperQueryImpl(jpql, params);
         }
 
@@ -351,8 +356,8 @@ public class Repositories {
          * @return The list of normal matches.
          */
         @Override
-        public List<NormalMatch> findAll() {
-            return context._em.createNamedQuery("PartidaNormal.findAll", NormalMatch.class)
+        public List<PartidaNormal> findAll() {
+            return context.em.createNamedQuery("Partida_Normal.findAll", PartidaNormal.class)
                     .getResultList();
         }
     }
@@ -368,8 +373,8 @@ public class Repositories {
          * @return The multiplayer match.
          */
         @Override
-        public MultiPlayerMatch findByKey(PartidaMultijogadorId key) {
-            return context._em.createNamedQuery("PartidaMultijogador.findByKey", MultiPlayerMatch.class)
+        public PartidaMultijogador findByKey(PartidaId key) {
+            return context.em.createNamedQuery("Partida_multijogador.findByKey", PartidaMultijogador.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -383,7 +388,7 @@ public class Repositories {
          */
         @SuppressWarnings("unchecked")
         @Override
-        public List<MultiPlayerMatch> find(String jpql, Object... params) {
+        public List<PartidaMultijogador> find(String jpql, Object... params) {
             return context.helperQueryImpl(jpql, params);
         }
 
@@ -393,8 +398,8 @@ public class Repositories {
          * @return The list of multiplayer matches.
          */
         @Override
-        public List<MultiPlayerMatch> findAll() {
-            return context._em.createNamedQuery("PartidaMultijogador.findAll", MultiPlayerMatch.class)
+        public List<PartidaMultijogador> findAll() {
+            return context.em.createNamedQuery("Partida_multijogador.findAll", PartidaMultijogador.class)
                     .getResultList();
         }
     }
@@ -410,8 +415,8 @@ public class Repositories {
          * @return The badge.
          */
         @Override
-        public Badge findByKey(CrachaId key) {
-            return context._em.createNamedQuery("Cracha.findByKey", Badge.class)
+        public Cracha findByKey(CrachaId key) {
+            return context.em.createNamedQuery("Cracha.findByKey", Cracha.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -425,7 +430,7 @@ public class Repositories {
          */
         @SuppressWarnings("unchecked")
         @Override
-        public List<Badge> find(String jpql, Object... params) {
+        public List<Cracha> find(String jpql, Object... params) {
             return context.helperQueryImpl(jpql, params);
         }
 
@@ -435,8 +440,8 @@ public class Repositories {
          * @return The list of badges.
          */
         @Override
-        public List<Badge> findAll() {
-            return context._em.createNamedQuery("Cracha.findAll", Badge.class)
+        public List<Cracha> findAll() {
+            return context.em.createNamedQuery("Cracha.findAll", Cracha.class)
                     .getResultList();
         }
     }
@@ -452,8 +457,8 @@ public class Repositories {
          * @return The chat.
          */
         @Override
-        public Chat findByKey(Integer key) {
-            return context._em.createNamedQuery("Conversa.findByKey", Chat.class)
+        public Conversa findByKey(Integer key) {
+            return context.em.createNamedQuery("Conversa.findByKey", Conversa.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -467,7 +472,7 @@ public class Repositories {
          */
         @SuppressWarnings("unchecked")
         @Override
-        public List<Chat> find(String jpql, Object... params) {
+        public List<Conversa> find(String jpql, Object... params) {
             return context.helperQueryImpl(jpql, params);
         }
 
@@ -477,8 +482,8 @@ public class Repositories {
          * @return The list of chats.
          */
         @Override
-        public List<Chat> findAll() {
-            return context._em.createNamedQuery("Conversa.findAll", Chat.class)
+        public List<Conversa> findAll() {
+            return context.em.createNamedQuery("Conversa.findAll", Conversa.class)
                     .getResultList();
         }
     }
@@ -494,8 +499,8 @@ public class Repositories {
          * @return The message.
          */
         @Override
-        public Message findByKey(MensagemId key) {
-            return context._em.createNamedQuery("Mensagem.findByKey", Message.class)
+        public Mensagem findByKey(MensagemId key) {
+            return context.em.createNamedQuery("Mensagem.findByKey", Mensagem.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -509,7 +514,7 @@ public class Repositories {
          */
         @SuppressWarnings("unchecked")
         @Override
-        public List<Message> find(String jpql, Object... params) {
+        public List<Mensagem> find(String jpql, Object... params) {
             return context.helperQueryImpl(jpql, params);
         }
 
@@ -519,8 +524,8 @@ public class Repositories {
          * @return The list of messages.
          */
         @Override
-        public List<Message> findAll() {
-            return context._em.createNamedQuery("Mensagem.findAll", Message.class)
+        public List<Mensagem> findAll() {
+            return context.em.createNamedQuery("Mensagem.findAll", Mensagem.class)
                     .getResultList();
         }
     }
@@ -538,7 +543,7 @@ public class Repositories {
          */
         @Override
         public Jogadortotalinfo findByKey(Integer key) {
-            return context._em.createNamedQuery("Jogadortotalinfo.findByKey", Jogadortotalinfo.class)
+            return context.em.createNamedQuery("Jogadortotalinfo.findByKey", Jogadortotalinfo.class)
                     .setParameter("key", key)
                     .getSingleResult();
         }
@@ -551,6 +556,7 @@ public class Repositories {
          * @return Collection of Players total info
          */
         @Override
+        @SuppressWarnings("unchecked")
         public List<Jogadortotalinfo> find(String jpql, Object... params) {
             return context.helperQueryImpl(jpql, params);
         }

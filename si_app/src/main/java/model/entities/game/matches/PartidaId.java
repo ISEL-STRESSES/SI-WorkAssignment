@@ -12,10 +12,10 @@ import java.util.Objects;
  */
 @Embeddable
 public class PartidaId implements Serializable {
-    @Column(name = "nr", nullable = false, insertable = false, updatable = false)
+    @Column(name = "nr", nullable = false/*, insertable = false, updatable = false*/)
     private Integer nr;
 
-    @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null", insertable = false, updatable = false)
+    @Column(name = "id_jogo", columnDefinition = "alphanumeric(0, 0) not null"/*, insertable = false, updatable = false*/)
     private String gameId;
 
     public PartidaId() {

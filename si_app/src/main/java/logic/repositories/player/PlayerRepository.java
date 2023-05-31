@@ -1,6 +1,7 @@
 package logic.repositories.player;
 
 import logic.repositories.Repository;
+import model.entities.player.Jogador;
 import model.entities.player.Player;
 import model.types.Email;
 
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * {@link Player} repository interface.
  */
-public interface PlayerRepository extends Repository<Player, List<Player>, Integer> {
+public interface PlayerRepository extends Repository<Jogador, List<Jogador>, Integer> {
 
     /**
      * Finds a player by username.
@@ -17,7 +18,7 @@ public interface PlayerRepository extends Repository<Player, List<Player>, Integ
      * @param username The username of the player.
      * @return The player with the given username.
      */
-    Player findByUsername(String username);
+    Jogador findByUsername(String username);
 
     /**
      * Finds a player by email.
@@ -25,5 +26,5 @@ public interface PlayerRepository extends Repository<Player, List<Player>, Integ
      * @param email The email of the player.
      * @return The player with the given email.
      */
-    Player findByEmail(Email email);
+    Jogador findByEmail(Email email);
 }
