@@ -1,7 +1,7 @@
 package pt.isel;
 
 import org.junit.Test;
-import pt.isel.dataAccess.JPAContext;
+import dataAccess.JPAContext;
 
 import static org.junit.Assert.assertNotNull;
 
