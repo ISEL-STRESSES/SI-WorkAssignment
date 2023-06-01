@@ -14,6 +14,7 @@ public enum PlayerState {
 //        BANED.description = "Banido";
 //    }
     public static final String PLAYER_STATE_REGEX = "^(ativo|banido|inativo)$";
+
     /**
      * Parses a string to a player state
      *
