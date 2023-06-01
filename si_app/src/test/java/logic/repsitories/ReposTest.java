@@ -1,7 +1,7 @@
 package logic.repsitories;
 
-import org.junit.Test;
 import dataAccess.JPAContext;
+import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 

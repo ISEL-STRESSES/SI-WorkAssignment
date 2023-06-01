@@ -6,7 +6,7 @@ package model.types;
 public enum PlayerState {
     ACTIVE, INACTIVE, BANED;
 
-//    public String description;
+    //    public String description;
 //
 //    static {
 //        ACTIVE.description = "Ativo";

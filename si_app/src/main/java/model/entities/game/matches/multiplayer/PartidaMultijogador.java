@@ -18,7 +18,7 @@ public class PartidaMultijogador implements MultiPlayerMatch {
     @EmbeddedId
     private PartidaId id;
 
-//    @MapsId("nrMatch")
+    //    @MapsId("nrMatch")
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumns({
             @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo", nullable = false, insertable = false, updatable = false),

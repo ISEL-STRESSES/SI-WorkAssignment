@@ -1,7 +1,6 @@
 package logic.mappers.game.badge;
 
 import logic.mappers.DataMapper;
-import model.entities.game.badge.Badge;
 import model.entities.game.badge.Cracha;
 import model.entities.game.badge.CrachaId;
 
