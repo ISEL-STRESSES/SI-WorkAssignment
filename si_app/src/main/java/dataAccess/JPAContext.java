@@ -20,7 +20,6 @@ import model.entities.player.Jogador;
 import model.entities.player.Player;
 import model.types.PlayerState;
 import model.views.Jogadortotalinfo;
-import utils.Pair;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -390,11 +389,11 @@ public class JPAContext implements Context {
     /**
      * TODO
      */
-    public List<Pair<Player, Integer>> gamePointsByPlayer(Game game) {
+    public List<Object[]> gamePointsByPlayer(Game game) {
         beginTransaction();
         Query q = em.createNativeQuery("call PontosJogoPorJogador(?)")
                 .setParameter(1, game.getId());
-        List<Pair<Player, Integer>> result = q.getResultList();
+        List<Object[]> result = (List<Object[]>) q.getResultList();
         commit();
         return result;
     }

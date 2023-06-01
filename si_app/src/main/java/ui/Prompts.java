@@ -2,12 +2,12 @@ package ui;
 
 import com.sun.istack.Nullable;
 import model.types.Email;
+import model.types.PlayerState;
 
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
 
-import static model.types.Email.EMAIL_REGEX;
 
 /**
  * Represents a prompt
@@ -45,7 +45,7 @@ public class Prompts {
      */
     public static Email promptEmail(String promptMessage) {
         System.out.println(promptMessage);
-        return new Email(prompt(input -> input.matches(EMAIL_REGEX), "Incorrect email, please input a correct email."));
+        return new Email(prompt(input -> new Email(input).isValid(), "Incorrect email, please input a correct email."));
     }
 
     /**
@@ -58,6 +58,18 @@ public class Prompts {
         System.out.println(promptMessage);
         return prompt(input -> input.length() > 1, "Incorrect username, please input a correct username.");
     }
+
+    /**
+     * Gets the prompt for the player state
+     *
+     * @param promptMessage the prompt message
+     * @return the prompt user state
+     */
+    public static PlayerState promptPlayerState(String promptMessage) {
+        System.out.println(promptMessage);
+        return PlayerState.parse(prompt(input -> input.matches(PlayerState.PLAYER_STATE_REGEX), "Incorrect user state, please input a correct user state."));
+    }
+
 
     /**
      * Gets the prompt region

@@ -5,9 +5,12 @@ import model.entities.player.Jogador;
 import model.entities.player.Player;
 import model.entities.region.Region;
 import model.types.Email;
+import model.types.PlayerState;
 
 import java.util.Map;
 import java.util.TreeMap;
+
+import static ui.Prompts.*;
 
 /**
  * Represents the commands available to the user.
@@ -21,8 +24,8 @@ public class Commands {
      */
     public static Map<String, Command> buildCommands() {
         Map<String, Command> commands = new TreeMap<>();
-        commands.put("test", buildTest());
-        commands.put("2d", build2d());
+        commands.put("2d1", build2d1());
+        commands.put("2d2", build2d2());
         commands.put("2e", build2e());
         commands.put("2f", build2f());
         commands.put("2g", build2g());
@@ -30,6 +33,7 @@ public class Commands {
         commands.put("2i", build2i());
         commands.put("2j", build2j());
         commands.put("2l", build2l());
+        commands.put("test", buildTest());
         commands.put("help", buildHelpCommand(commands));
         commands.put("exit", buildExitCommand());
         return commands;
@@ -43,8 +47,7 @@ public class Commands {
              */
             @Override
             public void act() {
-                JPAContext ctx = new JPAContext();
-                try {
+                try (JPAContext ctx = new JPAContext()) {
                     ctx.test();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -72,7 +75,7 @@ public class Commands {
      *
      * @return the command for the 2d exercise.
      */
-    private static Command build2d() {
+    private static Command build2d1() {
         return new Command("Criar um Jogador") {
 
             /**
@@ -80,16 +83,10 @@ public class Commands {
              */
             @Override
             public void act() {
-                final Email email = new Email("test@jpa.com");//promptEmail("Insert a new email for the new player.");
-                final String username = "testJpa";//promptUsername("Insert a new username for the new player.");
-                final String regionName = "test"; //promptRegion("Insert a new region for the new player.");
-                JPAContext ctx = null;
-                try {
-                    ctx = new JPAContext();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                try {
+                final Email email = promptEmail("Insert a new email for the new player."); //new Email("test@jpa.com");
+                final String username = promptUsername("Insert a new username for the new player."); //"testJpa";
+                final String regionName = promptRegion("Insert a new region for the new player."); //"testRegion";
+                try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
                     ctx.beginTransaction();
                     Region region = ctx.getRegions().findByKey(regionName);
@@ -107,6 +104,33 @@ public class Commands {
         };
     }
 
+    private static Command build2d2() {
+        return new Command("Atualizar o estado de um jogador") {
+
+            /**
+             * Executes the command of the 2d2 exercise.
+             */
+            @Override
+            public void act() {
+                final String username = promptUsername("Insert the username of the player to update."); //"testJpa";
+                final PlayerState newState = promptPlayerState("Insert the new state of the player."); //PlayerState.ACTIVE;
+                try (JPAContext ctx = new JPAContext()) {
+                    ctx.connect();
+                    ctx.beginTransaction();
+                    Player player = ctx.getPlayers().findByUsername(username);
+                    if (player == null) {
+                        System.out.println("Player not found.");
+                        return;
+                    }
+                    ctx.updatePlayerStatus(player, newState);
+                    ctx.commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
     /**
      * Builds the command for the 2e exercise.
      *
@@ -116,8 +140,20 @@ public class Commands {
         return new Command("Obter pontos totais de um jogador.") {
             @Override
             public void act() {
-
-                throw new UnsupportedOperationException("Not supported yet.");
+                final String username = promptUsername("Insert the username of the player to get the total points."); //"testJpa";
+                try (JPAContext ctx = new JPAContext()) {
+                    ctx.connect();
+                    ctx.beginTransaction();
+                    Player player = ctx.getPlayers().findByUsername(username);
+                    if (player == null) {
+                        System.out.println("Player not found.");
+                        return;
+                    }
+                    System.out.println("Total points: " + ctx.playerTotalPoints(player));
+                    ctx.commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
     }
@@ -131,7 +167,20 @@ public class Commands {
         return new Command("Obter número de jogos de um jogador.") {
             @Override
             public void act() {
-                throw new UnsupportedOperationException("Not supported yet.");
+                final String username = promptUsername("Insert the username of the player to get the number of games."); //"testJpa";
+                try (JPAContext ctx = new JPAContext()) {
+                    ctx.connect();
+                    ctx.beginTransaction();
+                    Player player = ctx.getPlayers().findByUsername(username);
+                    if (player == null) {
+                        System.out.println("Player not found.");
+                        return;
+                    }
+                    System.out.println("Number of games: " + ctx.playerTotalGames(player));
+                    ctx.commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
     }
@@ -145,7 +194,7 @@ public class Commands {
         return new Command("Associar crachá.") {
             @Override
             public void act() {
-                throw new UnsupportedOperationException("Not supported yet.");
+
             }
         };
     }
