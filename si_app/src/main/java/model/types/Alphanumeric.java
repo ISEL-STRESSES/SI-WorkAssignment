@@ -15,7 +15,7 @@ public record Alphanumeric(String alphanumeric) {
      *
      * @return true if the alphanumeric string is valid, false otherwise
      */
-    boolean isValid() {
+    public boolean isValid() {
         return alphanumeric.matches(ALPHANUMERIC_REGEX) && alphanumeric.length() <= MAX_LENGTH;
     }
 }

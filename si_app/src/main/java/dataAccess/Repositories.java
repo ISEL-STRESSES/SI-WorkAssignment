@@ -486,6 +486,19 @@ public class Repositories {
             return context.em.createNamedQuery("Conversa.findAll", Conversa.class)
                     .getResultList();
         }
+
+        /**
+         * Finds the chat by the name.
+         *
+         * @param name name of the chat.
+         * @return The chat.
+         */
+        @Override
+        public Conversa findByName(String name) {
+            return context.em.createNamedQuery("Conversa.findByName", Conversa.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        }
     }
 
     /**

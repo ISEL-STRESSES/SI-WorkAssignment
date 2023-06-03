@@ -12,6 +12,7 @@ import java.util.Set;
 @Entity
 @NamedQuery(name = "Conversa.findByKey", query = "SELECT c FROM Conversa c WHERE c.id = :key")
 @NamedQuery(name = "Conversa.findAll", query = "SELECT c FROM Conversa c")
+@NamedQuery(name = "Conversa.findByName", query = "SELECT c FROM Conversa c WHERE c.nome = :name")
 @Table(name = "conversa", schema = "public")
 public class Conversa implements Chat {
     @Id

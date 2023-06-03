@@ -418,12 +418,12 @@ public class JPAContext implements Context {
     /**
      * TODO
      */
-    public Integer initiateChat(Player player1, Player player2) {
+    public Integer initiateChat(Player player1, Chat chat) {
         beginTransaction();
         Integer chatId;
         Query q = em.createNativeQuery("call iniciarConversa(?, ?, ?)")
                 .setParameter(1, player1.getId())
-                .setParameter(2, player2.getId());
+                .setParameter(2, chat.getId());
         //.setParameter(3, chatId);
         q.executeUpdate();
         commit();

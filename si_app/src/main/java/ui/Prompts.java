@@ -1,9 +1,11 @@
 package ui;
 
 import com.sun.istack.Nullable;
+import model.types.Alphanumeric;
 import model.types.Email;
 import model.types.PlayerState;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Function;
@@ -67,9 +69,9 @@ public class Prompts {
      */
     public static PlayerState promptPlayerState(String promptMessage) {
         System.out.println(promptMessage);
+        System.out.println("Available states: " + Arrays.toString(PlayerState.values()));
         return PlayerState.parse(prompt(input -> input.matches(PlayerState.PLAYER_STATE_REGEX), "Incorrect user state, please input a correct user state."));
     }
-
 
     /**
      * Gets the prompt region
@@ -80,6 +82,51 @@ public class Prompts {
     public static String promptRegion(String promptMessage) {
         System.out.println(promptMessage);
         return prompt(input -> input.length() > 1, "Incorrect region name, please input a correct region name.");
+    }
+
+    /**
+     * Gets the prompt Game id (Alphanumeric)
+     *
+     * @param promptMessage the prompt message
+     * @return the prompt Game id
+     */
+    public static Alphanumeric promptGameId(String promptMessage) {
+        System.out.println(promptMessage);
+        return new Alphanumeric(prompt(input -> new Alphanumeric(input).isValid(), "Incorrect game id, please input a correct game id."));
+    }
+
+    /**
+     * Gets the prompt Badge name
+     *
+     * @param promptMessage the prompt message
+     * @return the prompt Badge name
+     */
+    public static String promptBadgeName(String promptMessage) {
+        System.out.println(promptMessage);
+        return prompt(input -> input.length() > 1, "Incorrect badge name, please input a correct badge name.");
+    }
+
+    /**
+     * Gets the prompt Chat name
+     *
+     * @param promptMessage the prompt message
+     * @return the prompt Chat name
+     */
+    public static String promptChatName(String promptMessage) {
+        System.out.println(promptMessage);
+        return prompt(input -> input.length() > 1, "Incorrect chat name, please input a correct chat name.");
+    }
+
+    /**
+     * Creates a prompt with length verification
+     *
+     * @param promptMessage the prompt message
+     * @param length        the length.
+     * @return the prompt
+     */
+    public static String promptLength(String promptMessage, Integer length) {
+        System.out.println(promptMessage);
+        return prompt(input -> input.length() > length, "Incorrect length, please input a correct length.");
     }
 
     /**
