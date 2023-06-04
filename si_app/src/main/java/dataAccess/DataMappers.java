@@ -29,8 +29,10 @@ import model.entities.game.matches.Partida;
 import model.entities.game.matches.PartidaId;
 import model.entities.game.matches.multiplayer.MultiPlayerMatch;
 import model.entities.game.matches.multiplayer.PartidaMultijogador;
+import model.entities.game.matches.multiplayer.PartidaMultijogadorId;
 import model.entities.game.matches.normal.NormalMatch;
 import model.entities.game.matches.normal.PartidaNormal;
+import model.entities.game.matches.normal.PartidaNormalId;
 import model.entities.player.Jogador;
 import model.entities.player.JogadorEstatistica;
 import model.entities.player.Player;
@@ -450,7 +452,7 @@ public class DataMappers {
          * @return The key of the created normal match
          */
         @Override
-        public PartidaId create(PartidaNormal entity) {
+        public PartidaNormalId create(PartidaNormal entity) {
             context.beginTransaction();
             context.em.persist(entity);
             context.commit();
@@ -464,7 +466,7 @@ public class DataMappers {
          * @return The normal match with the given key
          */
         @Override
-        public PartidaNormal read(PartidaId id) {
+        public PartidaNormal read(PartidaNormalId id) {
             return context.em.find(PartidaNormal.class, id);
         }
 
@@ -475,15 +477,13 @@ public class DataMappers {
          * @return The key of the updated normal match
          */
         @Override
-        public PartidaId update(PartidaNormal entity) {
+        public PartidaNormalId update(PartidaNormal entity) {
             context.beginTransaction();
             NormalMatch normalMatch = context.em.find(NormalMatch.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (normalMatch == null) {
                 throw new EntityNotFoundException("NormalMatch with id " + entity.getId() + " not found");
             }
             normalMatch.setId(entity.getId());
-            normalMatch.setMatchNumber(entity.getMatchNumber());
-            normalMatch.setGameId(entity.getGameId());
             normalMatch.setMatch(entity.getMatch());
             normalMatch.setMatchDifficulty(entity.getMatchDifficulty());
             context.commit();
@@ -496,7 +496,7 @@ public class DataMappers {
          * @param id Key of the normal match to be deleted
          */
         @Override
-        public void delete(PartidaId id) {
+        public void delete(PartidaNormalId id) {
             context.beginTransaction();
             NormalMatch normalMatch = context.em.find(NormalMatch.class, id, LockModeType.PESSIMISTIC_WRITE);
             if (normalMatch == null) {
@@ -519,7 +519,7 @@ public class DataMappers {
          * @return The key of the created entity
          */
         @Override
-        public PartidaId create(PartidaMultijogador entity) {
+        public PartidaMultijogadorId create(PartidaMultijogador entity) {
             context.beginTransaction();
             context.em.persist(entity);
             context.commit();
@@ -533,7 +533,7 @@ public class DataMappers {
          * @return The multiplayer match with the given key
          */
         @Override
-        public PartidaMultijogador read(PartidaId id) {
+        public PartidaMultijogador read(PartidaMultijogadorId id) {
             return context.em.find(PartidaMultijogador.class, id);
         }
 
@@ -544,15 +544,13 @@ public class DataMappers {
          * @return The key of the updated multiplayer match
          */
         @Override
-        public PartidaId update(PartidaMultijogador entity) {
+        public PartidaMultijogadorId update(PartidaMultijogador entity) {
             context.beginTransaction();
             PartidaMultijogador multiPlayerMatch = context.em.find(PartidaMultijogador.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
             if (multiPlayerMatch == null) {
                 throw new EntityNotFoundException("MultiPlayerMatch with id " + entity.getId() + " not found");
             }
             multiPlayerMatch.setId(entity.getId());
-            multiPlayerMatch.setMatchNumber(entity.getMatchNumber());
-            multiPlayerMatch.setGameId(entity.getGameId());
             multiPlayerMatch.setMatch(entity.getMatch());
             multiPlayerMatch.setState(entity.getState());
             context.commit();
@@ -565,7 +563,7 @@ public class DataMappers {
          * @param id Key of the multiplayer match to be deleted
          */
         @Override
-        public void delete(PartidaId id) {
+        public void delete(PartidaMultijogadorId id) {
             context.beginTransaction();
             PartidaMultijogador multiPlayerMatch = context.em.find(PartidaMultijogador.class, id, LockModeType.PESSIMISTIC_WRITE);
             if (multiPlayerMatch == null) {

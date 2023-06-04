@@ -632,7 +632,7 @@ public class JPAContext implements Context {
      * TEST METHOD
      */
     public void test() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPAExemplo");
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("si-app.g17");
         System.out.println("EMF: " + emf);
         EntityManager em = emf.createEntityManager();
         System.out.println("EM: " + em);

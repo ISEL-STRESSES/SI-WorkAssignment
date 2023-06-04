@@ -1,7 +1,6 @@
 package model.entities.game.matches.multiplayer;
 
 import model.entities.game.matches.Match;
-import model.entities.game.matches.PartidaId;
 import model.types.Alphanumeric;
 import model.types.MultiPlayerMatchState;
 
@@ -16,14 +15,14 @@ public interface MultiPlayerMatch {
      *
      * @return the match id
      */
-    PartidaId getId();
+    PartidaMultijogadorId getId();
 
     /**
      * Setter function for the match id
      *
      * @param id the match id
      */
-    void setId(PartidaId id);
+    void setId(PartidaMultijogadorId id);
 
     /**
      * Getter function for the match number
@@ -33,25 +32,11 @@ public interface MultiPlayerMatch {
     Integer getMatchNumber();
 
     /**
-     * Setter function for the match number
-     *
-     * @param matchNumber the match number
-     */
-    void setMatchNumber(Integer matchNumber);
-
-    /**
      * Getter function for the game id
      *
      * @return the game id
      */
     Alphanumeric getGameId();
-
-    /**
-     * Setter function for the game id
-     *
-     * @param gameId the game id
-     */
-    void setGameId(Alphanumeric gameId);
 
     /**
      * Getter function for the game status

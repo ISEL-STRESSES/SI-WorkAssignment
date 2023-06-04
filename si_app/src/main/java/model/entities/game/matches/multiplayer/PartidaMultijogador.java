@@ -3,7 +3,6 @@ package model.entities.game.matches.multiplayer;
 import jakarta.persistence.*;
 import model.entities.game.matches.Match;
 import model.entities.game.matches.Partida;
-import model.entities.game.matches.PartidaId;
 import model.types.Alphanumeric;
 import model.types.MultiPlayerMatchState;
 
@@ -16,13 +15,13 @@ import model.types.MultiPlayerMatchState;
 @Table(name = "partida_multijogador", schema = "public")
 public class PartidaMultijogador implements MultiPlayerMatch {
     @EmbeddedId
-    private PartidaId id;
+    private PartidaMultijogadorId id;
 
-    //    @MapsId("nrMatch")
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @MapsId("matchId")
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo", nullable = false, insertable = false, updatable = false),
-            @JoinColumn(name = "nr_partida", referencedColumnName = "nr", nullable = false, insertable = false, updatable = false)
+            @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo", nullable = false),
+            @JoinColumn(name = "nr", referencedColumnName = "nr", nullable = false)
     })
     private Partida match;
 
@@ -35,7 +34,7 @@ public class PartidaMultijogador implements MultiPlayerMatch {
      * @return the match id
      */
     @Override
-    public PartidaId getId() {
+    public PartidaMultijogadorId getId() {
         return id;
     }
 
@@ -45,7 +44,7 @@ public class PartidaMultijogador implements MultiPlayerMatch {
      * @param id the match id
      */
     @Override
-    public void setId(PartidaId id) {
+    public void setId(PartidaMultijogadorId id) {
         this.id = id;
     }
 
@@ -56,18 +55,9 @@ public class PartidaMultijogador implements MultiPlayerMatch {
      */
     @Override
     public Integer getMatchNumber() {
-        return this.id.getMatchNumber();
+        return this.id.getMatchId().getMatchNumber();
     }
 
-    /**
-     * Setter function for the match number
-     *
-     * @param matchNumber the match number
-     */
-    @Override
-    public void setMatchNumber(Integer matchNumber) {
-        this.id.setMatchNumber(matchNumber);
-    }
 
     /**
      * Getter function for the game id
@@ -76,17 +66,7 @@ public class PartidaMultijogador implements MultiPlayerMatch {
      */
     @Override
     public Alphanumeric getGameId() {
-        return this.id.getGameId();
-    }
-
-    /**
-     * Setter function for the game id
-     *
-     * @param gameId the game id
-     */
-    @Override
-    public void setGameId(Alphanumeric gameId) {
-        this.id.setGameId(gameId);
+        return this.id.getMatchId().getGameId();
     }
 
     /**

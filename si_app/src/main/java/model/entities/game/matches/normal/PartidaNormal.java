@@ -3,7 +3,6 @@ package model.entities.game.matches.normal;
 import jakarta.persistence.*;
 import model.entities.game.matches.Match;
 import model.entities.game.matches.Partida;
-import model.entities.game.matches.PartidaId;
 import model.types.Alphanumeric;
 
 /**
@@ -16,13 +15,13 @@ import model.types.Alphanumeric;
 @Table(name = "partida_normal", schema = "public")
 public class PartidaNormal implements NormalMatch {
     @EmbeddedId
-    private PartidaId id;
+    private PartidaNormalId id;
 
-    //@MapsId("matchNr")
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @MapsId("matchId")
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo", nullable = false, insertable = false, updatable = false),
-            @JoinColumn(name = "nr_partida", referencedColumnName = "nr", nullable = false, insertable = false, updatable = false)
+            @JoinColumn(name = "id_jogo", referencedColumnName = "id_jogo", nullable = false),
+            @JoinColumn(name = "nr", referencedColumnName = "nr", nullable = false)
     })
     private Partida match;
 
@@ -36,18 +35,18 @@ public class PartidaNormal implements NormalMatch {
      * @return the match id
      */
     @Override
-    public PartidaId getId() {
+    public PartidaNormalId getId() {
         return this.id;
     }
 
     /**
      * Setter function for the match id
      *
-     * @param normalMatchId the match id
+     * @param id the match id
      */
     @Override
-    public void setId(PartidaId normalMatchId) {
-        this.id = normalMatchId;
+    public void setId(PartidaNormalId id) {
+        this.id = id;
     }
 
     /**
@@ -57,18 +56,9 @@ public class PartidaNormal implements NormalMatch {
      */
     @Override
     public Integer getMatchNumber() {
-        return this.id.getMatchNumber();
+        return this.id.getMatchId().getMatchNumber();
     }
 
-    /**
-     * Setter function for the match number
-     *
-     * @param matchNumber the match number
-     */
-    @Override
-    public void setMatchNumber(Integer matchNumber) {
-        this.id.setMatchNumber(matchNumber);
-    }
 
     /**
      * Getter function for the game id
@@ -77,17 +67,7 @@ public class PartidaNormal implements NormalMatch {
      */
     @Override
     public Alphanumeric getGameId() {
-        return this.id.getGameId();
-    }
-
-    /**
-     * Setter function for the game id
-     *
-     * @param gameId the game id
-     */
-    @Override
-    public void setGameId(Alphanumeric gameId) {
-        this.id.setGameId(gameId);
+        return this.id.getMatchId().getGameId();
     }
 
     /**

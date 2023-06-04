@@ -1,7 +1,6 @@
 package model.entities.game.matches.normal;
 
 import model.entities.game.matches.Match;
-import model.entities.game.matches.PartidaId;
 import model.types.Alphanumeric;
 
 /**
@@ -15,14 +14,14 @@ public interface NormalMatch {
      *
      * @return the match id
      */
-    PartidaId getId();
+    PartidaNormalId getId();
 
     /**
      * Setter function for the match id
      *
-     * @param normalMatchId the match id
+     * @param id the match id
      */
-    void setId(PartidaId normalMatchId);
+    void setId(PartidaNormalId id);
 
     /**
      * Getter function for the match number
@@ -31,12 +30,6 @@ public interface NormalMatch {
      */
     Integer getMatchNumber();
 
-    /**
-     * Setter function for the match number
-     *
-     * @param matchNumber the match number
-     */
-    void setMatchNumber(Integer matchNumber);
 
     /**
      * Getter function for the game id
@@ -45,12 +38,6 @@ public interface NormalMatch {
      */
     Alphanumeric getGameId();
 
-    /**
-     * Setter function for the game id
-     *
-     * @param gameId the game id
-     */
-    void setGameId(Alphanumeric gameId);
 
     /**
      * Getter function for the match difficulty
