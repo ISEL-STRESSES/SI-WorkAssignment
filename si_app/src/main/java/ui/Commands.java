@@ -103,7 +103,8 @@ public class Commands {
                         System.out.println("Player not found.");
                         return;
                     }
-                    ctx.updatePlayerStatus(player, newState);
+                    Player updatedPlayer = ctx.updatePlayerStatus(player, newState);
+                    System.out.println("Player with username " + updatedPlayer.getUsername() + " now has state " + updatedPlayer.getState());
                     ctx.commit();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -364,7 +365,6 @@ public class Commands {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                throw new UnsupportedOperationException("Not supported yet.");
             }
         };
     }
@@ -387,7 +387,6 @@ public class Commands {
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.getPlayersTotalInfoFromDB().forEach(System.out::println);
                 }
-                throw new UnsupportedOperationException("Not supported yet.");
             }
         };
     }

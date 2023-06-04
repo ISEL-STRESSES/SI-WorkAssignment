@@ -174,10 +174,8 @@ public class JPAContext implements Context {
         try {
             if (emf == null || !emf.isOpen())
                 this.emf = Persistence.createEntityManagerFactory(persistentCtx);
-            if (em == null || !em.isOpen()) {
+            if (em == null || !em.isOpen())
                 this.em = emf.createEntityManager();
-                System.out.println(em);
-            }
         } catch (PersistenceException exception) {
             System.out.println(exception.getMessage() + ".");
             System.out.println("Please check the name of the persistence in the Persistence.xml file located in resources/META-INF!");
@@ -206,7 +204,7 @@ public class JPAContext implements Context {
     /* repositories */
 
     /**
-     * getter for the {@link RegionRepository}
+     * Getter for the {@link RegionRepository}
      *
      * @return the {@link RegionRepository}
      */
@@ -216,7 +214,7 @@ public class JPAContext implements Context {
     }
 
     /**
-     * getter for the {@link PlayerRepository}
+     * Getter for the {@link PlayerRepository}
      *
      * @return the {@link PlayerRepository}
      */
@@ -226,7 +224,7 @@ public class JPAContext implements Context {
     }
 
     /**
-     * getter for the {@link PlayerStatsRepository}
+     * Getter for the {@link PlayerStatsRepository}
      *
      * @return the {@link PlayerStatsRepository}
      */
@@ -236,7 +234,7 @@ public class JPAContext implements Context {
     }
 
     /**
-     * getter for the {@link GameRepository}
+     * Getter for the {@link GameRepository}
      *
      * @return the {@link GameRepository}
      */
@@ -246,7 +244,7 @@ public class JPAContext implements Context {
     }
 
     /**
-     * getter for the {@link GameStatsRepository}
+     * Getter for the {@link GameStatsRepository}
      *
      * @return the {@link GameStatsRepository}
      */
@@ -256,7 +254,7 @@ public class JPAContext implements Context {
     }
 
     /**
-     * getter for the {@link MatchRepository}
+     * Getter for the {@link MatchRepository}
      *
      * @return the {@link MatchRepository}
      */
@@ -266,7 +264,7 @@ public class JPAContext implements Context {
     }
 
     /**
-     * getter for the {@link NormalMatchRepository}
+     * Getter for the {@link NormalMatchRepository}
      *
      * @return the {@link NormalMatchRepository}
      */
@@ -276,7 +274,7 @@ public class JPAContext implements Context {
     }
 
     /**
-     * getter for the {@link MultiPlayerMatchRepository}
+     * Getter for the {@link MultiPlayerMatchRepository}
      *
      * @return the {@link MultiPlayerMatchRepository}
      */
@@ -286,7 +284,7 @@ public class JPAContext implements Context {
     }
 
     /**
-     * getter for the {@link BadgeRepository}
+     * Getter for the {@link BadgeRepository}
      *
      * @return the {@link BadgeRepository}
      */
@@ -296,7 +294,7 @@ public class JPAContext implements Context {
     }
 
     /**
-     * getter for the {@link ChatRepository}
+     * Getter for the {@link ChatRepository}
      *
      * @return the {@link ChatRepository}
      */
@@ -306,7 +304,7 @@ public class JPAContext implements Context {
     }
 
     /**
-     * getter for the {@link MessageRepository}
+     * Getter for the {@link MessageRepository}
      *
      * @return the {@link MessageRepository}
      */
@@ -316,7 +314,7 @@ public class JPAContext implements Context {
     }
 
     /**
-     * getter for the {@link Repositories.PlayerTotalInfoRepository}
+     * Getter for the {@link Repositories.PlayerTotalInfoRepository}
      *
      * @return the {@link Repositories.PlayerTotalInfoRepository}
      */
@@ -325,11 +323,115 @@ public class JPAContext implements Context {
         return playerTotalInfoRepository;
     }
 
+    /**
+     * Getter for the {@link DataMappers.RegionDataMapper}
+     *
+     * @return the {@link DataMappers.RegionDataMapper}
+     */
+    private DataMappers.RegionDataMapper regionMapper() {
+        return regionDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.PlayerDataMapper}
+     *
+     * @return the {@link DataMappers.PlayerDataMapper}
+     */
+    private DataMappers.PlayerDataMapper playerMapper() {
+        return playerDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.PlayerStatsDataMapper}
+     *
+     * @return the {@link DataMappers.PlayerStatsDataMapper}
+     */
+    private DataMappers.PlayerStatsDataMapper playerStatsMapper() {
+        return playerStatsDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.GameDataMapper}
+     *
+     * @return the {@link DataMappers.GameDataMapper}
+     */
+    private DataMappers.GameDataMapper gameMapper() {
+        return gameDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.GameStatsDataMapper}
+     *
+     * @return the {@link DataMappers.GameStatsDataMapper}
+     */
+    private DataMappers.GameStatsDataMapper gameStatsMapper() {
+        return gameStatsDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.MatchDataMapper}
+     *
+     * @return the {@link DataMappers.MatchDataMapper}
+     */
+    private DataMappers.MatchDataMapper matchMapper() {
+        return matchDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.NormalMatchDataMapper}
+     *
+     * @return the {@link DataMappers.NormalMatchDataMapper}
+     */
+    private DataMappers.NormalMatchDataMapper normalMatchMapper() {
+        return normalMatchDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.MultiPlayerMatchDataMapper}
+     *
+     * @return the {@link DataMappers.MultiPlayerMatchDataMapper}
+     */
+    private DataMappers.MultiPlayerMatchDataMapper multiPlayerMatchMapper() {
+        return multiPlayerMatchDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.BadgeDataMapper}
+     *
+     * @return the {@link DataMappers.BadgeDataMapper}
+     */
+    private DataMappers.BadgeDataMapper badgeMapper() {
+        return badgeDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.ChatDataMapper}
+     *
+     * @return the {@link DataMappers.ChatDataMapper}
+     */
+    private DataMappers.ChatDataMapper chatMapper() {
+        return chatDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.MessageDataMapper}
+     *
+     * @return the {@link DataMappers.MessageDataMapper}
+     */
+    private DataMappers.MessageDataMapper messageMapper() {
+        return messageDataMapper;
+    }
+
+
     /* exercises */
     /* 2d1 */
 
     /**
-     * TODO
+     * Persists a new {@link Player} in the database.
+     *
+     * @param player The player to be persisted.
+     * @Requirements: The player's region must already exist in the database.<p>
+     * All the player's fields must be valid.
      */
     public void createPlayer(Player player) {
         beginTransaction();
@@ -344,7 +446,13 @@ public class JPAContext implements Context {
     /* 2d2 */
 
     /**
-     * TODO
+     * Updates the status of a {@link Player}.
+     *
+     * @param player   The player to be updated.
+     * @param newState The new status of the player.
+     * @return The updated player.
+     * @Requirements: The player must already exist in the database.<p>
+     * The new status must be valid.
      */
     public Player updatePlayerStatus(Player player, PlayerState newState) {
         beginTransaction();
@@ -359,7 +467,11 @@ public class JPAContext implements Context {
     /* 2e */
 
     /**
-     * TODO
+     * Returns the total number of points of a {@link Player}.
+     *
+     * @param player The player.
+     * @return The total number of points of the player.
+     * @Requirements: The player must already exist in the database.
      */
     public Integer playerTotalPoints(Player player) {
         beginTransaction();
@@ -373,7 +485,11 @@ public class JPAContext implements Context {
     /* 2f */
 
     /**
-     * TODO
+     * Returns the total number of games of a {@link Player}.
+     *
+     * @param player The player.
+     * @return The total number of games of the player.
+     * @Requirements: The player must already exist in the database.
      */
     public Integer playerTotalGames(Player player) {
         beginTransaction();
@@ -387,7 +503,11 @@ public class JPAContext implements Context {
     /* 2g */
 
     /**
-     * TODO
+     * Returns the total number of points by {@link Player} in a {@link Game}.
+     *
+     * @param game The game.
+     * @return The total number of points by player in the game.
+     * @Requirements: The game must already exist in the database.
      */
     public List<Object[]> gamePointsByPlayer(Game game) {
         beginTransaction();
@@ -401,7 +521,14 @@ public class JPAContext implements Context {
     /* 2h */
 
     /**
-     * TODO
+     * Gives a badge to a {@link Player} in a {@link Game}.
+     *
+     * @param player The player.
+     * @param game   The game.
+     * @param badge  The badge.
+     * @Requirements: The player must already exist in the database.<p>
+     * The game must already exist in the database.<p>
+     * The badge must already exist in the database.
      */
     public void giveBadgeToPlayer(Player player, Game game, Badge badge) {
         beginTransaction();
@@ -416,13 +543,18 @@ public class JPAContext implements Context {
     /* 2i */
 
     /**
-     * TODO
+     * Initiates a {@link Chat} by adding a {@link Player} to it.
+     *
+     * @param player The player.
+     * @param chat   The chat.
+     * @return The chat id.
+     * @Requirements: The player must already exist in the database.<p>
      */
-    public Integer initiateChat(Player player1, Chat chat) {
+    public Integer initiateChat(Player player, Chat chat) {
         beginTransaction();
         Integer chatId;
         Query q = em.createNativeQuery("call iniciarConversa(?, ?, ?)")
-                .setParameter(1, player1.getId())
+                .setParameter(1, player.getId())
                 .setParameter(2, chat.getId());
         //.setParameter(3, chatId);
         q.executeUpdate();
@@ -433,7 +565,12 @@ public class JPAContext implements Context {
     /* 2j */
 
     /**
-     * TODO
+     * Adds a player to an already existent {@link Chat}.
+     *
+     * @param player The player to add to the chat.
+     * @param chat   The chat.
+     * @Requirements: The player must already exist in the database.<p>
+     * The chat must already exist in the database.
      */
     public void addPlayerToChat(Player player, Chat chat) {
         beginTransaction();
@@ -447,7 +584,13 @@ public class JPAContext implements Context {
     /* 2k */
 
     /**
-     * TODO
+     * Sends a message to a {@link Chat} by a {@link Player}.
+     *
+     * @param player  The player that sends the message.
+     * @param chat    The chat.
+     * @param message The text of the message.
+     * @Requirements: The player must already exist in the database.<p>
+     * The chat must already exist in the database.
      */
     public void sendMessage(Player player, Chat chat, String message) {
         beginTransaction();
@@ -463,7 +606,10 @@ public class JPAContext implements Context {
     // view
 
     /**
-     * TODO
+     * Returns the players total info from the database.
+     *
+     * @return The players total info.
+     * @Requirements: The players must not be banned.
      */
     public List<Jogadortotalinfo> getPlayersTotalInfoFromDB() {
         beginTransaction();
@@ -482,6 +628,9 @@ public class JPAContext implements Context {
         return result;
     }
 
+    /**
+     * TEST METHOD
+     */
     public void test() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPAExemplo");
         System.out.println("EMF: " + emf);
@@ -497,8 +646,4 @@ public class JPAContext implements Context {
             emf.close();
         }
     }
-    /* 2m */
-    // trigger
-    /* 2n */
-    // trigger
 }
