@@ -102,10 +102,9 @@ $$;
 -- This function calculates and returns the total points obtained by a player given their player ID. It performs the
 -- following tasks:
 --
--- Checks if the given player ID exists in the jogador table. If not, it raises a notice indicating that the player was
+-- Checks if the given player ID exists in the jogador table. If not, it raises a exception indicating that the player was
 -- not found.
--- Checks if the player is banned or inactive. If so, it raises a notice indicating that the player is banned or
--- inactive.
+-- Checks if the player is banned. If so, it raises a exception.
 -- Checks if the player has played any games. If not, it raises a notice indicating that the player has not played any
 -- games.
 -- Retrieves the points from the partida_normal and partida_multijogador tables for the player ID.
@@ -138,13 +137,13 @@ $$
         -- expected
         -- counts the points of partidas normais
         SELECT SUM(COALESCE(joga.pontuacao, 0)) INTO pontos_normal FROM joga
-        JOIN partida_normal pn on joga.id_jogo = pn.id_jogo AND joga.nr_partida = pn.nr_partida
+        JOIN partida_normal pn on joga.id_jogo = pn.id_jogo AND joga.nr_partida = pn.nr
         JOIN partida p ON joga.id_jogo = p.id_jogo AND joga.nr_partida = p.nr
         WHERE joga.id_jogador = jogador_id AND p.data_fim IS NOT NULL;
 
         -- counts the points of partidas multijogador
         SELECT SUM(COALESCE(joga.pontuacao, 0)) INTO pontos_multi FROM joga
-        JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr_partida
+        JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr
         JOIN partida p ON joga.id_jogo = p.id_jogo AND joga.nr_partida = p.nr
         WHERE joga.id_jogador = jogador_id AND pm.estado = 'Terminada' AND p.data_fim IS NOT NULL;
 
@@ -197,13 +196,13 @@ $$
         SELECT DISTINCT joga.id_jogo
         FROM joga
         JOIN partida ON joga.id_jogo = partida.id_jogo AND joga.nr_partida = partida.nr
-        JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr_partida
+        JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr
         WHERE joga.id_jogador = jogador_id AND pm.estado = 'Terminada' AND partida.data_fim IS NOT NULL
     ), normal_games AS (
         SELECT DISTINCT joga.id_jogo
         FROM joga
         JOIN partida ON joga.id_jogo = partida.id_jogo AND joga.nr_partida = partida.nr
-        JOIN partida_normal pn ON joga.id_jogo = pn.id_jogo AND joga.nr_partida = pn.nr_partida
+        JOIN partida_normal pn ON joga.id_jogo = pn.id_jogo AND joga.nr_partida = pn.nr
         WHERE joga.id_jogador = jogador_id AND partida.data_fim IS NOT NULL
     )
     SELECT COUNT(*) INTO jogos
@@ -224,7 +223,8 @@ $$;
 -- Example usage:
 -- SELECT * FROM PontosJogoPorJogador('1');
 CREATE OR REPLACE FUNCTION PontosJogoPorJogador(jogo_id ALPHANUMERIC)
-    RETURNS TABLE (id_jogador INT, total_pontos INT) LANGUAGE plpgsql
+    RETURNS TABLE (id_jogador INT, total_pontos INT)
+    LANGUAGE plpgsql
 AS
 $$
     BEGIN
@@ -237,8 +237,8 @@ $$
 
         RETURN QUERY SELECT joga.id_jogador, SUM(COALESCE(joga.pontuacao, 0))::integer AS total_pontos FROM joga
         JOIN partida p ON joga.id_jogo = p.id_jogo AND joga.nr_partida = p.nr
-        LEFT JOIN partida_normal pn ON joga.id_jogo = pn.id_jogo AND joga.nr_partida = pn.nr_partida
-        LEFT JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr_partida AND pm.estado = 'Terminada'
+        LEFT JOIN partida_normal pn ON joga.id_jogo = pn.id_jogo AND joga.nr_partida = pn.nr
+        LEFT JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr AND pm.estado = 'Terminada'
         WHERE joga.id_jogo = jogo_id AND p.data_fim IS NOT NULL
         GROUP BY joga.id_jogador;
     END;
@@ -525,10 +525,10 @@ CREATE OR REPLACE FUNCTION totalPartidasJogador(jogador_id INT)
 AS
 $$
     DECLARE
-        nr_partidas INT;
+        nrs INT;
     BEGIN
-        SELECT COUNT(nr_partida) INTO nr_partidas FROM joga WHERE joga.id_jogador = jogador_id;
-        RETURN nr_partidas;
+        SELECT COUNT(nr_partida) INTO nrs FROM joga WHERE joga.id_jogador = jogador_id;
+        RETURN nrs;
     END;
 $$;
 
@@ -566,7 +566,7 @@ $$
         IF EXISTS (
             SELECT 1
             FROM partida_normal pn
-            WHERE pn.id_jogo = NEW.id_jogo AND pn.nr_partida = NEW.nr_partida
+            WHERE pn.id_jogo = NEW.id_jogo AND pn.nr = NEW.nr_partida
         ) THEN
             -- For normal matches, assign badges based on the player's score if it exceeds the badge's limite_pontos
             INSERT INTO ganha (id_jogador, id_jogo, nome_cracha)
@@ -583,7 +583,7 @@ $$
                 SELECT 1
                 FROM partida_multijogador pm
                 WHERE pm.id_jogo = NEW.id_jogo
-                    AND pm.nr_partida = NEW.nr_partida
+                    AND pm.nr = NEW.nr_partida
                     AND pm.estado = 'Terminada'
             ) THEN
                 -- Check if the player's score exceeds the badge's limite_pontos

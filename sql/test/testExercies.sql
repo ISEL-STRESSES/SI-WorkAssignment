@@ -197,14 +197,14 @@ $$
         INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (2, game_id2, match_start_date, match_end_date, region_name1);
         INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (3, game_id2, match_start_date, match_end_date, region_name1);
         INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (4, game_id2, match_start_date, null, region_name1);
-        INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES (game_id1, 1, match_ended);
-        INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES (game_id1, 2, match_ended);
-        INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES (game_id2, 1, match_ended);
-        INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES (game_id2, 2, match_ended);
-        INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade) VALUES (game_id1, 3, 1);
-        INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade) VALUES (game_id1, 4, 1);
-        INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade) VALUES (game_id2, 3, 1);
-        INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade) VALUES (game_id2, 4, 1);
+        INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES (game_id1, 1, match_ended);
+        INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES (game_id1, 2, match_ended);
+        INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES (game_id2, 1, match_ended);
+        INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES (game_id2, 2, match_ended);
+        INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id1, 3, 1);
+        INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id1, 4, 1);
+        INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id2, 3, 1);
+        INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id2, 4, 1);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id1, null);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 2, game_id1, 1);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 3, game_id1, 1000);
@@ -330,10 +330,10 @@ $$
         INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id2, match_start_date, match_end_date, region_name1);
         INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id3, match_start_date, match_end_date, region_name1);
         INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id4, match_start_date, match_end_date, region_name1);
-        INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade) VALUES (game_id1, 1, 1);
-        INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade) VALUES (game_id2, 1, 1);
-        INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES (game_id3, 1, match_ended);
-        INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES (game_id4, 1, match_in_progress);
+        INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id1, 1, 1);
+        INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id2, 1, 1);
+        INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES (game_id3, 1, match_ended);
+        INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES (game_id4, 1, match_in_progress);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id1, 100);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id2, 100);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id3, 100);
@@ -451,12 +451,12 @@ $$
         INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (4, game_id1, match_start_date, match_end_date, region_name1);
         INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (5, game_id1, match_start_date, match_end_date, region_name1);
         INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (6, game_id1, match_start_date, match_end_date, region_name1);
-        INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade) VALUES (game_id1, 1, 3);
-        INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade) VALUES (game_id1, 3, 3);
-        INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES (game_id1, 5, match_ended);
-        INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade) VALUES (game_id1, 2, 3);
-        INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES (game_id1, 4, match_ended);
-        INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES (game_id1, 6, match_ended);
+        INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id1, 1, 3);
+        INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id1, 3, 3);
+        INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES (game_id1, 5, match_ended);
+        INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id1, 2, 3);
+        INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES (game_id1, 4, match_ended);
+        INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES (game_id1, 6, match_ended);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1,game_id1, 1);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 3,game_id1, 10);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 5,game_id1, 100);
@@ -559,24 +559,28 @@ $$
         CALL create_jogador(region_name1, player_name1, player_email1);
         SELECT jogador.id INTO player_id1 FROM jogador WHERE email = player_email1;
         INSERT INTO jogo (id, nome, url) VALUES (game_id1, game_name1, game_url1);
+        INSERT INTO jogo (id, nome, url) VALUES (game_id2, game_name2, game_url2);
         INSERT INTO cracha (nome, id_jogo, imagem, limite_pontos) VALUES (badge_name1, game_id1, badge_image1, badge_points1);
         INSERT INTO cracha (nome, id_jogo, imagem, limite_pontos) VALUES (badge_name2, game_id1, badge_image2, badge_points2);
         INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id1, match_start_date, match_end_date, region_name1);
-        INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (2, game_id1, match_start_date, match_end_date, region_name1);
+        INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id2, match_start_date, match_end_date, region_name1);
         INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (3, game_id1, match_start_date, match_end_date, region_name1);
-        INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade) VALUES (game_id1, 1, 3);
-        INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES (game_id1, 2, match_ended);
-        INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES (game_id1, 3, match_ended);
+        INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id1, 1, 3);
+        INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES (game_id2, 1, match_ended);
+        INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES (game_id1, 3, match_ended);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id1, 1);
-        INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 2, game_id1, 5);
+        INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id2, 5);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 3, game_id1, null);
         RAISE NOTICE 'Exercise 2h';
         RAISE NOTICE 'Test data created';
         RAISE NOTICE 'Testing the attribution of a badges to a player';
     BEGIN -- Test 1: Giving only a badge to a player
         CALL associarCracha(player_id1, game_id1, badge_name1);
+        RAISE NOTICE 'after badge 1';
         CALL associarCracha(player_id1, game_id1, badge_name2);
+        Raise NOTICE 'after badge 2';
         IF ((SELECT COUNT(*) FROM ganha WHERE id_jogador = player_id1 AND id_jogo = game_id1) = 1) THEN
+            Raise NOTICE 'outside if';
             IF ((SELECT ganha.nome_cracha FROM ganha WHERE id_jogador = player_id1 AND id_jogo = game_id1) = badge_name1) THEN
                 RAISE NOTICE 'Test 1 succeeded';
             ELSE
@@ -654,6 +658,8 @@ $$
             ELSE
                 RAISE EXCEPTION 'Test 7 failed with error %', SQLERRM;
             END IF;
+        WHEN unique_violation THEN
+            RAISE NOTICE 'Test 7 succeeded';
         WHEN others THEN
             RAISE EXCEPTION 'Test 7 failed with error %', SQLERRM;
     END;
@@ -661,8 +667,11 @@ $$
     DELETE FROM joga WHERE id_jogador = player_id1;
     DELETE FROM partida_normal WHERE id_jogo = game_id1;
     DELETE FROM partida_multijogador WHERE id_jogo = game_id1;
+    DELETE FROM partida_multijogador WHERE id_jogo = game_id2;
     DELETE FROM partida WHERE id_jogo = game_id1;
+    DELETE FROM partida WHERE id_jogo = game_id2;
     DELETE FROM ganha WHERE id_jogo = game_id1;
+    DELETE FROM ganha WHERE id_jogo = game_id2;
     DELETE FROM cracha WHERE id_jogo = game_id1;
     DELETE FROM jogo WHERE id = game_id1;
     DELETE FROM jogador WHERE id = player_id1;
@@ -893,15 +902,15 @@ $$
         INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id3, match_start_date, match_end_date, region_name1);
         INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (2, game_id3, match_start_date, match_end_date, region_name1);
         INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (3, game_id3, match_start_date, match_end_date, region_name1);
-        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade) VALUES (game_id1, 1, 1);
-        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade) VALUES (game_id1, 2, 1);
-        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado) VALUES (game_id1, 3, match_ended);
-        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade) VALUES (game_id2, 1, 1);
-        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado) VALUES (game_id2, 2, match_ended);
-        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado) VALUES (game_id2, 3, match_ended);
-        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade) VALUES (game_id3, 1, 1);
-        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade) VALUES (game_id3, 2, 1);
-        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade) VALUES (game_id3, 3, 1);
+        INSERT INTO partida_normal(id_jogo, nr, dificuldade) VALUES (game_id1, 1, 1);
+        INSERT INTO partida_normal(id_jogo, nr, dificuldade) VALUES (game_id1, 2, 1);
+        INSERT INTO partida_multijogador(id_jogo, nr, estado) VALUES (game_id1, 3, match_ended);
+        INSERT INTO partida_normal(id_jogo, nr, dificuldade) VALUES (game_id2, 1, 1);
+        INSERT INTO partida_multijogador(id_jogo, nr, estado) VALUES (game_id2, 2, match_ended);
+        INSERT INTO partida_multijogador(id_jogo, nr, estado) VALUES (game_id2, 3, match_ended);
+        INSERT INTO partida_normal(id_jogo, nr, dificuldade) VALUES (game_id3, 1, 1);
+        INSERT INTO partida_normal(id_jogo, nr, dificuldade) VALUES (game_id3, 2, 1);
+        INSERT INTO partida_normal(id_jogo, nr, dificuldade) VALUES (game_id3, 3, 1);
         INSERT INTO joga(id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id1, 1); --normal
         INSERT INTO joga(id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id2, 1000); --normal
         INSERT INTO joga(id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id3, 1000000); --normal
@@ -996,8 +1005,8 @@ $$
         DELETE FROM joga WHERE nr_partida = partida_nr1;
         INSERT INTO joga (id_jogador, nr_partida, id_jogo) VALUES (player_id1, partida_nr1, game_id1);
 
-        DELETE FROM partida_multijogador WHERE nr_partida = partida_nr1 AND id_jogo = game_id1;
-        INSERT INTO partida_multijogador (nr_partida, id_jogo, estado) VALUES (partida_nr1, game_id1, match_state);
+        DELETE FROM partida_multijogador WHERE nr = partida_nr1 AND id_jogo = game_id1;
+        INSERT INTO partida_multijogador (nr, id_jogo, estado) VALUES (partida_nr1, game_id1, match_state);
 
         DELETE FROM cracha WHERE nome = cracha_name1;
         INSERT INTO cracha (nome, id_jogo, imagem, limite_pontos) VALUES (cracha_name1, game_id1, 'https://test-cracha.example.com', 50);
@@ -1027,7 +1036,7 @@ $$
         -- Clean up test data
         DELETE FROM ganha WHERE id_jogador = player_id1;
         DELETE FROM joga WHERE id_jogador = player_id1;
-        DELETE FROM partida_normal WHERE nr_partida = partida_nr1;
+        DELETE FROM partida_normal WHERE nr = partida_nr1;
         DELETE FROM partida WHERE nr = partida_nr1;
         DELETE FROM cracha WHERE nome = cracha_name1;
         DELETE FROM jogo WHERE id = game_id1;
@@ -1085,15 +1094,15 @@ $$
         INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (1, game_id3, match_start_date, match_end_date, region_name1);
         INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (2, game_id3, match_start_date, match_end_date, region_name1);
         INSERT INTO partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (3, game_id3, match_start_date, match_end_date, region_name1);
-        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade) VALUES (game_id1, 1, 1);
-        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade) VALUES (game_id1, 2, 1);
-        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado) VALUES (game_id1, 3, match_ended);
-        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade) VALUES (game_id2, 1, 1);
-        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado) VALUES (game_id2, 2, match_ended);
-        INSERT INTO partida_multijogador(id_jogo, nr_partida, estado) VALUES (game_id2, 3, match_ended);
-        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade) VALUES (game_id3, 1, 1);
-        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade) VALUES (game_id3, 2, 1);
-        INSERT INTO partida_normal(id_jogo, nr_partida, dificuldade) VALUES (game_id3, 3, 1);
+        INSERT INTO partida_normal(id_jogo, nr, dificuldade) VALUES (game_id1, 1, 1);
+        INSERT INTO partida_normal(id_jogo, nr, dificuldade) VALUES (game_id1, 2, 1);
+        INSERT INTO partida_multijogador(id_jogo, nr, estado) VALUES (game_id1, 3, match_ended);
+        INSERT INTO partida_normal(id_jogo, nr, dificuldade) VALUES (game_id2, 1, 1);
+        INSERT INTO partida_multijogador(id_jogo, nr, estado) VALUES (game_id2, 2, match_ended);
+        INSERT INTO partida_multijogador(id_jogo, nr, estado) VALUES (game_id2, 3, match_ended);
+        INSERT INTO partida_normal(id_jogo, nr, dificuldade) VALUES (game_id3, 1, 1);
+        INSERT INTO partida_normal(id_jogo, nr, dificuldade) VALUES (game_id3, 2, 1);
+        INSERT INTO partida_normal(id_jogo, nr, dificuldade) VALUES (game_id3, 3, 1);
         INSERT INTO joga(id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id1, 1); --normal
         INSERT INTO joga(id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 2, game_id1, 10); --normal
         INSERT INTO joga(id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 3, game_id1, 100); --multi
@@ -1154,7 +1163,7 @@ CALL test_d2(); -- Passed
 CALL test_e(); -- Passed
 CALL test_f(); -- Passed
 CALL test_g(); -- Passed
-CALL test_h(); -- Not Passed
+CALL test_h(); -- Passed REQUIRES function m not in DB
 CALL test_i(); -- Passed
 CALL test_j(); -- Passed
 CALL test_k(); -- Passed

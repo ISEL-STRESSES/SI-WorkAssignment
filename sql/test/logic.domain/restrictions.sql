@@ -52,7 +52,7 @@ $$
 
     BEGIN
         insert into partida(nr, id_jogo, data_inicio, data_fim, nome_regiao) values (mach_nr, game_id, now(), null, region_name);
-        insert into partida_normal(id_jogo, nr_partida, dificuldade) values (game_id, mach_nr, match_difficulty);
+        insert into partida_normal(id_jogo, nr, dificuldade) values (game_id, mach_nr, match_difficulty);
         insert into joga(id_jogador, nr_partida, id_jogo) VALUES (player_id, mach_nr, game_id);
     END;
 $$;
@@ -75,7 +75,7 @@ $$
         t5 text;
     BEGIN
         insert into partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) values (partida_nr, game_id, now(), null, region_name);
-        insert into partida_normal (id_jogo, nr_partida, dificuldade) values (game_id, partida_nr, partida_dificuldade);
+        insert into partida_normal (id_jogo, nr, dificuldade) values (game_id, partida_nr, partida_dificuldade);
         insert into joga(id_jogador, nr_partida, id_jogo) VALUES (player_id, partida_nr, game_id);
     EXCEPTION
     WHEN OTHERS THEN

@@ -83,26 +83,26 @@ CREATE TABLE IF NOT EXISTS partida(
 -- Partida normal
 CREATE TABLE IF NOT EXISTS partida_normal(
     id_jogo     ALPHANUMERIC NOT NULL,
-    nr_partida  INT          NOT NULL,
+    nr          INT          NOT NULL,
     dificuldade INT          NOT NULL,
 
-    UNIQUE (id_jogo, nr_partida),
+    UNIQUE (id_jogo, nr),
 
     CONSTRAINT dificuldade_constraint CHECK(dificuldade BETWEEN 1 and 5),
 
-    CONSTRAINT fk_partida_normal FOREIGN KEY(id_jogo, nr_partida) REFERENCES partida(id_jogo, nr) ON DELETE CASCADE,
-    CONSTRAINT pk_partida_normal PRIMARY KEY(id_jogo, nr_partida)
+    CONSTRAINT fk_partida_normal FOREIGN KEY(id_jogo, nr) REFERENCES partida(id_jogo, nr) ON DELETE CASCADE,
+    CONSTRAINT pk_partida_normal PRIMARY KEY(id_jogo, nr)
 );
 
 -- Partida multijogador
 CREATE TABLE IF NOT EXISTS partida_multijogador(
     id_jogo    ALPHANUMERIC NOT NULL,
-    nr_partida INT          NOT NULL,
-    estado     VARCHAR(20)  DEFAULT 'Por iniciar',
+    nr         INT          NOT NULL,
+    estado     VARCHAR(20)  DEFAULT 'por iniciar',
 
-    CONSTRAINT estado_constraint CHECK(estado ~* '^(Por iniciar|A aguardar jogadores|Em curso|Terminada)$'),
-    CONSTRAINT fk_partida_multijogador FOREIGN KEY(id_jogo, nr_partida) REFERENCES partida(id_jogo, nr) ON DELETE CASCADE,
-    CONSTRAINT pk_partida_multijogador PRIMARY KEY(nr_partida, id_jogo)
+    CONSTRAINT estado_constraint CHECK(estado ~* '^(por iniciar|a aguardar jogadores|em curso|terminada)$'),
+    CONSTRAINT fk_partida_multijogador FOREIGN KEY(id_jogo, nr) REFERENCES partida(id_jogo, nr) ON DELETE CASCADE,
+    CONSTRAINT pk_partida_multijogador PRIMARY KEY(nr, id_jogo)
 );
 
 -- Cracha

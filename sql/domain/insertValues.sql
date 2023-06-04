@@ -62,19 +62,17 @@ INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (3,
 INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (4, 'KFMGS4D8w9', '2023-05-03', '2023-05-22', 'Congo');
 INSERT INTO partida (nr, id_jogo, data_inicio, data_fim, nome_regiao) VALUES (5, 'KFMGS4D8w9', '2023-05-03', '2023-05-23', 'Papua New Guinea');
 
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('KFMGS4D8w9', 0, 'Em curso');
-INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade)  VALUES ('KFMGS4D8w9', 1, 1);
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('KFMGS4D8w9', 2, 'Terminada');
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('KFMGS4D8w9', 3, 'Por iniciar');
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('KFMGS4D8w9', 4, 'Terminada');
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('KFMGS4D8w9', 5, 'Terminada');
+INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES ('KFMGS4D8w9', 0, 'Em curso');
+INSERT INTO partida_normal (id_jogo, nr, dificuldade)  VALUES ('KFMGS4D8w9', 1, 1);
+INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES ('KFMGS4D8w9', 2, 'Terminada');
+INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES ('KFMGS4D8w9', 3, 'Por iniciar');
+INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES ('KFMGS4D8w9', 4, 'Terminada');
+INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES ('KFMGS4D8w9', 5, 'Terminada');
 
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('WvKx6LoOFa', 0, 'A aguardar jogadores');
-INSERT INTO partida_multijogador (id_jogo, nr_partida, estado) VALUES ('i7px2DVUdf', 0, 'Terminada');
-INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade)  VALUES ('B86C76ooav', 0, 2);
-INSERT INTO partida_normal (id_jogo, nr_partida, dificuldade)  VALUES ('dRiuhNLeeu', 0, 1);
-
-
+INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES ('WvKx6LoOFa', 0, 'A aguardar jogadores');
+INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES ('i7px2DVUdf', 0, 'Terminada');
+INSERT INTO partida_normal (id_jogo, nr, dificuldade)  VALUES ('B86C76ooav', 0, 2);
+INSERT INTO partida_normal (id_jogo, nr, dificuldade)  VALUES ('dRiuhNLeeu', 0, 1);
 COMMIT;
 
 BEGIN TRANSACTION;
