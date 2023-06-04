@@ -62,9 +62,9 @@ public class Commands {
              */
             @Override
             public void act() {
-                final Email email = promptEmail("Insert a new email for the new player."); //new Email("test@jpa.com");
-                final String username = promptUsername("Insert a new username for the new player."); //"testJpa";
-                final String regionName = promptRegion("Insert a new region for the new player."); //"testRegion";
+                final Email email = promptEmail("Insert a new email for the new player."); // new Email("test@jpa.com");
+                final String username = promptUsername("Insert a new username for the new player."); // "testJpa";
+                final String regionName = promptRegion("Insert a new region for the new player."); // "Japan";
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
                     ctx.beginTransaction();

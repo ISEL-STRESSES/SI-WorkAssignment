@@ -6,13 +6,13 @@ package model.types;
 public enum PlayerState {
     ACTIVE, INACTIVE, BANED;
 
-    //    public String description;
-//
-//    static {
-//        ACTIVE.description = "Ativo";
-//        INACTIVE.description = "Inativo";
-//        BANED.description = "Banido";
-//    }
+    public String description;
+
+    static {
+        ACTIVE.description = "ativo";
+        INACTIVE.description = "inativo";
+        BANED.description = "banido";
+    }
     public static final String PLAYER_STATE_REGEX = "^(ativo|banido|inativo)$";
 
     /**

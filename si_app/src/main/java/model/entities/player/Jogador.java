@@ -20,39 +20,39 @@ import java.util.Set;
  * Represents a player
  */
 @Entity
-@NamedQuery(name = "Jogador.findByKey", query = "SELECT j FROM Jogador j where j.id = :id")
+@NamedQuery(name = "Jogador.findByKey", query = "SELECT j FROM Jogador j where j.id = :key")
 @NamedQuery(name = "Jogador.findAll", query = "SELECT j FROM Jogador j")
 @NamedQuery(name = "Jogador.findByUsername", query = "SELECT j FROM Jogador j where j.username = :username")
 @NamedQuery(name = "Jogador.findByEmail", query = "SELECT j FROM Jogador j where j.email = :email")
-//@NamedStoredProcedureQueries({
-//        @NamedStoredProcedureQuery(
-//                name = "updatePlayerStatus",
-//                procedureName = "update_estado_jogador",
-//                parameters = {
-//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "id", type = String.class),
-//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_estado", type = String.class)
-//                }
-//        ),
-//        @NamedStoredProcedureQuery(
-//                name = "createPlayer",
-//                procedureName = "create_jogador",
-//                parameters = {
-//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "regiao_nome", type = String.class),
-//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_username", type = String.class),
-//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_email", type = String.class),
-//                }
-//        ),
-//        @NamedStoredProcedureQuery(
-//                name = "createPlayerTransaction",
-//                procedureName = "createJogadorTransaction",
-//                parameters = {
-//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "regiao_nome", type = String.class),
-//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_username", type = String.class),
-//                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_email", type = String.class),
-//                }
-//        )
-//}
-//)
+@NamedStoredProcedureQueries({
+        @NamedStoredProcedureQuery(
+                name = "updatePlayerStatus",
+                procedureName = "update_estado_jogador",
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "id", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_estado", type = String.class)
+                }
+        ),
+        @NamedStoredProcedureQuery(
+                name = "createPlayer",
+                procedureName = "create_jogador",
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "regiao_nome", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_username", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_email", type = Email.class),
+                }
+        ),
+        @NamedStoredProcedureQuery(
+                name = "createPlayerTransaction",
+                procedureName = "createJogadorTransaction",
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "regiao_nome", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_username", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "new_email", type = String.class),
+                }
+        )
+}
+)
 @Table(name = "jogador", schema = "public")
 public class Jogador implements Player {
     @Id

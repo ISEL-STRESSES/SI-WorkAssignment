@@ -69,7 +69,7 @@ public class Prompts {
      */
     public static PlayerState promptPlayerState(String promptMessage) {
         System.out.println(promptMessage);
-        System.out.println("Available states: " + Arrays.toString(PlayerState.values()));
+        System.out.println("Available states: " + Arrays.toString(Arrays.stream(PlayerState.values()).map(playerState -> playerState.description).toArray()));
         return PlayerState.parse(prompt(input -> input.matches(PlayerState.PLAYER_STATE_REGEX), "Incorrect user state, please input a correct user state."));
     }
 

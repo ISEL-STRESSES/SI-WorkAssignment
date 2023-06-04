@@ -13,16 +13,22 @@ import logic.repositories.game.match.NormalMatchRepository;
 import logic.repositories.player.PlayerRepository;
 import logic.repositories.player.PlayerStatsRepository;
 import logic.repositories.region.RegionRepository;
+import model.associacions.earns.Ganha;
+import model.associacions.plays.Joga;
 import model.entities.chat.Chat;
 import model.entities.game.Game;
 import model.entities.game.badge.Badge;
+import model.entities.game.badge.Cracha;
+import model.entities.game.badge.CrachaId;
 import model.entities.player.Jogador;
 import model.entities.player.Player;
+import model.types.Alphanumeric;
 import model.types.PlayerState;
 import model.views.Jogadortotalinfo;
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Class responsible for the connection to the database, and exercises.
@@ -458,7 +464,7 @@ public class JPAContext implements Context {
         beginTransaction();
         Query q = em.createNativeQuery("call update_estado_jogador(?, ?)")
                 .setParameter(1, player.getId())
-                .setParameter(2, newState.toString());
+                .setParameter(2, newState.description);
         q.executeUpdate();
         commit();
         return playerRepository.findByKey(player.getId());
@@ -626,6 +632,94 @@ public class JPAContext implements Context {
         List<Jogadortotalinfo> result = playerTotalInfoRepository.findAll();
         commit();
         return result;
+    }
+
+    /**
+     * Does the same as the giveBadgeToPlayer method but manually.
+     * @param player The player.
+     * @param game The game.
+     * @param badge The badge.
+     */
+    public void giveBadgeToPlayerManual(Player player, Game game, Badge badge) {
+        beginTransaction();
+        Game g = gameRepository.findByKey(game.getId());
+        if (g == null) {
+            throw new IllegalArgumentException("Game does not exist");
+        }
+        Player p = playerRepository.findByKey(player.getId());
+        if (p == null) {
+            throw new IllegalArgumentException("Player does not exist");
+        }
+        Badge b = badgeRepository.findByKey(badge.getId());
+        if (b == null) {
+            throw new IllegalArgumentException("Badge does not exist");
+        }
+        Query q = em.createQuery("SELECT joga.points FROM Joga joga" +
+                " JOIN Partida p ON joga.id.idGame = p.id.gameId AND joga.id.matchNr = p.id.nr " +
+                " LEFT JOIN PartidaNormal pn ON joga.id.idGame = pn.id.matchId.gameId AND joga.id.matchNr = pn.id.matchId.nr" +
+                " LEFT JOIN PartidaMultijogador pm ON joga.id.idGame = pm.id.matchId.gameId AND joga.id.matchNr = pm.id.matchId.nr AND pm.state = 'Terminada'" +
+                " WHERE joga.id.idGame = :jogoId AND joga.id.idPlayer =: jogadorId AND p.endDate IS NOT NULL")
+                .setParameter("jogoId", game.getId())
+                .setParameter("jogadorId", player.getId());
+        q.executeUpdate();
+        List <Joga> pointEntries = q.getResultList();
+        Integer points = 0;
+        for (Joga joga : pointEntries) {
+            points += joga.getPoints();
+        }
+        if (points >= badge.getPoints()) {
+            Ganha ganha = new Ganha();
+            ganha.setBadge(b);
+            ganha.setIdPlayer(player);
+            Set<Ganha> badges = player.getBadges();
+            badges.add(ganha);
+            player.setBadges(badges);
+            em.persist(ganha);
+            em.merge(player);
+        }
+        commit();
+    }
+
+    /**
+     * Using optimistic locking raises in 20% the points to earn a badge.
+     * @param badgeName The badge name.
+     * @param gameId The gameId.
+     */
+    public void raisePointsToEarnBadgeOptimistic(String badgeName, Alphanumeric gameId) {
+        beginTransaction();
+        Game g = gameRepository.findByKey(gameId);
+        if (g == null) {
+            throw new IllegalArgumentException("Game does not exist");
+        }
+        Cracha b = em.find(Cracha.class, new CrachaId(gameId, badgeName)); // default lock mode is optimistic
+        if (b == null) {
+            throw new IllegalArgumentException("Badge does not exist");
+        }
+        b.setPoints((int) (b.getPoints() * 1.2));
+        em.merge(b);
+        commit();
+    }
+
+    /**
+     * Using pessimistic locking raises in 20% the points to earn a badge.
+     * @param badgeName The badge name.
+     * @param gameId The gameId.
+     */
+    public void raisePointsToEarnBadgePessimistic(String badgeName, Alphanumeric gameId) {
+        beginTransaction();
+        Game g = gameRepository.findByKey(gameId);
+
+        if (g == null) {
+            throw new IllegalArgumentException("Game does not exist");
+        }
+        Cracha b = em.find(Cracha.class, new CrachaId(gameId, badgeName), LockModeType.PESSIMISTIC_READ);
+        em.lock(b, LockModeType.PESSIMISTIC_WRITE);
+        if (b == null) {
+            throw new IllegalArgumentException("Badge does not exist");
+        }
+        b.setPoints((int) (b.getPoints() * 1.2));
+        em.merge(b);
+        commit();
     }
 
     /**

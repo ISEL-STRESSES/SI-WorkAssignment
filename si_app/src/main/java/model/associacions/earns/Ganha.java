@@ -5,11 +5,14 @@ import model.entities.game.badge.Badge;
 import model.entities.game.badge.Cracha;
 import model.entities.player.Jogador;
 import model.entities.player.Player;
+import org.eclipse.persistence.annotations.OptimisticLocking;
+import org.eclipse.persistence.annotations.OptimisticLockingType;
 
 /**
  * This class represents a player that has won a badge.
  */
 @Entity
+@OptimisticLocking(type = OptimisticLockingType.CHANGED_COLUMNS)
 @Table(name = "ganha", schema = "public")
 public class Ganha implements Earns {
     @EmbeddedId

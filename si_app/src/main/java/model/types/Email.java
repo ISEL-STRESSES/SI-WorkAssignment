@@ -18,4 +18,9 @@ public record Email(String email) {
     public boolean isValid() {
         return email.matches(EMAIL_REGEX) && email.length() <= MAX_EMAIL_LENGTH;
     }
+
+    @Override
+    public String toString() {
+        return email;
+    }
 }
