@@ -10,6 +10,8 @@ import model.entities.player.Player;
  * This class represents a player that has played a game.
  */
 @Entity
+@NamedQuery(name = "Joga.findByKey", query = "SELECT j FROM Joga j WHERE j.id = :key")
+@NamedQuery(name = "Joga.findAll", query = "SELECT j FROM Joga j")
 @Table(name = "joga", schema = "public")
 public class Joga implements Plays {
     @EmbeddedId

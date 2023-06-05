@@ -8,6 +8,8 @@ import model.entities.player.Player;
  * This class represents a friendship between two players.
  */
 @Entity
+@NamedQuery(name = "Amigo.findByKey", query = "SELECT a FROM Amigo a WHERE a.id = :key")
+@NamedQuery(name = "Amigo.findAll", query = "SELECT a FROM Amigo a")
 @Table(name = "amigo", schema = "public")
 public class Amigo implements Friend {
     @EmbeddedId

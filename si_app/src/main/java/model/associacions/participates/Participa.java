@@ -10,6 +10,8 @@ import model.entities.player.Player;
  * This class represents a player that has won a badge.
  */
 @Entity
+@NamedQuery(name = "Participa.findByKey", query = "SELECT p FROM Participa p WHERE p.id = :key")
+@NamedQuery(name = "Participa.findAll", query = "SELECT p FROM Participa p")
 @Table(name = "participa", schema = "public")
 public class Participa implements Participates {
     @EmbeddedId

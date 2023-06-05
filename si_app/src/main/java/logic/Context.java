@@ -1,17 +1,22 @@
 package logic;
 
-import logic.repositories.chat.ChatRepository;
-import logic.repositories.chat.MessageRepository;
-import logic.repositories.game.GameRepository;
-import logic.repositories.game.GameStatsRepository;
-import logic.repositories.game.badge.BadgeRepository;
-import logic.repositories.game.match.MatchRepository;
-import logic.repositories.game.match.MultiPlayerMatchRepository;
-import logic.repositories.game.match.NormalMatchRepository;
-import logic.repositories.player.PlayerRepository;
-import logic.repositories.player.PlayerStatsRepository;
-import logic.repositories.region.RegionRepository;
-import logic.repositories.view.PlayerTotalInfoRepository;
+import logic.repositories.associations.earns.EarnsRepository;
+import logic.repositories.associations.friend.FriendRepository;
+import logic.repositories.associations.participates.ParticipatesRepository;
+import logic.repositories.associations.plays.PlaysRepository;
+import logic.repositories.associations.purchase.PurchaseRepository;
+import logic.repositories.entities.chat.ChatRepository;
+import logic.repositories.entities.chat.MessageRepository;
+import logic.repositories.entities.game.GameRepository;
+import logic.repositories.entities.game.GameStatsRepository;
+import logic.repositories.entities.game.badge.BadgeRepository;
+import logic.repositories.entities.game.match.MatchRepository;
+import logic.repositories.entities.game.match.MultiPlayerMatchRepository;
+import logic.repositories.entities.game.match.NormalMatchRepository;
+import logic.repositories.entities.player.PlayerRepository;
+import logic.repositories.entities.player.PlayerStatsRepository;
+import logic.repositories.entities.region.RegionRepository;
+import logic.repositories.entities.view.PlayerTotalInfoRepository;
 
 /**
  * Interface that represents a context
@@ -127,4 +132,39 @@ public interface Context extends AutoCloseable {
      * @return the {@link PlayerTotalInfoRepository}
      */
     PlayerTotalInfoRepository getPlayerTotalInfo();
+
+    /**
+     * Getter for the {@link EarnsRepository}
+     *
+     * @return the {@link EarnsRepository}
+     */
+    EarnsRepository getEarns();
+
+    /**
+     * Getter for the {@link FriendRepository}
+     *
+     * @return the {@link FriendRepository}
+     */
+    FriendRepository getFriends();
+
+    /**
+     * Getter for the {@link ParticipatesRepository}
+     *
+     * @return the {@link ParticipatesRepository}
+     */
+    ParticipatesRepository getParticipates();
+
+    /**
+     * Getter for the {@link PlaysRepository}
+     *
+     * @return the {@link PlaysRepository}
+     */
+    PlaysRepository getPlays();
+
+    /**
+     * Getter for the {@link PurchaseRepository}
+     *
+     * @return the {@link PurchaseRepository}
+     */
+    PurchaseRepository getPurchases();
 }

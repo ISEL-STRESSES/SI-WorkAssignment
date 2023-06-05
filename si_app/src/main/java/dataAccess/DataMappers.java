@@ -2,17 +2,32 @@ package dataAccess;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.LockModeType;
-import logic.mappers.chat.ChatMapper;
-import logic.mappers.chat.MessageMapper;
-import logic.mappers.game.GameMapper;
-import logic.mappers.game.GameStatsMapper;
-import logic.mappers.game.badge.BadgeMapper;
-import logic.mappers.game.match.MatchMapper;
-import logic.mappers.game.match.MultiplayerMatchMapper;
-import logic.mappers.game.match.NormalMatchMapper;
-import logic.mappers.player.PlayerMapper;
-import logic.mappers.player.PlayerStatsMapper;
-import logic.mappers.region.RegionMapper;
+import logic.mappers.entities.chat.ChatMapper;
+import logic.mappers.entities.chat.MessageMapper;
+import logic.mappers.entities.game.GameMapper;
+import logic.mappers.entities.game.GameStatsMapper;
+import logic.mappers.entities.game.badge.BadgeMapper;
+import logic.mappers.entities.game.match.MatchMapper;
+import logic.mappers.entities.game.match.MultiplayerMatchMapper;
+import logic.mappers.entities.game.match.NormalMatchMapper;
+import logic.mappers.entities.player.PlayerMapper;
+import logic.mappers.entities.player.PlayerStatsMapper;
+import logic.mappers.entities.region.RegionMapper;
+import model.associacions.earns.Earns;
+import model.associacions.earns.Ganha;
+import model.associacions.earns.GanhaId;
+import model.associacions.friend.Amigo;
+import model.associacions.friend.AmigoId;
+import model.associacions.friend.Friend;
+import model.associacions.participates.Participa;
+import model.associacions.participates.ParticipaId;
+import model.associacions.participates.Participates;
+import model.associacions.plays.Joga;
+import model.associacions.plays.JogaId;
+import model.associacions.plays.Plays;
+import model.associacions.purchase.Compra;
+import model.associacions.purchase.CompraId;
+import model.associacions.purchase.Purchase;
 import model.entities.chat.Conversa;
 import model.entities.chat.Mensagem;
 import model.entities.chat.MensagemId;
@@ -644,7 +659,7 @@ public class DataMappers {
     }
 
     /**
-     * Creates the data mapper for the {@link model.entities.chat.Conversa} entity.
+     * Creates the data mapper for the {@link Conversa} entity.
      */
     protected class ChatDataMapper implements ChatMapper {
 
@@ -778,6 +793,345 @@ public class DataMappers {
                 throw new EntityNotFoundException("Message with id " + id + " not found");
             }
             context.em.remove(message);
+            context.commit();
+        }
+    }
+
+    /**
+     * Creates the data mapper for the {@link Earns} association.
+     */
+    protected class EarnsDataMapper implements logic.mappers.associations.earns.EarnsMapper {
+
+
+        /**
+         * Creates a new earns association in the database.
+         *
+         * @param entity earns association to be created
+         * @return The key of the created earns association
+         */
+        @Override
+        public GanhaId create(Ganha entity) {
+            context.beginTransaction();
+            context.em.persist(entity);
+            context.commit();
+            return entity.getId();
+        }
+
+        /**
+         * Reads an earns association from the database.
+         *
+         * @param id Key of the earns association to be read
+         * @return The earns association with the given key
+         */
+        @Override
+        public Ganha read(GanhaId id) {
+            return context.em.find(Ganha.class, id);
+        }
+
+        /**
+         * Updates an earns association in the database.
+         *
+         * @param entity earns association to be updated
+         * @return The key of the updated earns association
+         */
+        @Override
+        public GanhaId update(Ganha entity) {
+            context.beginTransaction();
+            Ganha earns = context.em.find(Ganha.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            if (earns == null) {
+                throw new EntityNotFoundException("Earns with id " + entity.getId() + " not found");
+            }
+            earns.setId(entity.getId());
+            earns.setBadge(entity.getBadge());
+            earns.setIdPlayer(entity.getIdPlayer());
+            context.commit();
+            return entity.getId();
+        }
+
+        /**
+         * Deletes an earns association from the database.
+         *
+         * @param id Key of the earns association to be deleted
+         */
+        @Override
+        public void delete(GanhaId id) {
+            context.beginTransaction();
+            Ganha earns = context.em.find(Ganha.class, id, LockModeType.PESSIMISTIC_WRITE);
+            if (earns == null) {
+                throw new EntityNotFoundException("Earns with id " + id + " not found");
+            }
+            context.em.remove(earns);
+            context.commit();
+        }
+    }
+
+    /**
+     * Creates the data mapper for the {@link Friend} association.
+     */
+    protected class FriendDataMapper implements logic.mappers.associations.friend.FriendMapper {
+
+        /**
+         * Creates a new friend association in the database.
+         *
+         * @param entity friend association to be created
+         * @return The key of the created friend association
+         */
+        @Override
+        public AmigoId create(Amigo entity) {
+            context.beginTransaction();
+            context.em.persist(entity);
+            context.commit();
+            return entity.getId();
+        }
+
+        /**
+         * Reads a friend association from the database.
+         *
+         * @param id Key of the friend association to be read
+         * @return The friend association with the given key
+         */
+        @Override
+        public Amigo read(AmigoId id) {
+            return context.em.find(Amigo.class, id);
+        }
+
+        /**
+         * Updates a friend association in the database.
+         *
+         * @param entity friend association to be updated
+         * @return The key of the updated friend association
+         */
+        @Override
+        public AmigoId update(Amigo entity) {
+            context.beginTransaction();
+            Amigo friend = context.em.find(Amigo.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            if (friend == null) {
+                throw new EntityNotFoundException("Friend with id " + entity.getId() + " not found");
+            }
+            friend.setId(entity.getId());
+            friend.setIdPlayer1(entity.getIdPlayer1());
+            friend.setIdPlayer2(entity.getIdPlayer2());
+            context.commit();
+            return entity.getId();
+        }
+
+        /**
+         * Deletes a friend association from the database.
+         *
+         * @param id Key of the friend association to be deleted
+         */
+        @Override
+        public void delete(AmigoId id) {
+            context.beginTransaction();
+            Amigo friend = context.em.find(Amigo.class, id, LockModeType.PESSIMISTIC_WRITE);
+            if (friend == null) {
+                throw new EntityNotFoundException("Friend with id " + id + " not found");
+            }
+            context.em.remove(friend);
+            context.commit();
+        }
+    }
+
+    /**
+     * Creates the data mapper for the {@link Participates} association.
+     */
+    protected class ParticipatesDataMapper implements logic.mappers.associations.participates.ParticipatesMapper {
+
+        /**
+         * Creates a new participates association in the database.
+         *
+         * @param entity participates association to be created
+         * @return The key of the created participates association
+         */
+        @Override
+        public ParticipaId create(Participa entity) {
+            context.beginTransaction();
+            context.em.persist(entity);
+            context.commit();
+            return entity.getId();
+        }
+
+        /**
+         * Reads a participates association from the database.
+         *
+         * @param id Key of the participates association to be read
+         * @return The participates association with the given key
+         */
+        @Override
+        public Participa read(ParticipaId id) {
+            return context.em.find(Participa.class, id);
+        }
+
+        /**
+         * Updates a participates association in the database.
+         *
+         * @param entity participates association to be updated
+         * @return The key of the updated participates association
+         */
+        @Override
+        public ParticipaId update(Participa entity) {
+            context.beginTransaction();
+            Participa participates = context.em.find(Participa.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            if (participates == null) {
+                throw new EntityNotFoundException("Participates with id " + entity.getId() + " not found");
+            }
+            participates.setId(entity.getId());
+            participates.setIdPlayer(entity.getIdPlayer());
+            participates.setIdChat(entity.getIdChat());
+            context.commit();
+            return entity.getId();
+        }
+
+        /**
+         * Deletes a participates association from the database.
+         *
+         * @param id Key of the participates association to be deleted
+         */
+        @Override
+        public void delete(ParticipaId id) {
+            context.beginTransaction();
+            Participa participates = context.em.find(Participa.class, id, LockModeType.PESSIMISTIC_WRITE);
+            if (participates == null) {
+                throw new EntityNotFoundException("Participates with id " + id + " not found");
+            }
+            context.em.remove(participates);
+            context.commit();
+        }
+    }
+
+    /**
+     * Creates the data mapper for the {@link Plays} association.
+     */
+    protected class PlaysDataMapper implements logic.mappers.associations.plays.PlaysMapper {
+
+        /**
+         * Creates a new plays association in the database.
+         *
+         * @param entity plays association to be created
+         * @return The key of the created plays association
+         */
+        @Override
+        public JogaId create(Joga entity) {
+            context.beginTransaction();
+            context.em.persist(entity);
+            context.commit();
+            return entity.getId();
+        }
+
+        /**
+         * Reads a plays association from the database.
+         *
+         * @param id Key of the plays association to be read
+         * @return The plays association with the given key
+         */
+        @Override
+        public Joga read(JogaId id) {
+            return context.em.find(Joga.class, id);
+        }
+
+        /**
+         * Updates a plays association in the database.
+         *
+         * @param entity plays association to be updated
+         * @return The key of the updated plays association
+         */
+        @Override
+        public JogaId update(Joga entity) {
+            context.beginTransaction();
+            Joga plays = context.em.find(Joga.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            if (plays == null) {
+                throw new EntityNotFoundException("Plays with id " + entity.getId() + " not found");
+            }
+            plays.setId(entity.getId());
+            plays.setIdPlayer(entity.getIdPlayer());
+            plays.setMatch(entity.getMatch());
+            plays.setPoints(entity.getPoints());
+            context.commit();
+            return entity.getId();
+        }
+
+        /**
+         * Deletes a plays association from the database.
+         *
+         * @param id Key of the plays association to be deleted
+         */
+        @Override
+        public void delete(JogaId id) {
+            context.beginTransaction();
+            Joga plays = context.em.find(Joga.class, id, LockModeType.PESSIMISTIC_WRITE);
+            if (plays == null) {
+                throw new EntityNotFoundException("Plays with id " + id + " not found");
+            }
+            context.em.remove(plays);
+            context.commit();
+        }
+    }
+
+    /**
+     * Creates the data mapper for the {@link Purchase} association.
+     */
+    protected class PurchaseDataMapper implements logic.mappers.associations.purchase.PurchaseMapper {
+
+        /**
+         * Creates a new purchase association in the database.
+         *
+         * @param entity purchase association to be created
+         * @return The key of the created purchase association
+         */
+        @Override
+        public CompraId create(Compra entity) {
+            context.beginTransaction();
+            context.em.persist(entity);
+            context.commit();
+            return entity.getId();
+        }
+
+        /**
+         * Reads a purchase association from the database.
+         *
+         * @param id Key of the purchase association to be read
+         * @return The purchase association with the given key
+         */
+        @Override
+        public Compra read(CompraId id) {
+            return context.em.find(Compra.class, id);
+        }
+
+        /**
+         * Updates a purchase association in the database.
+         *
+         * @param entity purchase association to be updated
+         * @return The key of the updated purchase association
+         */
+        @Override
+        public CompraId update(Compra entity) {
+            context.beginTransaction();
+            Compra purchase = context.em.find(Compra.class, entity.getId(), LockModeType.PESSIMISTIC_WRITE);
+            if (purchase == null) {
+                throw new EntityNotFoundException("Purchase with id " + entity.getId() + " not found");
+            }
+            purchase.setId(entity.getId());
+            purchase.setIdPlayer(entity.getIdPlayer());
+            purchase.setIdGame(entity.getIdGame());
+            purchase.setDate(entity.getDate());
+            purchase.setPrice(entity.getPrice());
+            context.commit();
+            return entity.getId();
+        }
+
+        /**
+         * Deletes a purchase association from the database.
+         *
+         * @param id Key of the purchase association to be deleted
+         */
+        @Override
+        public void delete(CompraId id) {
+            context.beginTransaction();
+            Compra purchase = context.em.find(Compra.class, id, LockModeType.PESSIMISTIC_WRITE);
+            if (purchase == null) {
+                throw new EntityNotFoundException("Purchase with id " + id + " not found");
+            }
+            context.em.remove(purchase);
             context.commit();
         }
     }

@@ -12,6 +12,8 @@ import org.eclipse.persistence.annotations.OptimisticLockingType;
  * This class represents a player that has won a badge.
  */
 @Entity
+@NamedQuery(name = "Ganha.findByKey", query = "SELECT g FROM Ganha g WHERE g.id = :key")
+@NamedQuery(name = "Ganha.findAll", query = "SELECT g FROM Ganha g")
 @OptimisticLocking(type = OptimisticLockingType.CHANGED_COLUMNS)
 @Table(name = "ganha", schema = "public")
 public class Ganha implements Earns {

@@ -1,5 +1,20 @@
 package dataAccess;
 
+import model.associacions.earns.Earns;
+import model.associacions.earns.Ganha;
+import model.associacions.earns.GanhaId;
+import model.associacions.friend.Amigo;
+import model.associacions.friend.AmigoId;
+import model.associacions.friend.Friend;
+import model.associacions.participates.Participa;
+import model.associacions.participates.ParticipaId;
+import model.associacions.participates.Participates;
+import model.associacions.plays.Joga;
+import model.associacions.plays.JogaId;
+import model.associacions.plays.Plays;
+import model.associacions.purchase.Compra;
+import model.associacions.purchase.CompraId;
+import model.associacions.purchase.Purchase;
 import model.entities.chat.*;
 import model.entities.game.Game;
 import model.entities.game.GameStats;
@@ -45,7 +60,7 @@ public class Repositories {
     /**
      * Creates the repository for the entity {@link Region}.
      */
-    protected class RegionRepository implements logic.repositories.region.RegionRepository {
+    protected class RegionRepository implements logic.repositories.entities.region.RegionRepository {
         /**
          * Finds the region by the key.
          *
@@ -87,7 +102,7 @@ public class Repositories {
     /**
      * Creates the repository for the entity {@link Player}.
      */
-    protected class PlayerRepository implements logic.repositories.player.PlayerRepository {
+    protected class PlayerRepository implements logic.repositories.entities.player.PlayerRepository {
         /**
          * Finds the player by the key.
          *
@@ -155,7 +170,7 @@ public class Repositories {
     /**
      * Creates the repository for the entity {@link PlayerStats}.
      */
-    protected class PlayerStatsRepository implements logic.repositories.player.PlayerStatsRepository {
+    protected class PlayerStatsRepository implements logic.repositories.entities.player.PlayerStatsRepository {
         /**
          * Finds the player stats by the key.
          *
@@ -197,7 +212,7 @@ public class Repositories {
     /**
      * Creates the repository for the entity {@link Game}.
      */
-    protected class GameRepository implements logic.repositories.game.GameRepository {
+    protected class GameRepository implements logic.repositories.entities.game.GameRepository {
         /**
          * Finds the game by the key.
          *
@@ -252,7 +267,7 @@ public class Repositories {
     /**
      * Creates the repository for the entity {@link GameStats}.
      */
-    protected class GameStatsRepository implements logic.repositories.game.GameStatsRepository {
+    protected class GameStatsRepository implements logic.repositories.entities.game.GameStatsRepository {
         /**
          * Finds the game stats by the key.
          *
@@ -294,7 +309,7 @@ public class Repositories {
     /**
      * Creates the repository for the entity {@link Match}.
      */
-    protected class MatchRepository implements logic.repositories.game.match.MatchRepository {
+    protected class MatchRepository implements logic.repositories.entities.game.match.MatchRepository {
         /**
          * Finds the match by the key.
          *
@@ -336,7 +351,7 @@ public class Repositories {
     /**
      * Creates the repository for the entity {@link NormalMatch}.
      */
-    protected class NormalMatchRepository implements logic.repositories.game.match.NormalMatchRepository {
+    protected class NormalMatchRepository implements logic.repositories.entities.game.match.NormalMatchRepository {
         /**
          * Finds the normal match by the key.
          *
@@ -378,7 +393,7 @@ public class Repositories {
     /**
      * Creates the repository for the entity {@link MultiPlayerMatch}.
      */
-    protected class MultiPlayerMatchRepository implements logic.repositories.game.match.MultiPlayerMatchRepository {
+    protected class MultiPlayerMatchRepository implements logic.repositories.entities.game.match.MultiPlayerMatchRepository {
         /**
          * Finds the multiplayer match by the key.
          *
@@ -420,7 +435,7 @@ public class Repositories {
     /**
      * Creates the repository for the entity {@link Badge}.
      */
-    protected class BadgeRepository implements logic.repositories.game.badge.BadgeRepository {
+    protected class BadgeRepository implements logic.repositories.entities.game.badge.BadgeRepository {
         /**
          * Finds the badge by the key.
          *
@@ -462,7 +477,7 @@ public class Repositories {
     /**
      * Creates the repository for the entity {@link Chat}.
      */
-    protected class ChatRepository implements logic.repositories.chat.ChatRepository {
+    protected class ChatRepository implements logic.repositories.entities.chat.ChatRepository {
         /**
          * Finds the chat by the key.
          *
@@ -517,7 +532,7 @@ public class Repositories {
     /**
      * Creates the repository for the entity {@link Message}.
      */
-    protected class MessageRepository implements logic.repositories.chat.MessageRepository {
+    protected class MessageRepository implements logic.repositories.entities.chat.MessageRepository {
         /**
          * Finds the message by the key.
          *
@@ -559,7 +574,7 @@ public class Repositories {
     /**
      * Creates a repository for the view {@link Jogadortotalinfo}
      */
-    protected class PlayerTotalInfoRepository implements logic.repositories.view.PlayerTotalInfoRepository {
+    protected class PlayerTotalInfoRepository implements logic.repositories.entities.view.PlayerTotalInfoRepository {
 
         /**
          * Finds the Player total info by its key
@@ -594,7 +609,223 @@ public class Repositories {
          */
         @Override
         public List<Jogadortotalinfo> findAll() {
-            return null;
+            return context.em.createNamedQuery("Jogadortotalinfo.findAll", Jogadortotalinfo.class)
+                    .getResultList();
+        }
+    }
+
+    /**
+     * Creates a repository for the association {@link Earns}
+     */
+    protected class EarnsRepository implements logic.repositories.associations.earns.EarnsRepository {
+
+        /**
+         * Finds the Earns associations by its key
+         *
+         * @param key Key of the Earns association
+         * @return Earns association
+         */
+        @Override
+        public Ganha findByKey(GanhaId key) {
+            return context.em.createNamedQuery("Ganha.findByKey", Ganha.class)
+                    .setParameter("key", key)
+                    .getSingleResult();
+        }
+
+        /**
+         * Finds a Collection of Earns associations by the given query
+         *
+         * @param jpql   query to be executed
+         * @param params parameters of the query
+         * @return Collection of Earns associations
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public List<Ganha> find(String jpql, Object... params) {
+            return context.helperQueryImpl(jpql, params);
+        }
+
+        /**
+         * Finds all Earns associations
+         *
+         * @return Collection of Earns associations
+         */
+        @Override
+        public List<Ganha> findAll() {
+            return context.em.createNamedQuery("Ganha.findAll", Ganha.class)
+                    .getResultList();
+        }
+    }
+
+    /**
+     * Creates a repository for the association {@link Friend}
+     */
+    protected class FriendRepository implements logic.repositories.associations.friend.FriendRepository {
+
+        /**
+         * Finds the Friend associations by its key
+         *
+         * @param key Key of the Friend association
+         * @return Friend association
+         */
+        @Override
+        public Amigo findByKey(AmigoId key) {
+            return context.em.createNamedQuery("Amigo.findByKey", Amigo.class)
+                    .setParameter("key", key)
+                    .getSingleResult();
+        }
+
+        /**
+         * Finds a Collection of Friend associations by the given query
+         *
+         * @param jpql   query to be executed
+         * @param params parameters of the query
+         * @return Collection of Friend associations
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public List<Amigo> find(String jpql, Object... params) {
+            return context.helperQueryImpl(jpql, params);
+        }
+
+        /**
+         * Finds all Friend associations
+         *
+         * @return Collection of Friend associations
+         */
+        @Override
+        public List<Amigo> findAll() {
+            return context.em.createNamedQuery("Amigo.findAll", Amigo.class)
+                    .getResultList();
+        }
+    }
+
+    /**
+     * Creates a repository for the association {@link Participates}
+     */
+    protected class ParticipatesRepository implements logic.repositories.associations.participates.ParticipatesRepository {
+
+        /**
+         * Finds the Participates associations by its key
+         *
+         * @param key Key of the Participates association
+         * @return Participates association
+         */
+        @Override
+        public Participa findByKey(ParticipaId key) {
+            return context.em.createNamedQuery("Participa.findByKey", Participa.class)
+                    .setParameter("key", key)
+                    .getSingleResult();
+        }
+
+        /**
+         * Finds a Collection of Participates associations by the given query
+         *
+         * @param jpql   query to be executed
+         * @param params parameters of the query
+         * @return Collection of Participates associations
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public List<Participa> find(String jpql, Object... params) {
+            return context.helperQueryImpl(jpql, params);
+        }
+
+        /**
+         * Finds all Participates associations
+         *
+         * @return Collection of Participates associations
+         */
+        @Override
+        public List<Participa> findAll() {
+            return context.em.createNamedQuery("Participa.findAll", Participa.class)
+                    .getResultList();
+        }
+    }
+
+    /**
+     * Creates a repository for the association {@link Plays}
+     */
+    protected class PlaysRepository implements logic.repositories.associations.plays.PlaysRepository {
+
+        /**
+         * Finds the Plays associations by its key
+         *
+         * @param key Key of the Plays association
+         * @return Plays association
+         */
+        @Override
+        public Joga findByKey(JogaId key) {
+            return context.em.createNamedQuery("Joga.findByKey", Joga.class)
+                    .setParameter("key", key)
+                    .getSingleResult();
+        }
+
+        /**
+         * Finds a Collection of Plays associations by the given query
+         *
+         * @param jpql   query to be executed
+         * @param params parameters of the query
+         * @return Collection of Plays associations
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public List<Joga> find(String jpql, Object... params) {
+            return context.helperQueryImpl(jpql, params);
+        }
+
+        /**
+         * Finds all Plays associations
+         *
+         * @return Collection of Plays associations
+         */
+        @Override
+        public List<Joga> findAll() {
+            return context.em.createNamedQuery("Joga.findAll", Joga.class)
+                    .getResultList();
+        }
+    }
+
+    /**
+     * Creates a repository for the association {@link Purchase}
+     */
+    protected class PurchaseRepository implements logic.repositories.associations.purchase.PurchaseRepository {
+
+        /**
+         * Finds the Purchase associations by its key
+         *
+         * @param key Key of the Purchase association
+         * @return Purchase association
+         */
+        @Override
+        public Compra findByKey(CompraId key) {
+            return context.em.createNamedQuery("Compra.findByKey", Compra.class)
+                    .setParameter("key", key)
+                    .getSingleResult();
+        }
+
+        /**
+         * Finds a Collection of Purchase associations by the given query
+         *
+         * @param jpql   query to be executed
+         * @param params parameters of the query
+         * @return Collection of Purchase associations
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public List<Compra> find(String jpql, Object... params) {
+            return context.helperQueryImpl(jpql, params);
+        }
+
+        /**
+         * Finds all Purchase associations
+         *
+         * @return Collection of Purchase associations
+         */
+        @Override
+        public List<Compra> findAll() {
+            return context.em.createNamedQuery("Compra.findAll", Compra.class)
+                    .getResultList();
         }
     }
 }

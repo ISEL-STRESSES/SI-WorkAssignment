@@ -115,4 +115,42 @@ public class ReposTest {
             ctx.close();
         }
     }
+
+    @Test
+    public void playerStatsRepoTest() {
+        try {
+            ctx.connect();
+            assertNotNull(ctx.getPlayersStats().findAll());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ctx.close();
+        }
+    }
+
+    @Test
+    public void gameStatsRepoTest() {
+        try {
+            ctx.connect();
+            assertNotNull(ctx.getGamesStats().findAll());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ctx.close();
+        }
+    }
+
+// gives compile error cause it cant find the findAll method?????????
+//    @Test
+//    public void playerTotalInfoRepoTest() {
+//        try {
+//            ctx.connect();
+//            assertNotNull(ctx.getPlayerTotalInfo().findAll());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            ctx.close();
+//        }
+//    }
+
 }

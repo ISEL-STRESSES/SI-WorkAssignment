@@ -13,6 +13,8 @@ import java.time.LocalDate;
  * This class represents a purchase of a game by a player.
  */
 @Entity
+@NamedQuery(name = "Compra.findByKey", query = "SELECT c FROM Compra c WHERE c.id = :key")
+@NamedQuery(name = "Compra.findAll", query = "SELECT c FROM Compra c")
 @Table(name = "compra", schema = "public")
 public class Compra implements Purchase {
     @EmbeddedId

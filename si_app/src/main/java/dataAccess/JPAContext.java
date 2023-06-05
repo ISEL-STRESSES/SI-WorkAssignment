@@ -2,17 +2,22 @@ package dataAccess;
 
 import jakarta.persistence.*;
 import logic.Context;
-import logic.repositories.chat.ChatRepository;
-import logic.repositories.chat.MessageRepository;
-import logic.repositories.game.GameRepository;
-import logic.repositories.game.GameStatsRepository;
-import logic.repositories.game.badge.BadgeRepository;
-import logic.repositories.game.match.MatchRepository;
-import logic.repositories.game.match.MultiPlayerMatchRepository;
-import logic.repositories.game.match.NormalMatchRepository;
-import logic.repositories.player.PlayerRepository;
-import logic.repositories.player.PlayerStatsRepository;
-import logic.repositories.region.RegionRepository;
+import logic.repositories.associations.earns.EarnsRepository;
+import logic.repositories.associations.friend.FriendRepository;
+import logic.repositories.associations.participates.ParticipatesRepository;
+import logic.repositories.associations.plays.PlaysRepository;
+import logic.repositories.associations.purchase.PurchaseRepository;
+import logic.repositories.entities.chat.ChatRepository;
+import logic.repositories.entities.chat.MessageRepository;
+import logic.repositories.entities.game.GameRepository;
+import logic.repositories.entities.game.GameStatsRepository;
+import logic.repositories.entities.game.badge.BadgeRepository;
+import logic.repositories.entities.game.match.MatchRepository;
+import logic.repositories.entities.game.match.MultiPlayerMatchRepository;
+import logic.repositories.entities.game.match.NormalMatchRepository;
+import logic.repositories.entities.player.PlayerRepository;
+import logic.repositories.entities.player.PlayerStatsRepository;
+import logic.repositories.entities.region.RegionRepository;
 import model.associacions.earns.Ganha;
 import model.associacions.plays.Joga;
 import model.entities.chat.Chat;
@@ -50,6 +55,12 @@ public class JPAContext implements Context {
     private final Repositories.ChatRepository chatRepository;
     private final Repositories.MessageRepository messageRepository;
     private final Repositories.PlayerTotalInfoRepository playerTotalInfoRepository;
+
+    private final Repositories.EarnsRepository earnsRepository;
+    private final Repositories.FriendRepository friendRepository;
+    private final Repositories.ParticipatesRepository participatesRepository;
+    private final Repositories.PlaysRepository playsRepository;
+    private final Repositories.PurchaseRepository purchaseRepository;
     /* data mappers */
     private final DataMappers.RegionDataMapper regionDataMapper;
     private final DataMappers.PlayerDataMapper playerDataMapper;
@@ -62,6 +73,13 @@ public class JPAContext implements Context {
     private final DataMappers.BadgeDataMapper badgeDataMapper;
     private final DataMappers.ChatDataMapper chatDataMapper;
     private final DataMappers.MessageDataMapper messageDataMapper;
+
+    private final DataMappers.EarnsDataMapper earnsDataMapper;
+    private final DataMappers.FriendDataMapper friendDataMapper;
+    private final DataMappers.ParticipatesDataMapper participatesDataMapper;
+    private final DataMappers.PlaysDataMapper playsDataMapper;
+    private final DataMappers.PurchaseDataMapper purchaseDataMapper;
+
     protected EntityManager em;
     private EntityManagerFactory emf;
     private EntityTransaction tx;
@@ -97,6 +115,12 @@ public class JPAContext implements Context {
         this.chatRepository = repositories.new ChatRepository();
         this.messageRepository = repositories.new MessageRepository();
         this.playerTotalInfoRepository = repositories.new PlayerTotalInfoRepository();
+
+        this.earnsRepository = repositories.new EarnsRepository();
+        this.friendRepository = repositories.new FriendRepository();
+        this.participatesRepository = repositories.new ParticipatesRepository();
+        this.playsRepository = repositories.new PlaysRepository();
+        this.purchaseRepository = repositories.new PurchaseRepository();
         //data mappers init
         DataMappers dataMappers = new DataMappers(this);
         this.regionDataMapper = dataMappers.new RegionDataMapper();
@@ -110,6 +134,12 @@ public class JPAContext implements Context {
         this.badgeDataMapper = dataMappers.new BadgeDataMapper();
         this.chatDataMapper = dataMappers.new ChatDataMapper();
         this.messageDataMapper = dataMappers.new MessageDataMapper();
+
+        this.earnsDataMapper = dataMappers.new EarnsDataMapper();
+        this.friendDataMapper = dataMappers.new FriendDataMapper();
+        this.participatesDataMapper = dataMappers.new ParticipatesDataMapper();
+        this.playsDataMapper = dataMappers.new PlaysDataMapper();
+        this.purchaseDataMapper = dataMappers.new PurchaseDataMapper();
     }
 
     /**
@@ -329,6 +359,56 @@ public class JPAContext implements Context {
     }
 
     /**
+     * Getter for the {@link EarnsRepository}
+     *
+     * @return the {@link EarnsRepository}
+     */
+    @Override
+    public EarnsRepository getEarns() {
+        return earnsRepository;
+    }
+
+    /**
+     * Getter for the {@link FriendRepository}
+     *
+     * @return the {@link FriendRepository}
+     */
+    @Override
+    public FriendRepository getFriends() {
+        return friendRepository;
+    }
+
+    /**
+     * Getter for the {@link ParticipatesRepository}
+     *
+     * @return the {@link ParticipatesRepository}
+     */
+    @Override
+    public ParticipatesRepository getParticipates() {
+        return participatesRepository;
+    }
+
+    /**
+     * Getter for the {@link PlaysRepository}
+     *
+     * @return the {@link PlaysRepository}
+     */
+    @Override
+    public PlaysRepository getPlays() {
+        return playsRepository;
+    }
+
+    /**
+     * Getter for the {@link PurchaseRepository}
+     *
+     * @return the {@link PurchaseRepository}
+     */
+    @Override
+    public PurchaseRepository getPurchases() {
+        return purchaseRepository;
+    }
+
+    /**
      * Getter for the {@link DataMappers.RegionDataMapper}
      *
      * @return the {@link DataMappers.RegionDataMapper}
@@ -427,9 +507,52 @@ public class JPAContext implements Context {
         return messageDataMapper;
     }
 
+    /**
+     * Getter for the {@link DataMappers.EarnsDataMapper}
+     *
+     * @return the {@link DataMappers.EarnsDataMapper}
+     */
+    private DataMappers.EarnsDataMapper earnsMapper() {
+        return earnsDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.FriendDataMapper}
+     *
+     * @return the {@link DataMappers.FriendDataMapper}
+     */
+    private DataMappers.FriendDataMapper friendMapper() {
+        return friendDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.ParticipatesDataMapper}
+     *
+     * @return the {@link DataMappers.ParticipatesDataMapper}
+     */
+    private DataMappers.ParticipatesDataMapper participatesMapper() {
+        return participatesDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.PlaysDataMapper}
+     *
+     * @return the {@link DataMappers.PlaysDataMapper}
+     */
+    private DataMappers.PlaysDataMapper playsMapper() {
+        return playsDataMapper;
+    }
+
+    /**
+     * Getter for the {@link DataMappers.PurchaseDataMapper}
+     *
+     * @return the {@link DataMappers.PurchaseDataMapper}
+     */
+    private DataMappers.PurchaseDataMapper purchaseMapper() {
+        return purchaseDataMapper;
+    }
 
     /* exercises */
-    /* 2d1 */
 
     /**
      * Creates  in the database.
@@ -454,8 +577,6 @@ public class JPAContext implements Context {
         q.executeUpdate();
         commit();
     }
-
-    /* 2d2 */
 
     /**
      * Updates the status of a {@link Player}.
@@ -482,8 +603,6 @@ public class JPAContext implements Context {
         return playerRepository.findByKey(player.getId());
     }
 
-    /* 2e */
-
     /**
      * Returns the total number of points of a {@link Player}.
      *
@@ -505,8 +624,6 @@ public class JPAContext implements Context {
         commit();
         return result;
     }
-
-    /* 2f */
 
     /**
      * Returns the total number of games of a {@link Player}.
@@ -530,8 +647,6 @@ public class JPAContext implements Context {
         return result;
     }
 
-    /* 2g */
-
     /**
      * Returns the total number of points by {@link Player} in a {@link Game}.
      *
@@ -553,8 +668,6 @@ public class JPAContext implements Context {
         commit();
         return result;
     }
-
-    /* 2h */
 
     /**
      * Gives a {@link Badge} to a {@link Player} in a {@link Game}.
