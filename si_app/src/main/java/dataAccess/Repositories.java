@@ -234,6 +234,19 @@ public class Repositories {
             return context.em.createNamedQuery("Jogo.findAll", Jogo.class)
                     .getResultList();
         }
+
+        /**
+         * Finds the game by the name.
+         *
+         * @param name Name of the game.
+         * @return The game.
+         */
+        @Override
+        public Jogo findByName(String name) {
+            return context.em.createNamedQuery("Jogo.findByName", Jogo.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        }
     }
 
     /**

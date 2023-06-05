@@ -165,7 +165,6 @@ public class DataMappers {
             if (player == null) {
                 throw new EntityNotFoundException("Player with id " + entity.getId() + " not found");
             }
-            // player.setId(entity.getId());
             player.setUsername(entity.getUsername());
             player.setEmail(entity.getEmail());
             player.setState(entity.getState());

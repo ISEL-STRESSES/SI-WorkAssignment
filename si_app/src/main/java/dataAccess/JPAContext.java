@@ -20,13 +20,12 @@ import model.entities.game.Game;
 import model.entities.game.badge.Badge;
 import model.entities.game.badge.Cracha;
 import model.entities.game.badge.CrachaId;
-import model.entities.player.Jogador;
 import model.entities.player.Player;
 import model.types.Alphanumeric;
+import model.types.Email;
 import model.types.PlayerState;
 import model.views.Jogadortotalinfo;
 
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Set;
 
@@ -433,18 +432,25 @@ public class JPAContext implements Context {
     /* 2d1 */
 
     /**
-     * Persists a new {@link Player} in the database.
+     * Creates  in the database.
      *
-     * @param player The player to be persisted.
+     * @param email      The email of the player.
+     * @param username   The username of the player.
+     * @param regionName The name of the region of the player.
      * @Requirements: The player's region must already exist in the database.<p>
      * All the player's fields must be valid.
      */
-    public void createPlayer(Player player) {
+    public void createPlayer(Email email, String username, String regionName) {
         beginTransaction();
+        if (regionRepository.findByKey(regionName) == null) {
+            System.out.println("Region not found.");
+            rollback();
+            return;
+        }
         Query q = em.createNativeQuery("call create_jogador(?, ?, ?)")
-                .setParameter(1, player.getRegion().getId())
-                .setParameter(2, player.getUsername())
-                .setParameter(3, player.getEmail().toString());
+                .setParameter(1, regionName)
+                .setParameter(2, username)
+                .setParameter(3, email.toString());
         q.executeUpdate();
         commit();
     }
@@ -454,14 +460,20 @@ public class JPAContext implements Context {
     /**
      * Updates the status of a {@link Player}.
      *
-     * @param player   The player to be updated.
+     * @param username The username of the player.
      * @param newState The new status of the player.
      * @return The updated player.
      * @Requirements: The player must already exist in the database.<p>
      * The new status must be valid.
      */
-    public Player updatePlayerStatus(Player player, PlayerState newState) {
+    public Player updatePlayerStatus(String username, PlayerState newState) {
         beginTransaction();
+        Player player = playerRepository.findByUsername(username);
+        if (player == null) {
+            System.out.println("Player not found.");
+            rollback();
+            return null;
+        }
         Query q = em.createNativeQuery("call update_estado_jogador(?, ?)")
                 .setParameter(1, player.getId())
                 .setParameter(2, newState.description);
@@ -475,12 +487,18 @@ public class JPAContext implements Context {
     /**
      * Returns the total number of points of a {@link Player}.
      *
-     * @param player The player.
+     * @param username The username of the player.
      * @return The total number of points of the player.
      * @Requirements: The player must already exist in the database.
      */
-    public Integer playerTotalPoints(Player player) {
+    public Integer playerTotalPoints(String username) {
         beginTransaction();
+        Player player = playerRepository.findByUsername(username);
+        if (player == null) {
+            System.out.println("Player not found.");
+            rollback();
+            return null;
+        }
         Query q = em.createNativeQuery("call totalPontosJogador(?)")
                 .setParameter(1, player.getId());
         Integer result = (Integer) q.getSingleResult();
@@ -493,12 +511,18 @@ public class JPAContext implements Context {
     /**
      * Returns the total number of games of a {@link Player}.
      *
-     * @param player The player.
+     * @param username The username of the player.
      * @return The total number of games of the player.
      * @Requirements: The player must already exist in the database.
      */
-    public Integer playerTotalGames(Player player) {
+    public Integer playerTotalGames(String username) {
         beginTransaction();
+        Player player = playerRepository.findByUsername(username);
+        if (player == null) {
+            System.out.println("Player not found.");
+            rollback();
+            return null;
+        }
         Query q = em.createNativeQuery("call totalJogosJogador(?)")
                 .setParameter(1, player.getId());
         Integer result = (Integer) q.getSingleResult();
@@ -511,12 +535,18 @@ public class JPAContext implements Context {
     /**
      * Returns the total number of points by {@link Player} in a {@link Game}.
      *
-     * @param game The game.
+     * @param gameName The game name.
      * @return The total number of points by player in the game.
      * @Requirements: The game must already exist in the database.
      */
-    public List<Object[]> gamePointsByPlayer(Game game) {
+    public List<Object[]> gamePointsByPlayer(String gameName) {
         beginTransaction();
+        Game game = gameRepository.findByName(gameName);
+        if (game == null) {
+            System.out.println("Game not found.");
+            rollback();
+            return null;
+        }
         Query q = em.createNativeQuery("call PontosJogoPorJogador(?)")
                 .setParameter(1, game.getId());
         List<Object[]> result = (List<Object[]>) q.getResultList();
@@ -527,21 +557,39 @@ public class JPAContext implements Context {
     /* 2h */
 
     /**
-     * Gives a badge to a {@link Player} in a {@link Game}.
+     * Gives a {@link Badge} to a {@link Player} in a {@link Game}.
      *
-     * @param player The player.
-     * @param game   The game.
-     * @param badge  The badge.
+     * @param username  The username of the player.
+     * @param gameName  The name of the game.
+     * @param badgeName The name of the badge.
      * @Requirements: The player must already exist in the database.<p>
      * The game must already exist in the database.<p>
      * The badge must already exist in the database.
      */
-    public void giveBadgeToPlayer(Player player, Game game, Badge badge) {
+    public void giveBadgeToPlayer(String username, String gameName, String badgeName) {
         beginTransaction();
+        Player player = playerRepository.findByUsername(username);
+        if (player == null) {
+            System.out.println("Player not found.");
+            rollback();
+            return;
+        }
+        Game game = gameRepository.findByName(gameName);
+        if (game == null) {
+            System.out.println("Game not found.");
+            rollback();
+            return;
+        }
+        Badge badge = badgeRepository.findByKey(new CrachaId(game.getId(), badgeName));
+        if (badge == null) {
+            System.out.println("Badge not found.");
+            rollback();
+            return;
+        }
         Query q = em.createNativeQuery("call associarCracha(?, ?, ?)")
                 .setParameter(1, player.getId())
                 .setParameter(2, game.getId())
-                .setParameter(3, badge.getId());
+                .setParameter(3, badge.getId().getBadgeName());
         q.executeUpdate();
         commit();
     }
@@ -551,21 +599,31 @@ public class JPAContext implements Context {
     /**
      * Initiates a {@link Chat} by adding a {@link Player} to it.
      *
-     * @param player The player.
-     * @param chat   The chat.
+     * @param username The username of the player.
+     * @param chatName The name of the chat.
      * @return The chat id.
      * @Requirements: The player must already exist in the database.<p>
      */
-    public Integer initiateChat(Player player, Chat chat) {
+    public Integer initiateChat(String username, String chatName) {
         beginTransaction();
-        Integer chatId;
-        Query q = em.createNativeQuery("call iniciarConversa(?, ?, ?)")
+        Player player = playerRepository.findByUsername(username);
+        if (player == null) {
+            System.out.println("Player not found.");
+            rollback();
+            return null;
+        }
+        Chat chat = chatRepository.findByName(chatName);
+        if (chat == null) {
+            System.out.println("Chat not found.");
+            rollback();
+            return null;
+        }
+        Query q = em.createNativeQuery("call startchat(?, ?)")
                 .setParameter(1, player.getId())
                 .setParameter(2, chat.getId());
-        //.setParameter(3, chatId);
         q.executeUpdate();
         commit();
-        return null;
+        return q.getFirstResult();
     }
 
     /* 2j */
@@ -573,13 +631,25 @@ public class JPAContext implements Context {
     /**
      * Adds a player to an already existent {@link Chat}.
      *
-     * @param player The player to add to the chat.
-     * @param chat   The chat.
+     * @param username The player username to add to the chat.
+     * @param chatName The chat name.
      * @Requirements: The player must already exist in the database.<p>
      * The chat must already exist in the database.
      */
-    public void addPlayerToChat(Player player, Chat chat) {
+    public void addPlayerToChat(String username, String chatName) {
         beginTransaction();
+        Player player = playerRepository.findByUsername(username);
+        if (player == null) {
+            System.out.println("Player not found.");
+            rollback();
+            return;
+        }
+        Chat chat = chatRepository.findByName(chatName);
+        if (chat == null) {
+            System.out.println("Chat not found.");
+            rollback();
+            return;
+        }
         Query q = em.createNativeQuery("call juntarConversa(?, ?)")
                 .setParameter(1, player.getId())
                 .setParameter(2, chat.getId());
@@ -592,14 +662,26 @@ public class JPAContext implements Context {
     /**
      * Sends a message to a {@link Chat} by a {@link Player}.
      *
-     * @param player  The player that sends the message.
-     * @param chat    The chat.
-     * @param message The text of the message.
+     * @param username The player username to send the message.
+     * @param chatName The chat name.
+     * @param message  The text of the message.
      * @Requirements: The player must already exist in the database.<p>
      * The chat must already exist in the database.
      */
-    public void sendMessage(Player player, Chat chat, String message) {
+    public void sendMessage(String username, String chatName, String message) {
         beginTransaction();
+        Player player = playerRepository.findByUsername(username);
+        if (player == null) {
+            System.out.println("Player not found.");
+            rollback();
+            return;
+        }
+        Chat chat = chatRepository.findByName(chatName);
+        if (chat == null) {
+            System.out.println("Chat not found.");
+            rollback();
+            return;
+        }
         Query q = em.createNativeQuery("call enviarMensagem(?, ?, ?)")
                 .setParameter(1, player.getId())
                 .setParameter(2, chat.getId())
@@ -607,9 +689,6 @@ public class JPAContext implements Context {
         q.executeUpdate();
         commit();
     }
-
-    /* 2l */
-    // view
 
     /**
      * Returns the players total info from the database.
@@ -636,40 +715,41 @@ public class JPAContext implements Context {
 
     /**
      * Does the same as the giveBadgeToPlayer method but manually.
-     * @param player The player.
-     * @param game The game.
-     * @param badge The badge.
+     *
+     * @param username  The player's username.
+     * @param gameName  The game name.
+     * @param badgeName The badge name.
      */
-    public void giveBadgeToPlayerManual(Player player, Game game, Badge badge) {
+    public void giveBadgeToPlayerManual(String username, String gameName, String badgeName) {
         beginTransaction();
-        Game g = gameRepository.findByKey(game.getId());
-        if (g == null) {
+        Game game = gameRepository.findByName(gameName);
+        if (game == null) {
             throw new IllegalArgumentException("Game does not exist");
         }
-        Player p = playerRepository.findByKey(player.getId());
-        if (p == null) {
+        Player player = playerRepository.findByUsername(username);
+        if (player == null) {
             throw new IllegalArgumentException("Player does not exist");
         }
-        Badge b = badgeRepository.findByKey(badge.getId());
-        if (b == null) {
+        Badge badge = badgeRepository.findByKey(new CrachaId(game.getId(), badgeName));
+        if (badge == null) {
             throw new IllegalArgumentException("Badge does not exist");
         }
         Query q = em.createQuery("SELECT joga.points FROM Joga joga" +
-                " JOIN Partida p ON joga.id.idGame = p.id.gameId AND joga.id.matchNr = p.id.nr " +
-                " LEFT JOIN PartidaNormal pn ON joga.id.idGame = pn.id.matchId.gameId AND joga.id.matchNr = pn.id.matchId.nr" +
-                " LEFT JOIN PartidaMultijogador pm ON joga.id.idGame = pm.id.matchId.gameId AND joga.id.matchNr = pm.id.matchId.nr AND pm.state = 'Terminada'" +
-                " WHERE joga.id.idGame = :jogoId AND joga.id.idPlayer =: jogadorId AND p.endDate IS NOT NULL")
+                        " JOIN Partida p ON joga.id.idGame = p.id.gameId AND joga.id.matchNr = p.id.nr " +
+                        " LEFT JOIN PartidaNormal pn ON joga.id.idGame = pn.id.matchId.gameId AND joga.id.matchNr = pn.id.matchId.nr" +
+                        " LEFT JOIN PartidaMultijogador pm ON joga.id.idGame = pm.id.matchId.gameId AND joga.id.matchNr = pm.id.matchId.nr AND pm.state = 'Terminada'" +
+                        " WHERE joga.id.idGame = :jogoId AND joga.id.idPlayer =: jogadorId AND p.endDate IS NOT NULL")
                 .setParameter("jogoId", game.getId())
                 .setParameter("jogadorId", player.getId());
         q.executeUpdate();
-        List <Joga> pointEntries = q.getResultList();
+        List<Joga> pointEntries = q.getResultList();
         Integer points = 0;
         for (Joga joga : pointEntries) {
             points += joga.getPoints();
         }
         if (points >= badge.getPoints()) {
             Ganha ganha = new Ganha();
-            ganha.setBadge(b);
+            ganha.setBadge(badge);
             ganha.setIdPlayer(player);
             Set<Ganha> badges = player.getBadges();
             badges.add(ganha);
@@ -682,8 +762,9 @@ public class JPAContext implements Context {
 
     /**
      * Using optimistic locking raises in 20% the points to earn a badge.
+     *
      * @param badgeName The badge name.
-     * @param gameId The gameId.
+     * @param gameId    The gameId.
      */
     public void raisePointsToEarnBadgeOptimistic(String badgeName, Alphanumeric gameId) {
         beginTransaction();
@@ -702,8 +783,9 @@ public class JPAContext implements Context {
 
     /**
      * Using pessimistic locking raises in 20% the points to earn a badge.
+     *
      * @param badgeName The badge name.
-     * @param gameId The gameId.
+     * @param gameId    The gameId.
      */
     public void raisePointsToEarnBadgePessimistic(String badgeName, Alphanumeric gameId) {
         beginTransaction();
@@ -720,24 +802,5 @@ public class JPAContext implements Context {
         b.setPoints((int) (b.getPoints() * 1.2));
         em.merge(b);
         commit();
-    }
-
-    /**
-     * TEST METHOD
-     */
-    public void test() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("si-app.g17");
-        System.out.println("EMF: " + emf);
-        EntityManager em = emf.createEntityManager();
-        System.out.println("EM: " + em);
-        try {
-            Jogador j = em.find(Jogador.class, 1);
-            System.out.println(j.getId());
-        } catch (Exception e) {
-            e.printStackTrace(new PrintStream(System.out));
-        } finally {
-            em.close();
-            emf.close();
-        }
     }
 }

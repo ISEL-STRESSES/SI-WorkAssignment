@@ -15,12 +15,10 @@ public class Participa implements Participates {
     @EmbeddedId
     private ParticipaId id;
 
-    //@MapsId("idPlayer")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_jogador", nullable = false, insertable = false, updatable = false)
     private Jogador idPlayer;
 
-    //@MapsId("idChat")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_conversa", nullable = false, insertable = false, updatable = false)
     private Conversa idChat;

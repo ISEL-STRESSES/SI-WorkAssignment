@@ -18,12 +18,10 @@ public class Compra implements Purchase {
     @EmbeddedId
     private CompraId id;
 
-    //@MapsId("idPlayer")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_jogador", nullable = false, insertable = false, updatable = false)
     private Jogador idPlayer;
 
-    //@MapsId("idGame")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_jogo", nullable = false, insertable = false, updatable = false)
     private Jogo idGame;

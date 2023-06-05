@@ -1,13 +1,7 @@
 package ui;
 
 import dataAccess.JPAContext;
-import model.entities.chat.Chat;
-import model.entities.game.Game;
-import model.entities.game.badge.Badge;
-import model.entities.game.badge.CrachaId;
-import model.entities.player.Jogador;
 import model.entities.player.Player;
-import model.entities.region.Region;
 import model.types.Alphanumeric;
 import model.types.Email;
 import model.types.PlayerState;
@@ -30,51 +24,47 @@ public class Commands {
      */
     public static Map<String, Command> buildCommands() {
         Map<String, Command> commands = new TreeMap<>();
-        commands.put("2d1", build2d1());
-        commands.put("2d2", build2d2());
-        commands.put("2e", build2e());
-        commands.put("2f", build2f());
-        commands.put("2g", build2g());
-        commands.put("2h", build2h());
-        commands.put("2i", build2i());
-        commands.put("2j", build2j());
-        commands.put("2k", build2k());
-        commands.put("2l", build2l());
-        commands.put("test", buildTest());
+        commands.put("1d1", build1d1());
+        commands.put("1d2", build1d2());
+        commands.put("1e", build1e());
+        commands.put("1f", build1f());
+        commands.put("1g", build1g());
+        commands.put("1h1", build1h());
+        commands.put("1h2", build1hManually());
+        commands.put("1i", build1i());
+        commands.put("1j", build1j());
+        commands.put("1k", build1k());
+        commands.put("1l", build1l());
+        commands.put("2a", build2a());
+        commands.put("2c", build2c());
         commands.put("help", buildHelpCommand(commands));
         commands.put("exit", buildExitCommand());
         return commands;
     }
 
     /**
-     * Builds the command for the 2d exercise.
+     * Builds the command for the 1d1 exercise.
      *
-     * @return the command for the 2d exercise.
+     * @return the command for the 1d1 exercise.
      */
-    private static Command build2d1() {
-        return new Command("Criar um Jogador") {
+    private static Command build1d1() {
+        return new Command("Criar um Jogador.") {
 
             /**
-             * Executes the command of the 2d exercise.
+             * Executes the command of the 1d exercise.
              * Creates a new player given the email, region and username.
              * It's required to already exist a region with the given name.
              * The email and/or username must be unique.
              */
             @Override
             public void act() {
-                final Email email = promptEmail("Insert a new email for the new player."); // new Email("test@jpa.com");
-                final String username = promptUsername("Insert a new username for the new player."); // "testJpa";
-                final String regionName = promptRegion("Insert a new region for the new player."); // "Japan";
+                final Email email = promptEmail("Insert a new email for the new player.");
+                final String username = promptUsername("Insert a new username for the new player.");
+                final String regionName = promptRegion("Insert a region for the new player.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
                     ctx.beginTransaction();
-                    Region region = ctx.getRegions().findByKey(regionName);
-                    if (region == null) {
-                        System.out.println("Region not found.");
-                        return;
-                    }
-                    Player player = new Jogador(username, email, region);
-                    ctx.createPlayer(player);
+                    ctx.createPlayer(email, username, regionName);
                     ctx.commit();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -83,28 +73,27 @@ public class Commands {
         };
     }
 
-    private static Command build2d2() {
+    /**
+     * Builds the command for the 1d2 exercise.
+     *
+     * @return the command for the 1d2 exercise.
+     */
+    private static Command build1d2() {
         return new Command("Atualizar o estado de um jogador") {
 
             /**
-             * Executes the command of the 2d2 exercise.
+             * Executes the command of the 1d2 exercise.
              * Updates the state of a player given the username.
-             * TODO ask in the S.out if the user want to find player by username or email or id(dont want id)
              */
             @Override
             public void act() {
-                final String username = promptUsername("Insert the username of the player to update."); //"testJpa";
-                final PlayerState newState = promptPlayerState("Insert the new state of the player."); //PlayerState.ACTIVE;
+                final String username = promptUsername("Insert the username of the player to update.");
+                final PlayerState newState = promptPlayerState("Insert the new state of the player.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
-                    ctx.beginTransaction();
-                    Player player = ctx.getPlayers().findByUsername(username);
-                    if (player == null) {
-                        System.out.println("Player not found.");
-                        return;
-                    }
-                    Player updatedPlayer = ctx.updatePlayerStatus(player, newState);
-                    System.out.println("Player with username " + updatedPlayer.getUsername() + " now has state " + updatedPlayer.getState());
+                    Player updatedPlayer = ctx.updatePlayerStatus(username, newState);
+                    System.out.println("Player with username " + updatedPlayer.getUsername() +
+                            " now has state " + updatedPlayer.getState());
                     ctx.commit();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -114,31 +103,22 @@ public class Commands {
     }
 
     /**
-     * Builds the command for the 2e exercise.
+     * Builds the command for the 1e exercise.
      *
-     * @return the command for the 2e exercise.
+     * @return the command for the 1e exercise.
      */
-    private static Command build2e() {
+    private static Command build1e() {
         return new Command("Obter pontos totais de um jogador.") {
             /**
-             * Executes the command of the 2e exercise.
+             * Executes the command of the 1e exercise.
              * Gets the total points of a player given the username.
-             * TODO ask in the S.out if the user want to find player by username or email or id(dont want id)
              */
             @Override
             public void act() {
-                final String username = promptUsername("Insert the username of the player to get the total points."); //"testJpa";
-                // final Email email = promptEmail("Insert the email of the player to get the total points."); //new Email("");
-                // final Integer id = promptId("Insert the id of the player to get the total points."); //1;
+                final String username = promptUsername("Insert the username of the player to get the total points.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
-                    ctx.beginTransaction();
-                    Player player = ctx.getPlayers().findByUsername(username);
-                    if (player == null) {
-                        System.out.println("Player not found.");
-                        return;
-                    }
-                    System.out.println("Total points: " + ctx.playerTotalPoints(player));
+                    System.out.println("Total points: " + ctx.playerTotalPoints(username));
                     ctx.commit();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -148,29 +128,22 @@ public class Commands {
     }
 
     /**
-     * Builds the command for the 2f exercise.
+     * Builds the command for the 1f exercise.
      *
-     * @return the command for the 2f exercise.
+     * @return the command for the 1f exercise.
      */
-    private static Command build2f() {
+    private static Command build1f() {
         return new Command("Obter número de jogos de um jogador.") {
             /**
-             * Executes the command of the 2f exercise.
+             * Executes the command of the 1f exercise.
              * Gets the number of games of a player given the username.
-             * TODO ask in the S.out if the user want to find player by username or email or id(dont want id)
              */
             @Override
             public void act() {
-                final String username = promptUsername("Insert the username of the player to get the number of games."); //"testJpa";
+                final String username = promptUsername("Insert the username of the player to get the number of games.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
-                    ctx.beginTransaction();
-                    Player player = ctx.getPlayers().findByUsername(username);
-                    if (player == null) {
-                        System.out.println("Player not found.");
-                        return;
-                    }
-                    System.out.println("Number of games: " + ctx.playerTotalGames(player));
+                    System.out.println("Number of games: " + ctx.playerTotalGames(username));
                     ctx.commit();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -180,28 +153,23 @@ public class Commands {
     }
 
     /**
-     * Builds the command for the 2g exercise.
+     * Builds the command for the 1g exercise.
      *
-     * @return the command for the 2g exercise.
+     * @return the command for the 1g exercise.
      */
-    private static Command build2g() {
+    private static Command build1g() {
         return new Command("Obter todos os pontos de jogadores de um jogo.") {
             /**
-             * Executes the command of the 2g exercise.
+             * Executes the command of the 1g exercise.
              * Gets the total points of all players of a game given the game id or name.
              */
             @Override
             public void act() {
-                final Alphanumeric gameId = promptGameId("Insert the game identifier to get the total points of all players.");
+                //final Alphanumeric gameId = promptGameId("Insert the game identifier to get the total points of all players.");
+                final String gameName = promptGameName("Insert the game name to get the total points of all players.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
-                    ctx.beginTransaction();
-                    Game game = ctx.getGames().findByKey(gameId);
-                    if (game == null) {
-                        System.out.println("Game not found.");
-                        return;
-                    }
-                    List<Object[]> points = ctx.gamePointsByPlayer(game);
+                    List<Object[]> points = ctx.gamePointsByPlayer(gameName);
                     System.out.println("Total points of all players: ");
                     for (Object[] point : points) {
                         System.out.println("Player: " + point[0] + " Points: " + point[1]);
@@ -215,41 +183,26 @@ public class Commands {
     }
 
     /**
-     * Builds the command for the 2h exercise.
+     * Builds the command for the 1h exercise.
      *
-     * @return the command for the 2h exercise.
+     * @return the command for the 1h exercise.
      */
-    private static Command build2h() {
+    private static Command build1h() {
         return new Command("Associar crachá.") {
             /**
-             * Executes the command of the 2h exercise.
+             * Executes the command of the 1h exercise.
              * Associates a badge to a player given the badge name, the player id and game id.
              */
             @Override
             public void act() {
-                final String badgeName = promptBadgeName("Insert the badge name to associate to a player."); //"testJpa";
-                final Alphanumeric gameId = promptGameId("Insert the game identifier to associate the badge to a player.");
-                final Integer playerId = promptId("Insert the player id to associate the badge to a player.");
+                final String badgeName = promptBadgeName("Insert the badge name to associate to a player.");
+                //final Alphanumeric gameId = promptGameId("Insert the game identifier to associate the badge to a player.");4
+                final String gameName = promptGameName("Insert the game name to associate the badge to a player.");
+                //final Integer playerId = promptId("Insert the player id to associate the badge to a player.");
+                final String username = promptUsername("Insert the username to associate the badge to a player.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
-                    ctx.beginTransaction();
-                    Player player = ctx.getPlayers().findByKey(playerId);
-                    if (player == null) {
-                        System.out.println("Player not found.");
-                        return;
-                    }
-                    Game game = ctx.getGames().findByKey(gameId);
-                    if (game == null) {
-                        System.out.println("Game not found.");
-                        return;
-                    }
-                    CrachaId crachaId = new CrachaId(gameId, badgeName);
-                    Badge badge = ctx.getBadges().findByKey(crachaId);
-                    if (badge == null) {
-                        System.out.println("Badge not found.");
-                        return;
-                    }
-                    ctx.giveBadgeToPlayer(player, game, badge);
+                    ctx.giveBadgeToPlayer(username, gameName, badgeName);
                     ctx.commit();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -259,31 +212,26 @@ public class Commands {
     }
 
     /**
-     * Builds the command for the 2i exercise.
+     * Builds the command for the 1i exercise.
      *
-     * @return the command for the 2i exercise.
+     * @return the command for the 1i exercise.
      */
-    private static Command build2i() {
+    private static Command build1i() {
         return new Command("Iniciar conversa.") {
 
             /**
-             * Executes the command of the 2i exercise.
+             * Executes the command of the 1i exercise.
              * Starts a chat given the name of the conversation and the player id.
              */
             @Override
             public void act() {
-                final String chatName = promptChatName("Insert the name of the chat to start."); //"testJpa";
-                final Integer playerId = promptId("Insert the player id to start the chat.");
+                final String chatName = promptChatName("Insert the name of the chat to start.");
+                // final Integer playerId = promptId("Insert the player id to start the chat.");
+                final String username = promptUsername("Insert the username to start the chat.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
-                    ctx.beginTransaction();
-                    Player player = ctx.getPlayers().findByKey(playerId);
-                    if (player == null) {
-                        System.out.println("Player not found.");
-                        return;
-                    }
-                    Chat chat = ctx.getChats().findByName(chatName);
-                    ctx.initiateChat(player, chat);
+                    Integer chatId = ctx.initiateChat(username, chatName);
+                    System.out.println("Chat with id " + chatId + " created.");
                     ctx.commit();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -293,35 +241,26 @@ public class Commands {
     }
 
     /**
-     * Builds the command for the 2j exercise.
+     * Builds the command for the 1j exercise.
      *
-     * @return the command for the 2j exercise.
+     * @return the command for the 1j exercise.
      */
-    private static Command build2j() {
+    private static Command build1j() {
         return new Command("Juntar a uma conversa.") {
 
             /**
-             * Executes the command of the 2j exercise.
+             * Executes the command of the 1j exercise.
              * Joins a player to the given the id of the conversation with the id of the conversation and player.
              */
             @Override
             public void act() {
-                final Integer chatId = promptId("Insert the id of the chat to join."); //"testJpa";
-                final Integer playerId = promptId("Insert the player id to join the chat.");
+                // final Integer chatId = promptId("Insert the id of the chat to join.");
+                final String chatName = promptChatName("Insert the name of the chat to join.");
+                // final Integer playerId = promptId("Insert the player id to join the chat.");
+                final String username = promptUsername("Insert the username to join the chat.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
-                    ctx.beginTransaction();
-                    Player player = ctx.getPlayers().findByKey(playerId);
-                    if (player == null) {
-                        System.out.println("Player not found.");
-                        return;
-                    }
-                    Chat chat = ctx.getChats().findByKey(chatId);
-                    if (chat == null) {
-                        System.out.println("Chat not found.");
-                        return;
-                    }
-                    ctx.addPlayerToChat(player, chat);
+                    ctx.addPlayerToChat(username, chatName);
                     ctx.commit();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -331,36 +270,28 @@ public class Commands {
     }
 
     /**
-     * Builds the command for the 2k exercise.
+     * Builds the command for the 1k exercise.
      *
-     * @return the command for the 2k exercise.
+     * @return the command for the 1k exercise.
      */
-    private static Command build2k() {
+    private static Command build1k() {
         return new Command("Enviar uma mensagem para uma conversa.") {
 
             /**
-             * Executes the command of the 2k exercise.
+             * Executes the command of the 1k exercise.
              * Sends a message to a chat given the id of the conversation, the player id and the text of the message.
              */
             @Override
             public void act() {
-                final Integer chatId = promptId("Insert the id of the chat to send a message."); //"testJpa";
-                final Integer playerId = promptId("Insert the player id to send a message to the chat.");
+                // final Integer chatId = promptId("Insert the id of the chat to send a message.");
+                // final Integer playerId = promptId("Insert the player id to send a message to the chat.");
+                final String chatName = promptChatName("Insert the name of the chat to send a message.");
+                final String username = promptUsername("Insert the username to send a message to the chat.");
                 final String messageText = promptLength("Insert the text of the message to send to the chat.", 20);
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
                     ctx.beginTransaction();
-                    Player player = ctx.getPlayers().findByKey(playerId);
-                    if (player == null) {
-                        System.out.println("Player not found.");
-                        return;
-                    }
-                    Chat chat = ctx.getChats().findByKey(chatId);
-                    if (chat == null) {
-                        System.out.println("Chat not found.");
-                        return;
-                    }
-                    ctx.sendMessage(player, chat, messageText);
+                    ctx.sendMessage(username, chatName, messageText);
                     ctx.commit();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -370,17 +301,16 @@ public class Commands {
     }
 
     /**
-     * Builds the command for the 2l exercise.
+     * Builds the command for the 1l exercise.
      *
-     * @return the command for the 2l exercise.
+     * @return the command for the 1l exercise.
      */
-    private static Command build2l() {
-        return new Command("Obter informação total de um jogador") {
+    private static Command build1l() {
+        return new Command("Obter informação total dos jogadores.") {
 
             /**
-             * Executes the command of the 2l exercise.
+             * Executes the command of the 1l exercise.
              * Gets the total information of all players that are not banned.
-             *
              */
             @Override
             public void act() {
@@ -391,16 +321,88 @@ public class Commands {
         };
     }
 
-    private static Command buildTest() {
-        return new Command("test") {
+    /**
+     * Builds the command for the 1h manually exercise.
+     *
+     * @return the command for the 1h manually exercise.
+     */
+    private static Command build1hManually() {
+        return new Command("Associacar um cracha a um jogador manualmente.") {
 
             /**
-             * Executes a test command.
+             * Executes the command of the 1h manually exercise.
+             * Gives a badge to a player given the name of the badge and the player id.
              */
             @Override
             public void act() {
+                final String badgeName = promptBadgeName("Insert the badge name to associate to a player.");
+                final String gameName = promptGameName("Insert the game name to associate the badge to a player.");
+                final String username = promptUsername("Insert the username to associate the badge to a player.");
+                // final Alphanumeric gameId = promptGameId("Insert the game identifier to associate the badge to a player.");
+                // final Integer playerId = promptId("Insert the player id to associate the badge to a player.");
                 try (JPAContext ctx = new JPAContext()) {
-                    ctx.test();
+                    ctx.connect();
+                    ctx.beginTransaction();
+                    ctx.giveBadgeToPlayerManual(username, gameName, badgeName);
+                    ctx.commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+    /**
+     * Builds the command for the 2a exercise.
+     *
+     * @return the command for the 2a exercise.
+     */
+    private static Command build2a() {
+        return new Command("Aumentar os pontos de um cracha em 20% com optimistic locking.") {
+
+            /**
+             * Executes the command of the 2a exercise.
+             * Increases the points of a badge by 20% given the name of the badge.
+             * Uses optimistic locking.
+             */
+            @Override
+            public void act() {
+                final String badgeName = promptBadgeName("Insert the name of the badge to increase the points.");
+                final Alphanumeric gameId = promptGameId("Insert the game id to increase the points of the badge.");
+                try (JPAContext ctx = new JPAContext()) {
+                    ctx.connect();
+                    ctx.beginTransaction();
+                    ctx.raisePointsToEarnBadgeOptimistic(badgeName, gameId);
+                    ctx.commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+    /**
+     * Builds the command for the 2c exercise.
+     *
+     * @return the command for the 2c exercise.
+     */
+    private static Command build2c() {
+        return new Command("Aumentar os pontos de um cracha em 20% com pessimistic locking.") {
+
+            /**
+             * Executes the command of the 2c exercise.
+             * Increases the points of a badge by 20% given the name of the badge.
+             * Uses pessimistic locking.
+             */
+            @Override
+            public void act() {
+                final String badgeName = promptBadgeName("Insert the name of the badge to increase the points.");
+                final Alphanumeric gameId = promptGameId("Insert the game id to increase the points of the badge.");
+                try (JPAContext ctx = new JPAContext()) {
+                    ctx.connect();
+                    ctx.beginTransaction();
+                    ctx.raisePointsToEarnBadgePessimistic(badgeName, gameId);
+                    ctx.commit();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

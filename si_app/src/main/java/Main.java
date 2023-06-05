@@ -11,6 +11,8 @@ class Main {
             Map<String, Command> commands = Commands.buildCommands();
 
             while (true) {
+                System.out.println("Please input a command");
+                commands.get("help").act();
                 final Command command = promptCommand(commands);
                 System.out.println("Executing...");
                 command.act();

@@ -96,6 +96,17 @@ public class Prompts {
     }
 
     /**
+     * Gets the prompt Game name
+     *
+     * @param promptMessage the prompt message
+     * @return the prompt Game name
+     */
+    public static String promptGameName(String promptMessage) {
+        System.out.println(promptMessage);
+        return prompt(input -> input.length() > 1, "Incorrect game name, please input a correct game name.");
+    }
+
+    /**
      * Gets the prompt Badge name
      *
      * @param promptMessage the prompt message

@@ -33,7 +33,6 @@ public class JogoEstatistica implements GameStats {
      * Empty Constructor
      */
     public JogoEstatistica() {
-        // for ORM only
     }
 
     /**
