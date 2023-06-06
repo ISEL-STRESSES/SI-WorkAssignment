@@ -11,7 +11,7 @@ import model.types.URL;
  */
 @Entity
 @NamedQuery(name = "Cracha.findAll", query = "SELECT c FROM Cracha c")
-@NamedQuery(name = "Cracha.findByKey", query = "SELECT c FROM Cracha c where c.id = :id")
+@NamedQuery(name = "Cracha.findByKey", query = "SELECT c FROM Cracha c where c.id = :key")
 @Table(name = "cracha", schema = "public")
 public class Cracha implements Badge {
     @EmbeddedId
@@ -27,6 +27,16 @@ public class Cracha implements Badge {
 
     @Column(name = "imagem", columnDefinition = "url(0, 0) not null")
     private String imagem;
+
+    public Cracha(Alphanumeric gameId, String badgeName, int pointLimit, URL image) {
+        this.id = new CrachaId(gameId, badgeName);
+        this.limitePontos = pointLimit;
+        this.imagem = image.toString();
+    }
+
+    public Cracha() {
+        // empty constructor
+    }
 
     /**
      * Getter function for the badge id

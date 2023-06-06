@@ -18,4 +18,9 @@ public record Alphanumeric(String alphanumeric) {
     public boolean isValid() {
         return alphanumeric.matches(ALPHANUMERIC_REGEX) && alphanumeric.length() <= MAX_LENGTH;
     }
+
+    @Override
+    public String toString() {
+        return alphanumeric;
+    }
 }

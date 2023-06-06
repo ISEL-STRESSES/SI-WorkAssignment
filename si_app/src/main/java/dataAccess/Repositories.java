@@ -222,7 +222,7 @@ public class Repositories {
         @Override
         public Jogo findByKey(Alphanumeric key) {
             return context.em.createNamedQuery("Jogo.findByKey", Jogo.class)
-                    .setParameter("key", key.alphanumeric())
+                    .setParameter("key", key.toString())
                     .getSingleResult();
         }
 

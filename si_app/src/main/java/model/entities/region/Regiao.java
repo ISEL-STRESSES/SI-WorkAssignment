@@ -28,6 +28,22 @@ public class Regiao implements Region {
     private Set<Partida> matches = new LinkedHashSet<>();
 
     /**
+     * Default empty constructor
+     */
+    public Regiao() {
+
+    }
+
+    /**
+     * Constructor for the region entity
+     *
+     * @param region the region name
+     */
+    public Regiao(String region) {
+        this.name = region;
+    }
+
+    /**
      * Getter function for the region name
      *
      * @return the region name

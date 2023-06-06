@@ -17,7 +17,7 @@ import java.util.Set;
  */
 @Entity
 @NamedQuery(name = "Jogo.findAll", query = "SELECT j FROM Jogo j")
-@NamedQuery(name = "Jogo.findByKey", query = "SELECT j FROM Jogo j where j.id = :id")
+@NamedQuery(name = "Jogo.findByKey", query = "SELECT j FROM Jogo j where j.id = :key")
 @NamedQuery(name = "Jogo.findByName", query = "SELECT j FROM Jogo j where j.name = :name")
 @Table(name = "jogo", schema = "public", indexes = {
         @Index(name = "jogo_nome_key", columnList = "nome", unique = true)

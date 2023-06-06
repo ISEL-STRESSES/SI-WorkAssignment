@@ -18,4 +18,9 @@ public record URL(String url) {
     boolean isValid() {
         return url.matches(URL_REGEX) && url.length() <= MAX_URL_LENGTH;
     }
+
+    @Override
+    public String toString() {
+        return url;
+    }
 }

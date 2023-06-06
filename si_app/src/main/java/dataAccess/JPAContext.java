@@ -25,6 +25,7 @@ import model.entities.game.Game;
 import model.entities.game.badge.Badge;
 import model.entities.game.badge.Cracha;
 import model.entities.game.badge.CrachaId;
+import model.entities.player.Jogador;
 import model.entities.player.Player;
 import model.types.Alphanumeric;
 import model.types.Email;
@@ -599,6 +600,8 @@ public class JPAContext implements Context {
                 .setParameter(1, player.getId())
                 .setParameter(2, newState.description);
         q.executeUpdate();
+        player.setState(newState);
+        playerDataMapper.update((Jogador) player);
         commit();
         return playerRepository.findByKey(player.getId());
     }
@@ -618,7 +621,7 @@ public class JPAContext implements Context {
             rollback();
             return null;
         }
-        Query q = em.createNativeQuery("call totalPontosJogador(?)")
+        Query q = em.createNativeQuery("SELECT totalPontosJogador(?)")
                 .setParameter(1, player.getId());
         Integer result = (Integer) q.getSingleResult();
         commit();
@@ -640,7 +643,7 @@ public class JPAContext implements Context {
             rollback();
             return null;
         }
-        Query q = em.createNativeQuery("call totalJogosJogador(?)")
+        Query q = em.createNativeQuery("SELECT totalJogosJogador(?)")
                 .setParameter(1, player.getId());
         Integer result = (Integer) q.getSingleResult();
         commit();
@@ -662,7 +665,7 @@ public class JPAContext implements Context {
             rollback();
             return null;
         }
-        Query q = em.createNativeQuery("call PontosJogoPorJogador(?)")
+        Query q = em.createNativeQuery("SELECT PontosJogoPorJogador(?)")
                 .setParameter(1, game.getId());
         List<Object[]> result = (List<Object[]>) q.getResultList();
         commit();
