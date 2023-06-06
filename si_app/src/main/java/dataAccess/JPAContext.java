@@ -19,7 +19,6 @@ import logic.repositories.entities.player.PlayerRepository;
 import logic.repositories.entities.player.PlayerStatsRepository;
 import logic.repositories.entities.region.RegionRepository;
 import model.associacions.earns.Ganha;
-import model.associacions.plays.Joga;
 import model.entities.chat.Chat;
 import model.entities.game.Game;
 import model.entities.game.badge.Badge;
@@ -666,7 +665,7 @@ public class JPAContext implements Context {
             return null;
         }
         Query q = em.createNativeQuery("SELECT PontosJogoPorJogador(?)")
-                .setParameter(1, game.getId());
+                .setParameter(1, game.getId().toString());
         List<Object[]> result = (List<Object[]>) q.getResultList();
         commit();
         return result;
@@ -704,7 +703,7 @@ public class JPAContext implements Context {
         }
         Query q = em.createNativeQuery("call associarCracha(?, ?, ?)")
                 .setParameter(1, player.getId())
-                .setParameter(2, game.getId())
+                .setParameter(2, game.getId().toString())
                 .setParameter(3, badge.getId().getBadgeName());
         q.executeUpdate();
         commit();
@@ -728,18 +727,11 @@ public class JPAContext implements Context {
             rollback();
             return null;
         }
-        Chat chat = chatRepository.findByName(chatName);
-        if (chat == null) {
-            System.out.println("Chat not found.");
-            rollback();
-            return null;
-        }
-        Query q = em.createNativeQuery("call startchat(?, ?)")
+        Query q = em.createNativeQuery("SELECT startchat(?, ?)")
                 .setParameter(1, player.getId())
-                .setParameter(2, chat.getId());
-        q.executeUpdate();
+                .setParameter(2, chatName);
         commit();
-        return q.getFirstResult();
+        return (Integer) q.getSingleResult();
     }
 
     /* 2j */
@@ -815,10 +807,10 @@ public class JPAContext implements Context {
     public List<Jogadortotalinfo> getPlayersTotalInfoFromDB() {
         beginTransaction();
         Query q = em.createNativeQuery("CREATE OR REPLACE VIEW jogadorTotalInfo AS" +
-                " SELECT j.id, j.estado, j.email, " +
-                "totaljogosjogador(?) AS totalJogos, " +
-                "totalpartidasjogador(?) AS totalPartidas, " +
-                "totalpontosjogador(?) AS totalPontos " +
+                " SELECT j.id, j.estado, j.email, j.username, " +
+                "totaljogosjogador(j.id) AS total_jogos, " +
+                "totalpartidasjogador(j.id) AS total_partidas, " +
+                "totalpontosjogador(j.id) AS total_pontos " +
                 "FROM jogador j WHERE j.estado <>'BANIDO'");
         q.executeUpdate();
         commit();
@@ -854,14 +846,13 @@ public class JPAContext implements Context {
                         " JOIN Partida p ON joga.id.idGame = p.id.gameId AND joga.id.matchNr = p.id.nr " +
                         " LEFT JOIN PartidaNormal pn ON joga.id.idGame = pn.id.matchId.gameId AND joga.id.matchNr = pn.id.matchId.nr" +
                         " LEFT JOIN PartidaMultijogador pm ON joga.id.idGame = pm.id.matchId.gameId AND joga.id.matchNr = pm.id.matchId.nr AND pm.state = 'Terminada'" +
-                        " WHERE joga.id.idGame = :jogoId AND joga.id.idPlayer =: jogadorId AND p.endDate IS NOT NULL")
-                .setParameter("jogoId", game.getId())
+                        " WHERE joga.id.idGame = :jogoId AND joga.id.idPlayer = :jogadorId AND p.endDate IS NOT NULL")
+                .setParameter("jogoId", game.getId().toString())
                 .setParameter("jogadorId", player.getId());
-        q.executeUpdate();
-        List<Joga> pointEntries = q.getResultList();
+        List<Integer> pointEntries = q.getResultList();
         Integer points = 0;
-        for (Joga joga : pointEntries) {
-            points += joga.getPoints();
+        for (Integer pointsEntry : pointEntries) {
+            points += pointsEntry;
         }
         if (points >= badge.getPoints()) {
             Ganha ganha = new Ganha();

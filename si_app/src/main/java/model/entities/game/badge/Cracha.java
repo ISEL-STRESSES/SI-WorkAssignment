@@ -1,10 +1,14 @@
 package model.entities.game.badge;
 
 import jakarta.persistence.*;
+import model.associacions.earns.Ganha;
 import model.entities.game.Game;
 import model.entities.game.Jogo;
 import model.types.Alphanumeric;
 import model.types.URL;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * class that represents a badge
@@ -28,6 +32,9 @@ public class Cracha implements Badge {
     @Column(name = "imagem", columnDefinition = "url(0, 0) not null")
     private String imagem;
 
+    @OneToMany(mappedBy = "badge", orphanRemoval = true)
+    private Set<Ganha> player = new LinkedHashSet<>();
+
     public Cracha(Alphanumeric gameId, String badgeName, int pointLimit, URL image) {
         this.id = new CrachaId(gameId, badgeName);
         this.limitePontos = pointLimit;
@@ -36,6 +43,14 @@ public class Cracha implements Badge {
 
     public Cracha() {
         // empty constructor
+    }
+
+    public Set<Ganha> getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Set<Ganha> player) {
+        this.player = player;
     }
 
     /**

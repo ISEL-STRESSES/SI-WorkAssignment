@@ -8,7 +8,7 @@ package model.types;
 public record Alphanumeric(String alphanumeric) {
 
     private static final Integer MAX_LENGTH = 10;
-    private static final String ALPHANUMERIC_REGEX = "^[A-Z0-9]+$";
+    private static final String ALPHANUMERIC_REGEX = "^[A-Za-z0-9]+$";
 
     /**
      * Checks if the alphanumeric string is valid

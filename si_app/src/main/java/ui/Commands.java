@@ -315,7 +315,10 @@ public class Commands {
             @Override
             public void act() {
                 try (JPAContext ctx = new JPAContext()) {
+                    ctx.connect();
+                    ctx.beginTransaction();
                     ctx.getPlayersTotalInfoFromDB().forEach(System.out::println);
+                    ctx.commit();
                 }
             }
         };

@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION startChat(jogador_id INT, nome_conversa VARCHAR(50))
 AS
 $$
     DECLARE
-        chat_id INT;
+        chat_id INT DEFAULT -1;
     BEGIN
         call iniciarconversa(jogador_id, nome_conversa, chat_id);
         RETURN chat_id;
