@@ -330,7 +330,7 @@ public class Commands {
      * @return the command for the 1h manually exercise.
      */
     private static Command build1hManually() {
-        return new Command("Associacar um cracha a um jogador manualmente.") {
+        return new Command("Associar um cracha a um jogador manualmente.") {
 
             /**
              * Executes the command of the 1h manually exercise.
