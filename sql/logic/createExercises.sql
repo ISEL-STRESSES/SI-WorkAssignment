@@ -145,7 +145,7 @@ $$
         SELECT SUM(COALESCE(joga.pontuacao, 0)) INTO pontos_multi FROM joga
         JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr
         JOIN partida p ON joga.id_jogo = p.id_jogo AND joga.nr_partida = p.nr
-        WHERE joga.id_jogador = jogador_id AND pm.estado = 'Terminada' AND p.data_fim IS NOT NULL;
+        WHERE joga.id_jogador = jogador_id AND pm.estado ~* '^(terminada)$' AND p.data_fim IS NOT NULL;
 
         RETURN pontos_normal + pontos_multi;
     END;
@@ -197,7 +197,7 @@ $$
         FROM joga
         JOIN partida ON joga.id_jogo = partida.id_jogo AND joga.nr_partida = partida.nr
         JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr
-        WHERE joga.id_jogador = jogador_id AND pm.estado = 'Terminada' AND partida.data_fim IS NOT NULL
+        WHERE joga.id_jogador = jogador_id AND pm.estado ~* '^(terminada)$' AND partida.data_fim IS NOT NULL
     ), normal_games AS (
         SELECT DISTINCT joga.id_jogo
         FROM joga
@@ -238,7 +238,7 @@ $$
         RETURN QUERY SELECT joga.id_jogador, SUM(COALESCE(joga.pontuacao, 0))::integer AS total_pontos FROM joga
         JOIN partida p ON joga.id_jogo = p.id_jogo AND joga.nr_partida = p.nr
         LEFT JOIN partida_normal pn ON joga.id_jogo = pn.id_jogo AND joga.nr_partida = pn.nr
-        LEFT JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr AND pm.estado = 'Terminada'
+        LEFT JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr AND pm.estado ~* '^(terminada)$'
         WHERE joga.id_jogo = jogo_id AND p.data_fim IS NOT NULL
         GROUP BY joga.id_jogador;
     END;
@@ -284,7 +284,7 @@ $$
     END
 $$;
 
-CREATE OR REPLACE PROCEDURE associarChachatransacao(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50))
+CREATE OR REPLACE PROCEDURE associarCrachatransacao(jogador_id INT, jogo_id ALPHANUMERIC, cracha_nome VARCHAR(50))
     LANGUAGE plpgsql
     AS
 $$
@@ -343,7 +343,7 @@ $$
             INSERT INTO participa (id_jogador, id_conversa) VALUES (jogador_id, conversa_id);
             -- Add a message that the player created the conversation
             INSERT INTO mensagem (nr_ordem, id_jogador, id_conversa, texto, data)
-            VALUES (default_conversa_nr_ordem, jogador_id, conversa_id,'O jogador criou a conversa', now());
+            VALUES (default_conversa_nr_ordem, jogador_id, conversa_id,'O jogador criou a conversa', LOCALTIMESTAMP);
         END IF;
     END;
 $$;
@@ -407,7 +407,7 @@ $$
 
         SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador = jogador_id AND mensagem.id_conversa = conversa_id;
         nr := nr + 1;
-        INSERT INTO mensagem(nr_ordem, id_conversa, id_jogador, texto, data) VALUES (nr, conversa_id, jogador_id, 'O jogador entrou na conversa', now());
+        INSERT INTO mensagem(nr_ordem, id_conversa, id_jogador, texto, data) VALUES (nr, conversa_id, jogador_id, 'O jogador entrou na conversa', LOCALTIMESTAMP);
     END;
 $$;
 
@@ -475,7 +475,7 @@ $$
         END IF;
         SELECT COUNT(mensagem.nr_ordem) INTO nr FROM mensagem WHERE id_jogador = jogador_id AND mensagem.id_conversa = conversa_id;
         nr := nr + 1;
-        INSERT INTO mensagem(nr_ordem, id_conversa, id_jogador, texto, data) VALUES (nr, conversa_id, jogador_id, mensagem_texto, now());
+        INSERT INTO mensagem(nr_ordem, id_conversa, id_jogador, texto, data) VALUES (nr, conversa_id, jogador_id, mensagem_texto, LOCALTIMESTAMP);
     END;
 $$;
 
@@ -546,7 +546,7 @@ CREATE OR REPLACE VIEW jogadorTotalInfo AS
             totalJogosJogador(jogador.id) AS total_jogos,
             totalPartidasJogador(jogador.id) AS total_partidas,
             totalPontosJogador(jogador.id) AS total_pontos
-    FROM jogador WHERE jogador.estado != 'Banido';
+    FROM jogador WHERE jogador.estado !~* '^(banido)$';
 
 ------------------------------------------------------------------------------------------------------------------------
 -- (m) Criar os mecanismos necessários para que, de forma automática, quando uma partida termina, se proceda à
@@ -584,7 +584,7 @@ $$
                 FROM partida_multijogador pm
                 WHERE pm.id_jogo = NEW.id_jogo
                     AND pm.nr = NEW.nr_partida
-                    AND pm.estado = 'Terminada'
+                    AND pm.estado ~* '^(terminada)$'
             ) THEN
                 -- Check if the player's score exceeds the badge's limite_pontos
                 INSERT INTO ganha (id_jogador, id_jogo, nome_cracha)
@@ -606,11 +606,11 @@ $$;
 -- CREATE OR REPLACE TRIGGER atribuirCrachasMultijogadorTrigger
 --     AFTER UPDATE OF estado ON partida_multijogador
 --     FOR EACH ROW
---     WHEN (NEW.estado = 'Terminada')
+--     WHEN (NEW.estado = 'terminada')
 --         EXECUTE PROCEDURE atribuirCrachas();
 
-CREATE OR REPLACE TRIGGER atribuirCrachasNormalTrigger
-    AFTER INSERT OR UPDATE OF pontuacao ON joga
+CREATE OR REPLACE TRIGGER atribuirCrachasTrigger
+    AFTER UPDATE OF pontuacao ON joga
     FOR EACH ROW
     WHEN (NEW.pontuacao >= 0)
     EXECUTE PROCEDURE atribuirCrachas();
@@ -650,7 +650,7 @@ DECLARE
     jogador_id INT;
 BEGIN
     SELECT jogador.id INTO jogador_id FROM jogador WHERE jogador.username = OLD.username;
-    UPDATE jogador SET estado = 'Banido' WHERE jogador.id = jogador_id;
+    UPDATE jogador SET estado = 'banido' WHERE jogador.id = jogador_id;
     RETURN OLD;
 END;
 $$;

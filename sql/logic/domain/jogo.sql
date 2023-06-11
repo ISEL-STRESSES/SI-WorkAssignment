@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------------------------------------------------
--- 3. Update the nr_partidas of the jogo_estatistica when a new partida is added or removed
+-- 3. Update the nr_partidas of the jogo_estatistica when a new joga entry is added or removed
 
 CREATE OR REPLACE FUNCTION updateNrPartidas()
     RETURNS TRIGGER
@@ -22,7 +22,7 @@ $$
 $$;
 
 CREATE OR REPLACE TRIGGER updateNrPartidasTrigger
-    AFTER INSERT OR DELETE ON partida
+    AFTER INSERT OR DELETE ON joga
     FOR EACH ROW
     EXECUTE FUNCTION updateNrPartidas();
 
@@ -47,7 +47,6 @@ BEGIN
     RETURN NULL;
 END;
 $$;
-
 
 CREATE OR REPLACE TRIGGER updateNrJogadoresTrigger
     AFTER INSERT OR DELETE ON joga

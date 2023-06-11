@@ -18,7 +18,7 @@ $$
         regiao_nome VARCHAR(50);
         jogador_nome_regiao VARCHAR(50);
     BEGIN
-        SELECT partida.nome_regiao INTO regiao_nome FROM partida WHERE partida.id_jogo = NEW.id_jogo;
+        SELECT partida.nome_regiao INTO regiao_nome FROM partida WHERE partida.id_jogo = NEW.id_jogo AND partida.nr = NEW.nr_partida;
         SELECT jogador.nome_regiao INTO jogador_nome_regiao FROM jogador WHERE jogador.id = NEW.id_jogador;
         IF (regiao_nome != jogador_nome_regiao) THEN
             RAISE EXCEPTION 'O jogador nao pertence a regiao da partida';
@@ -47,7 +47,7 @@ CREATE OR REPLACE FUNCTION checkJogadorMensagemConversa()
 AS
 $$
     BEGIN
-        IF (NOT EXISTS (SELECT 1 FROM participa WHERE id_jogador = NEW.id_jogador AND id_conversa = NEW.id_conversa)) THEN
+        IF (NOT EXISTS (SELECT 1 FROM participa WHERE participa.id_jogador = NEW.id_jogador AND participa.id_conversa = NEW.id_conversa)) THEN
             RAISE EXCEPTION 'O jogador nao pertence a conversa';
         END IF;
         RETURN NEW;

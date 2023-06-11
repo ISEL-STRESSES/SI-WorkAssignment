@@ -13,13 +13,7 @@ $$
         player_email1 varchar := 'testplayer11@gmail.com';
         player_email2 varchar := 'testplayer12@hotmail.com';
         player_email3 varchar := 'testplayer13@iol.pt';
-        player_sequence integer := 0;
     BEGIN
-        SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
-        DELETE FROM jogador WHERE email = player_email1;
-        DELETE FROM jogador WHERE email = player_email2;
-        DELETE FROM jogador WHERE email = player_email3;
-        DELETE FROM regiao WHERE nome = region_name1;
         INSERT INTO regiao (nome) VALUES (region_name1);
         RAISE NOTICE 'Exercise 2d.1';
         RAISE NOTICE 'Test data created';
@@ -90,11 +84,7 @@ $$
         WHEN OTHERS THEN
             RAISE EXCEPTION 'Test 6 failed with exception: %', SQLERRM;
     END;
-        DELETE FROM jogador WHERE email = player_email1;
-        DELETE FROM jogador WHERE email = player_email2;
-        DELETE FROM jogador WHERE email = player_email3;
-        DELETE FROM regiao WHERE nome = region_name1;
-        EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
+        ROLLBACK;
     END;
 $$;
 
@@ -108,10 +98,7 @@ $$
         player_name1 varchar := 'TestPlayer14';
         player_id1 integer;
         player_email1 varchar := 'testplayer14@gmail.com';
-        player_sequence integer := 0;
     BEGIN
-        SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
-        DELETE FROM regiao WHERE nome = region_name1;
         INSERT INTO regiao (nome) VALUES (region_name1);
         INSERT INTO jogador (username, email, nome_regiao) VALUES (player_name1, player_email1, region_name1);
         SELECT jogador.id INTO player_id1 FROM jogador WHERE email = player_email1;
@@ -148,9 +135,7 @@ $$
         WHEN OTHERS THEN
             RAISE EXCEPTION 'Test 3 failed with exception: %', SQLERRM;
     END;
-        DELETE FROM jogador WHERE email = player_email1;
-        DELETE FROM regiao WHERE nome = region_name1;
-        EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
+        ROLLBACK;
     END;
 $$;
 ------------------------------------------------------------------------------------------------------------------------
@@ -167,7 +152,7 @@ $$
         player_id2 integer;
         player_name2 varchar := 'TestPlayer22';
         player_email2 varchar := 'testplayer22@something.edu';
-        player_banned varchar := 'Banido';
+        player_banned varchar := 'banido';
         game_id1 alphanumeric := 'testGame21';
         game_name1 varchar := 'TestGame21';
         game_url1 varchar := 'https://www.testgame21.com/?index';
@@ -176,12 +161,10 @@ $$
         game_url2 varchar := 'https://www.testgame22.com/?index';
         match_start_date date := '2020-01-01';
         match_end_date date := '2020-01-02';
-        match_ended varchar := 'Terminada';
+        match_ended varchar := 'terminada';
         points integer;
         expected_points integer := 101111;
-        player_sequence integer := 0;
     BEGIN
-        SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
         INSERT INTO regiao (nome) VALUES (region_name1);
         INSERT INTO jogador (username, email, nome_regiao) VALUES (player_name1, player_email1, region_name1);
         INSERT INTO jogador (username, email, estado, nome_regiao) VALUES (player_name2, player_email2, player_banned, region_name1);
@@ -265,19 +248,7 @@ $$
         WHEN others THEN
             RAISE NOTICE 'Test 5 failed with error: %', SQLERRM;
     END;
-        DELETE FROM joga WHERE id_jogador = player_id1;
-        DELETE FROM partida_normal WHERE id_jogo = game_id1;
-        DELETE FROM partida_normal WHERE id_jogo = game_id2;
-        DELETE FROM partida_multijogador WHERE id_jogo = game_id1;
-        DELETE FROM partida_multijogador WHERE id_jogo = game_id2;
-        DELETE FROM partida WHERE id_jogo = game_id1;
-        DELETE FROM partida WHERE id_jogo = game_id2;
-        DELETE FROM jogo WHERE id = game_id1;
-        DELETE FROM jogo WHERE id = game_id2;
-        DELETE FROM jogador WHERE id = player_id1;
-        DELETE FROM jogador WHERE id = player_id2;
-        DELETE FROM regiao WHERE nome = region_name1;
-        EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
+        ROLLBACK;
     END;
 $$;
 ------------------------------------------------------------------------------------------------------------------------
@@ -309,13 +280,11 @@ $$
         game_url4 varchar := 'https://www.testgame34.com/?index';
         match_start_date date := '2020-01-01';
         match_end_date date := '2020-01-02';
-        match_ended varchar := 'Terminada';
-        match_in_progress varchar := 'Em curso';
+        match_ended varchar := 'terminada';
+        match_in_progress varchar := 'em curso';
         games int;
         expected_games int := 3;
-        player_sequence integer := 0;
     BEGIN
-        SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
         INSERT INTO regiao (nome) VALUES (region_name1);
         CALL create_jogador(region_name1, player_name1, player_email1);
         CALL create_jogador(region_name1, player_name2, player_email2);
@@ -390,24 +359,7 @@ $$
         WHEN others THEN
             RAISE NOTICE 'Test 5 failed with error: %', SQLERRM;
     END;
-        DELETE FROM joga WHERE id_jogador = player_id1;
-        DELETE FROM joga WHERE id_jogador = player_id2;
-        DELETE FROM partida_normal WHERE id_jogo = game_id1;
-        DELETE FROM partida_normal WHERE id_jogo = game_id2;
-        DELETE FROM partida_multijogador WHERE id_jogo = game_id3;
-        DELETE FROM partida_multijogador WHERE id_jogo = game_id4;
-        DELETE FROM partida WHERE id_jogo = game_id1;
-        DELETE FROM partida WHERE id_jogo = game_id2;
-        DELETE FROM partida WHERE id_jogo = game_id3;
-        DELETE FROM partida WHERE id_jogo = game_id4;
-        DELETE FROM jogo WHERE id = game_id1;
-        DELETE FROM jogo WHERE id = game_id2;
-        DELETE FROM jogo WHERE id = game_id3;
-        DELETE FROM jogo WHERE id = game_id4;
-        DELETE FROM jogador WHERE id = player_id1;
-        DELETE FROM jogador WHERE id = player_id2;
-        DELETE FROM regiao WHERE nome = region_name1;
-        EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
+        ROLLBACK;
     END;
 $$;
 ------------------------------------------------------------------------------------------------------------------------
@@ -433,12 +385,10 @@ $$
         game_url2 varchar := 'https://testgame42.com/index';
         match_start_date date := '2020-01-01';
         match_end_date date := '2020-01-02';
-        match_ended varchar := 'Terminada';
+        match_ended varchar := 'terminada';
         player INT;
         pontos int;
-        player_sequence integer := 0;
     BEGIN
-        SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
         INSERT INTO regiao VALUES (region_name1);
         CALL create_jogador(region_name1,player_name1, player_email1);
         SELECT jogador.id INTO player_id1 FROM jogador WHERE email = player_email1;
@@ -511,16 +461,7 @@ $$
         WHEN others THEN
             RAISE EXCEPTION 'Test 3 failed with error %', SQLERRM;
     END;
-        DELETE FROM joga WHERE id_jogador = player_id1;
-        DELETE FROM joga WHERE id_jogador = player_id2;
-        DELETE FROM partida_normal WHERE id_jogo = game_id1;
-        DELETE FROM partida_multijogador WHERE id_jogo = game_id1;
-        DELETE FROM partida WHERE id_jogo = game_id1;
-        DELETE FROM jogo WHERE id = game_id1;
-        DELETE FROM jogador WHERE id = player_id1;
-        DELETE FROM jogador WHERE id = player_id2;
-        DELETE FROM regiao WHERE nome = region_name1;
-        EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
+        ROLLBACK;
     END;
 $$;
 ------------------------------------------------------------------------------------------------------------------------
@@ -551,10 +492,8 @@ $$
         badge_points3 int := 100;
         match_start_date date := '2020-01-01';
         match_end_date date := '2020-01-02';
-        match_ended varchar := 'Terminada';
-        player_sequence integer := 0;
+        match_ended varchar := 'terminada';
     BEGIN
-        SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
         INSERT INTO regiao VALUES (region_name1);
         CALL create_jogador(region_name1, player_name1, player_email1);
         SELECT jogador.id INTO player_id1 FROM jogador WHERE email = player_email1;
@@ -664,19 +603,7 @@ $$
             RAISE EXCEPTION 'Test 7 failed with error %', SQLERRM;
     END;
     -- Cleanup: Delete the test data
-    DELETE FROM joga WHERE id_jogador = player_id1;
-    DELETE FROM partida_normal WHERE id_jogo = game_id1;
-    DELETE FROM partida_multijogador WHERE id_jogo = game_id1;
-    DELETE FROM partida_multijogador WHERE id_jogo = game_id2;
-    DELETE FROM partida WHERE id_jogo = game_id1;
-    DELETE FROM partida WHERE id_jogo = game_id2;
-    DELETE FROM ganha WHERE id_jogo = game_id1;
-    DELETE FROM ganha WHERE id_jogo = game_id2;
-    DELETE FROM cracha WHERE id_jogo = game_id1;
-    DELETE FROM jogo WHERE id = game_id1;
-    DELETE FROM jogador WHERE id = player_id1;
-    DELETE FROM regiao WHERE nome = region_name1;
-    EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
+        ROLLBACK;
     END;
 $$;
 ------------------------------------------------------------------------------------------------------------------------
@@ -693,12 +620,8 @@ $$
         player_id1 INT;
         chat_name varchar := 'TestChat61';
         chat_id INT :=0;
-        player_sequence integer := 0;
-        chat_sequence integer := 0;
     BEGIN
-        SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
-        SELECT conversa_id_seq.last_value FROM conversa_id_seq INTO chat_sequence;
-        insert into regiao(nome) values(region_name1);
+        INSERT INTO regiao(nome) values(region_name1);
         CALL create_jogador(region_name1, player_name1, player_email1);
         SELECT id INTO player_id1 FROM jogador WHERE email = player_email1;
         RAISE NOTICE 'Exercise 2i';
@@ -710,13 +633,7 @@ $$
                 RAISE NOTICE 'Test 1 succeeded';
             ELSE RAISE EXCEPTION 'Test 1 failed'; END IF;
     END;
-        DELETE FROM mensagem WHERE id_conversa = chat_id;
-        DELETE FROM participa WHERE id_conversa = chat_id;
-        DELETE FROM conversa WHERE id = chat_id;
-        DELETE FROM jogador WHERE id = player_id1;
-        DELETE FROM regiao WHERE nome = region_name1;
-        EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
-        EXECUTE format('ALTER SEQUENCE conversa_id_seq RESTART WITH %s', chat_sequence + 1);
+        ROLLBACK;
     END;
 $$;
 ------------------------------------------------------------------------------------------------------------------------
@@ -740,11 +657,7 @@ $$
         chat_name varchar := 'TestChat71';
         chat_id INT := 0;
         text_message varchar := 'O jogador entrou na conversa';
-        player_sequence integer := 0;
-        chat_sequence integer := 0;
     BEGIN
-        SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
-        SELECT conversa_id_seq.last_value FROM conversa_id_seq INTO chat_sequence;
         INSERT INTO regiao(nome) VALUES (region_name1);
         INSERT INTO regiao(nome) VALUES (region_name2);
         CALL create_jogador(region_name1, player_name1, player_email1);
@@ -770,16 +683,7 @@ $$
             RAISE EXCEPTION 'Test 1 failed: No messages found';
         END IF;
     END;
-        DELETE FROM mensagem WHERE id_conversa = chat_id;
-        DELETE FROM participa WHERE id_conversa = chat_id;
-        DELETE FROM conversa WHERE id = chat_id;
-        DELETE FROM jogador WHERE id = player_id1;
-        DELETE FROM jogador WHERE id = player_id2;
-        DELETE FROM jogador WHERE id = player_id3;
-        DELETE FROM regiao WHERE nome = region_name1;
-        DELETE FROM regiao WHERE nome = region_name2;
-        EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
-        EXECUTE format('ALTER SEQUENCE conversa_id_seq RESTART WITH %s', chat_sequence + 1);
+        ROLLBACK;
     END;
 $$;
 ------------------------------------------------------------------------------------------------------------------------
@@ -803,11 +707,7 @@ $$
         chat_name varchar := 'TestChat81';
         chat_id INT :=0;
         text_message varchar := 'TestMessage81';
-        player_sequence integer := 0;
-        chat_sequence integer := 0;
     BEGIN
-        SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
-        SELECT conversa_id_seq.last_value FROM conversa_id_seq INTO chat_sequence;
         insert into regiao(nome) values(region_name1);
         insert into regiao(nome) values(region_name2);
         CALL create_jogador(region_name1, player_name1, player_email1);
@@ -831,16 +731,7 @@ $$
             ELSE RAISE EXCEPTION 'Test 1 failed';
             END IF;
     END;
-        DELETE FROM mensagem WHERE id_conversa = chat_id;
-        DELETE FROM participa WHERE id_conversa = chat_id;
-        DELETE FROM conversa WHERE id = chat_id;
-        DELETE FROM jogador WHERE id = player_id1;
-        DELETE FROM jogador WHERE id = player_id2;
-        DELETE FROM jogador WHERE id = player_id3;
-        DELETE FROM regiao WHERE nome = region_name1;
-        DELETE FROM regiao WHERE nome = region_name2;
-        EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
-        EXECUTE format('ALTER SEQUENCE conversa_id_seq RESTART WITH %s', chat_sequence + 1);
+        ROLLBACK;
     END;
 $$;
 ------------------------------------------------------------------------------------------------------------------------
@@ -871,7 +762,7 @@ $$
         game_url3 varchar := 'https://testgame93.com';
         match_start_date date := '2020-01-01';
         match_end_date date := '2020-01-02';
-        match_ended varchar := 'Terminada';
+        match_ended varchar := 'terminada';
         vista REFCURSOR;
         player_id Int;
         player_status varchar;
@@ -880,9 +771,7 @@ $$
         player_games int;
         player_points Int;
         Player_matches Int;
-        player_sequence integer := 0;
     BEGIN
-        SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
         INSERT INTO regiao(nome) VALUES (region_name1);
         INSERT INTO jogador(username, email, nome_regiao) VALUES (player_name1, player_email1, region_name1);
         INSERT INTO jogador(username, email, nome_regiao) VALUES (player_name2, player_email2, region_name1);
@@ -933,7 +822,7 @@ $$
             FOR i IN 0..2 LOOP
                 FETCH NEXT FROM vista INTO player_id, player_status, player_email, player_username, player_games, Player_matches, player_points;
                 ASSERT player_id = player_id1 OR player_id = player_id2 OR player_id = player_id3, 'Test 1 failed: player_id not in test data';
-                ASSERT player_status = 'Ativo' OR player_status = 'Ativo' OR player_status = 'Ativo', 'Test 1 failed: player_status not in test data';
+                ASSERT player_status ~* '^(ativo)$' OR player_status ~* '^(ativo)$' OR player_status ~* '^(ativo)$', 'Test 1 failed: player_status not in test data';
                 ASSERT player_email = player_email1 OR player_email = player_email2 OR player_email = player_email3, 'Test 1 failed: player_email not in test data';
                 ASSERT player_username = player_name1 OR player_username = player_name2 OR player_username = player_name3, 'Test 1 failed: player_username not in test data';
                 ASSERT player_games = 3 OR player_games = 3 OR player_games = 3, 'Test 1 failed: player_games not in test data';
@@ -946,27 +835,8 @@ $$
         WHEN OTHERS THEN
             RAISE NOTICE 'Test 1 failed: %', SQLERRM;
     END;
-        DELETE FROM joga WHERE id_jogador = player_id1;
-        DELETE FROM joga WHERE id_jogador = player_id2;
-        DELETE FROM joga WHERE id_jogador = player_id3;
-        DELETE FROM partida_normal WHERE id_jogo = game_id1;
-        DELETE FROM partida_normal WHERE id_jogo = game_id2;
-        DELETE FROM partida_normal WHERE id_jogo = game_id3;
-        DELETE FROM partida_multijogador WHERE id_jogo = game_id1;
-        DELETE FROM partida_multijogador WHERE id_jogo = game_id2;
-        DELETE FROM partida_multijogador WHERE id_jogo = game_id3;
-        DELETE FROM partida WHERE id_jogo = game_id1;
-        DELETE FROM partida WHERE id_jogo = game_id2;
-        DELETE FROM partida WHERE id_jogo = game_id3;
-        DELETE FROM jogo WHERE id = game_id1;
-        DELETE FROM jogo WHERE id = game_id2;
-        DELETE FROM jogo WHERE id = game_id3;
-        DELETE FROM jogador WHERE id = player_id1;
-        DELETE FROM jogador WHERE id = player_id2;
-        DELETE FROM jogador WHERE id = player_id3;
-        DELETE FROM regiao WHERE nome = region_name1;
-        EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
-        RAISE NOTICE 'Test data deleted';
+        RAISE NOTICE 'Test data deleted for test l';
+        ROLLBACK;
     END;
 $$;
 ------------------------------------------------------------------------------------------------------------------------
@@ -975,45 +845,33 @@ CREATE OR REPLACE PROCEDURE test_m()
     LANGUAGE plpgsql
 AS
 $$
-    DECLARE
-        region_name1 varchar := 'TestRegion102';
-        player_name1 varchar := 'TestPlayer104';
-        player_id1 integer;
-        player_email1 varchar := 'testplayer104@gmail.com';
-        game_id1 ALPHANUMERIC := 'GAME1234';
-        game_name1 varchar := 'TestGame102';
-        game_url1 varchar := 'https://testgame102.example.com';
-        partida_nr1 INT := 100;
-        cracha_name1 VARCHAR(50) := 'TestCracha1';
-        match_state varchar := 'Em curso';
-        player_sequence integer := 0;
+DECLARE
+    region_name1 varchar := 'TestRegion102';
+    player_name1 varchar := 'TestPlayer104';
+    player_id1 integer;
+    player_email1 varchar := 'testplayer104@gmail.com';
+    game_id1 ALPHANUMERIC := 'GAME1234';
+    game_name1 varchar := 'TestGame102';
+    game_url1 varchar := 'https://testgame102.example.com';
+    partida_nr1 INT := 1;
+    cracha_name1 VARCHAR := 'TestCracha1';
+    cracha_image1 url := 'https://test-cracha.example.com';
+    cracha_points1 INT := 50;
+    match_state varchar := 'em curso';
+BEGIN
+    -- Prepare test data
+    INSERT INTO regiao (nome) VALUES (region_name1);
+    CALL create_jogador(region_name1, player_name1, player_email1);
+    SELECT jogador.id INTO player_id1 FROM jogador WHERE email = player_email1;
+    INSERT INTO jogo (id, nome, url) VALUES (game_id1, game_name1, game_url1);
+    INSERT INTO partida (nr, id_jogo, data_inicio, nome_regiao) VALUES (partida_nr1, game_id1, LOCALTIMESTAMP, region_name1);
+    INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, partida_nr1, game_id1, 0);
+    INSERT INTO partida_multijogador (nr, id_jogo, estado) VALUES (partida_nr1, game_id1, match_state);
+    INSERT INTO cracha (nome, id_jogo, imagem, limite_pontos) VALUES (cracha_name1, game_id1, cracha_image1, cracha_points1);
+    RAISE NOTICE 'Exercise 2m';
+    RAISE NOTICE 'Test data created';
+    RAISE NOTICE 'Testing atribuirCrachas function';
     BEGIN
-        SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
-        -- Prepare test data
-        DELETE FROM regiao WHERE nome = region_name1;
-        INSERT INTO regiao (nome) VALUES (region_name1);
-
-        CALL create_jogador(region_name1, player_name1, player_email1);
-        SELECT jogador.id INTO player_id1 FROM jogador WHERE email = player_email1;
-
-        DELETE FROM jogo WHERE id = game_id1;
-        INSERT INTO jogo (id, nome, url) VALUES (game_id1, game_name1, game_url1);
-
-        DELETE FROM partida WHERE nr = partida_nr1;
-        INSERT INTO partida (nr, id_jogo, data_inicio, nome_regiao) VALUES (partida_nr1, game_id1, CURRENT_DATE, region_name1);
-
-        DELETE FROM joga WHERE nr_partida = partida_nr1;
-        INSERT INTO joga (id_jogador, nr_partida, id_jogo) VALUES (player_id1, partida_nr1, game_id1);
-
-        DELETE FROM partida_multijogador WHERE nr = partida_nr1 AND id_jogo = game_id1;
-        INSERT INTO partida_multijogador (nr, id_jogo, estado) VALUES (partida_nr1, game_id1, match_state);
-
-        DELETE FROM cracha WHERE nome = cracha_name1;
-        INSERT INTO cracha (nome, id_jogo, imagem, limite_pontos) VALUES (cracha_name1, game_id1, 'https://test-cracha.example.com', 50);
-
-        -- Tests
-        RAISE NOTICE 'Testing atribuirCrachas function';
-
         -- Test 1: Do not award badge when total points < badge points limit
         UPDATE joga SET pontuacao = 40
         WHERE nr_partida = partida_nr1 AND id_jogo = game_id1 AND id_jogador = player_id1;
@@ -1023,27 +881,50 @@ $$
         ELSE
             RAISE EXCEPTION 'Test 1 failed';
         END IF;
-
-        -- Test 2: Award badge when total points >= badge points limit
+    END;
+    BEGIN
+        -- Test 2: Award badge when total points >= badge points limit should fail cause partida multiplayer is not "terminada" and data fim is null
         UPDATE joga SET pontuacao = 60
         WHERE nr_partida = partida_nr1 AND id_jogo = game_id1 AND id_jogador = player_id1;
 
-        IF (has_badge(player_id1, cracha_name1, game_id1)) THEN
+        IF (NOT has_badge(player_id1, cracha_name1, game_id1)) THEN
             RAISE NOTICE 'Test 2 succeeded';
         ELSE
             RAISE EXCEPTION 'Test 2 failed';
         END IF;
-        -- Clean up test data
-        DELETE FROM ganha WHERE id_jogador = player_id1;
-        DELETE FROM joga WHERE id_jogador = player_id1;
-        DELETE FROM partida_normal WHERE nr = partida_nr1;
-        DELETE FROM partida WHERE nr = partida_nr1;
-        DELETE FROM cracha WHERE nome = cracha_name1;
-        DELETE FROM jogo WHERE id = game_id1;
-        DELETE FROM jogador WHERE id = player_id1;
-        DELETE FROM regiao WHERE nome = region_name1;
-        EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
     END;
+    BEGIN
+        UPDATE partida_multijogador SET estado = 'terminada' WHERE nr = partida_nr1 AND id_jogo = game_id1;
+
+        IF (NOT has_badge(player_id1, cracha_name1, game_id1)) THEN
+            RAISE NOTICE 'Test 3 succeeded';
+        ELSE
+            RAISE EXCEPTION 'Test 3 failed';
+        END IF;
+    END;
+    BEGIN
+
+        UPDATE partida SET data_fim = LOCALTIMESTAMP + INTERVAL '1 second' WHERE nr = partida_nr1 AND id_jogo = game_id1;
+
+        IF (NOT has_badge(player_id1, cracha_name1, game_id1)) THEN
+            RAISE NOTICE 'Test 4 succeeded';
+        ELSE
+            RAISE EXCEPTION 'Test 4 failed';
+        END IF;
+    END;
+    BEGIN
+        UPDATE joga SET pontuacao = 55
+        WHERE nr_partida = partida_nr1 AND id_jogo = game_id1 AND id_jogador = player_id1;
+
+        IF (has_badge(player_id1, cracha_name1, game_id1)) THEN
+            RAISE NOTICE 'Test 5 succeeded';
+        ELSE
+            RAISE EXCEPTION 'Test 5 failed';
+        END IF;
+    END;
+    -- Clean up test data
+    ROLLBACK;
+END;
 $$;
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -1068,7 +949,7 @@ $$
         game_url3 varchar := 'https://testgame113.com';
         match_start_date date := '2020-01-01';
         match_end_date date := '2020-01-02';
-        match_ended varchar := 'Terminada';
+        match_ended varchar := 'terminada';
         player_id Int;
         player_status varchar;
         player_email email;
@@ -1076,9 +957,7 @@ $$
         player_games int;
         player_points Int;
         Player_matches Int;
-        player_sequence integer := 0;
     BEGIN
-        SELECT jogador_id_seq.last_value FROM jogador_id_seq INTO player_sequence;
         INSERT INTO regiao(nome) VALUES (region_name1);
         INSERT INTO jogador(username, email, nome_regiao) VALUES (player_name1, player_email1, region_name1);
         SELECT id INTO player_id1 FROM jogador WHERE username = player_name1;
@@ -1117,42 +996,26 @@ $$
         RAISE NOTICE 'Testing the view jogadorTotalInfo';
     BEGIN -- Test 1: Deleting over the player 1
         SELECT * FROM jogadortotalinfo into player_id, player_status, player_email, player_username, player_games, Player_matches, player_points;
-        RAISE NOTICE 'PLAYER VIEW %, PLAYER TABLE %', player_username, player_name1;
         ASSERT player_id = player_id1, 'Test 1 failed: player_id not in test data';
-        ASSERT player_status = 'Ativo', 'Test 1 failed: player_status not in test data';
+        ASSERT player_status ~* '^(ativo)$', 'Test 1 failed: player_status not in test data';
         ASSERT player_email = player_email1, 'Test 1 failed: player_email not in test data';
         ASSERT player_username = player_name1 , 'Test 1 failed: player_username not in test data';
         ASSERT player_games = 3, 'Test 1 failed: player_games not in test data';
-        ASSERT Player_matches = 5, 'Test 1 failed: Player_matches not in test data';
-        ASSERT player_points = 1101101, 'Test 1 failed: player_points not in test data';
+        ASSERT Player_matches = 9, 'Test 1 failed: Player_matches not in test data';
+        ASSERT player_points = 111111111, 'Test 1 failed: player_points not in test data';
         DELETE FROM jogadorTotalInfo WHERE jogadortotalinfo.username = player_name1;
         SELECT jogador.estado into player_status from jogador WHERE jogador.username = player_name1;
-        IF (player_status = 'Ativo') THEN
+        IF (player_status = 'ativo') THEN
             RAISE NOTICE 'Test 1 failed: player not deleted';
-        ELSIF (player_status = 'Banido') THEN
+        ELSIF (player_status = 'banido') THEN
             RAISE NOTICE 'Test 1 succeeded';
         END IF;
         EXCEPTION
             WHEN OTHERS THEN
                 RAISE NOTICE 'Test 1 failed: %', SQLERRM;
     END;
-        DELETE FROM joga WHERE id_jogador = player_id1;
-        DELETE FROM partida_normal WHERE id_jogo = game_id1;
-        DELETE FROM partida_normal WHERE id_jogo = game_id2;
-        DELETE FROM partida_normal WHERE id_jogo = game_id3;
-        DELETE FROM partida_multijogador WHERE id_jogo = game_id1;
-        DELETE FROM partida_multijogador WHERE id_jogo = game_id2;
-        DELETE FROM partida_multijogador WHERE id_jogo = game_id3;
-        DELETE FROM partida WHERE id_jogo = game_id1;
-        DELETE FROM partida WHERE id_jogo = game_id2;
-        DELETE FROM partida WHERE id_jogo = game_id3;
-        DELETE FROM jogo WHERE id = game_id1;
-        DELETE FROM jogo WHERE id = game_id2;
-        DELETE FROM jogo WHERE id = game_id3;
-        DELETE FROM jogador WHERE id = player_id1;
-        DELETE FROM regiao WHERE nome = region_name1;
-        EXECUTE format('ALTER SEQUENCE jogador_id_seq RESTART WITH %s', player_sequence + 1);
-        RAISE NOTICE 'Test data deleted';
+        RAISE NOTICE 'Test data deleted for test n';
+        ROLLBACK;
     END;
 $$;
 
@@ -1163,10 +1026,10 @@ CALL test_d2(); -- Passed
 CALL test_e(); -- Passed
 CALL test_f(); -- Passed
 CALL test_g(); -- Passed
-CALL test_h(); -- Passed REQUIRES function m not in DB
+CALL test_h(); -- Passed
 CALL test_i(); -- Passed
 CALL test_j(); -- Passed
 CALL test_k(); -- Passed
 CALL test_l(); -- Passed
-CALL test_m(); -- Not Passed
+CALL test_m(); -- Passed
 CALL test_n(); -- Passed
