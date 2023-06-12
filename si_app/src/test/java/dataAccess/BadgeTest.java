@@ -1,6 +1,6 @@
 package dataAccess;
 
-
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.RollbackException;
 import model.entities.game.Game;
 import model.entities.game.Jogo;
@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 public class BadgeTest {
     private JPAContext ctx;
@@ -55,7 +54,7 @@ public class BadgeTest {
                     concurrentCtx.beginTransaction();
 
                     // Retrieve the badge in the concurrent thread
-                    Badge concurrentBadge = concurrentCtx.getBadges().findByKey(badgeId);
+                    Badge concurrentBadge = concurrentCtx.em.find(Cracha.class, badgeId, LockModeType.OPTIMISTIC);
 
                     // Increase the badge points by 20%
                     int currentPoints = concurrentBadge.getPoints();
@@ -101,13 +100,18 @@ public class BadgeTest {
             ctx.beginTransaction();
 
             // Create a test game and badge
-            Game testGame = new Jogo(new Alphanumeric("TestGame"), "Test Game", new URL("https://example.com"));
-            Badge testBadge = new Cracha(testGame.getId(), "TestBadge", 100, new URL("https://example.com/image.png"));
-            testBadge.setGame(testGame);
-            testBadge.setImage(new URL("https://example.com/image.png"));
-
-            // Save the test game and badge in the repository
+            Game testGame = new Jogo();
+            testGame.setId(new Alphanumeric("TestGame1"));
+            testGame.setName("Test Game1");
+            testGame.setUrl(new URL("https://example1.com"));
             ctx.em.persist(testGame);
+
+            Badge testBadge = new Cracha();
+            CrachaId badgeId = new CrachaId(testGame.getId(), "TestBadge1");
+            testBadge.setId(badgeId);
+            testBadge.setGame(testGame);
+            testBadge.setPoints(100);
+            testBadge.setImage(new URL("https://example1.com/image1.png"));
             ctx.em.persist(testBadge);
 
             // Commit the initial transaction
@@ -121,7 +125,7 @@ public class BadgeTest {
                     ctx.beginTransaction();
 
                     // Retrieve the badge with optimistic locking
-                    Badge retrievedBadge = ctx.getBadges().findByKey(new CrachaId(testGame.getId(), "TestBadge"));
+                    Badge retrievedBadge = ctx.em.find(Cracha.class, badgeId, LockModeType.OPTIMISTIC);
 
                     if (retrievedBadge == null) {
                         throw new RuntimeException("Badge not found");
@@ -148,15 +152,14 @@ public class BadgeTest {
             } while (nreps > 0);
 
             // Retrieve the updated badge from the repository
-            Badge updatedBadge = ctx.getBadges().findByKey(new CrachaId(testGame.getId(), "TestBadge"));
+            Badge updatedBadge = ctx.getBadges().findByKey(badgeId);
 
             // Assert that the points have been increased by 20%
-            assertNotEquals(120, (int) updatedBadge.getPoints());
+            assertEquals(120, (int) updatedBadge.getPoints());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             ctx.close();
         }
     }
-
 }

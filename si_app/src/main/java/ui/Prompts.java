@@ -16,6 +16,8 @@ import java.util.function.Function;
  */
 public class Prompts {
     private static final String PROMPT = "> ";
+    private static final Integer MAX_PROMPT_LENGTH = 50;
+    private static final Integer MAX_MESSAGE_LENGTH = 100_000; // The PostgreSQL Text data type limit is 65,535 bytes
 
     /**
      * Prompts the user for a command
@@ -26,17 +28,6 @@ public class Prompts {
     public static Command promptCommand(Map<String, Command> commands) {
         final String input = prompt(commands::containsKey, "Not a valid Command. Use the `help` command for more information");
         return commands.get(input);
-    }
-
-    /**
-     * Gets the prompt id
-     *
-     * @param promptMessage the prompt message
-     * @return the prompt id
-     */
-    public static int promptId(String promptMessage) {
-        final String input = prompt(in -> true, "");
-        return Integer.parseInt(input);
     }
 
     /**
@@ -58,7 +49,7 @@ public class Prompts {
      */
     public static String promptUsername(String promptMessage) {
         System.out.println(promptMessage);
-        return prompt(input -> input.length() > 1, "Incorrect username, please input a correct username.");
+        return promptLength(promptMessage, MAX_PROMPT_LENGTH);
     }
 
     /**
@@ -81,7 +72,7 @@ public class Prompts {
      */
     public static String promptRegion(String promptMessage) {
         System.out.println(promptMessage);
-        return prompt(input -> input.length() > 1, "Incorrect region name, please input a correct region name.");
+        return promptLength(promptMessage, MAX_PROMPT_LENGTH);
     }
 
     /**
@@ -103,7 +94,7 @@ public class Prompts {
      */
     public static String promptGameName(String promptMessage) {
         System.out.println(promptMessage);
-        return prompt(input -> input.length() > 1, "Incorrect game name, please input a correct game name.");
+        return promptLength(promptMessage, MAX_PROMPT_LENGTH);
     }
 
     /**
@@ -114,7 +105,7 @@ public class Prompts {
      */
     public static String promptBadgeName(String promptMessage) {
         System.out.println(promptMessage);
-        return prompt(input -> input.length() > 1, "Incorrect badge name, please input a correct badge name.");
+        return promptLength(promptMessage, MAX_PROMPT_LENGTH);
     }
 
     /**
@@ -125,7 +116,18 @@ public class Prompts {
      */
     public static String promptChatName(String promptMessage) {
         System.out.println(promptMessage);
-        return prompt(input -> input.length() > 1, "Incorrect chat name, please input a correct chat name.");
+        return promptLength(promptMessage, MAX_PROMPT_LENGTH);
+    }
+
+    /**
+     * Gets the prompt Chat message
+     *
+     * @param promptMessage the prompt message
+     * @return the prompt Chat message
+     */
+    public static String promptChatMessage(String promptMessage) {
+        System.out.println(promptMessage);
+        return promptLength(promptMessage, MAX_MESSAGE_LENGTH);
     }
 
     /**
@@ -135,9 +137,9 @@ public class Prompts {
      * @param length        the length.
      * @return the prompt
      */
-    public static String promptLength(String promptMessage, Integer length) {
+    private static String promptLength(String promptMessage, Integer length) {
         System.out.println(promptMessage);
-        return prompt(input -> input.length() > length, "Incorrect length, please input a correct length.");
+        return prompt(input -> input.length() < length, "Incorrect length, please input a correct length.");
     }
 
     /**

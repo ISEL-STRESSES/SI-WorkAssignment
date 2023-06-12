@@ -565,11 +565,6 @@ public class JPAContext implements Context {
      */
     public void createPlayer(Email email, String username, String regionName) {
         beginTransaction();
-        if (regionRepository.findByKey(regionName) == null) {
-            System.out.println("Region not found.");
-            rollback();
-            return;
-        }
         Query q = em.createNativeQuery("call create_jogador(?, ?, ?)")
                 .setParameter(1, regionName)
                 .setParameter(2, username)
@@ -589,7 +584,7 @@ public class JPAContext implements Context {
      */
     public Player updatePlayerStatus(String username, PlayerState newState) {
         beginTransaction();
-        Player player = playerRepository.findByUsername(username);
+        Jogador player = playerRepository.findByUsername(username);
         if (player == null) {
             System.out.println("Player not found.");
             rollback();
@@ -600,7 +595,7 @@ public class JPAContext implements Context {
                 .setParameter(2, newState.description);
         q.executeUpdate();
         player.setState(newState);
-        playerDataMapper.update((Jogador) player);
+        playerDataMapper.update(player);
         commit();
         return playerRepository.findByKey(player.getId());
     }
@@ -695,16 +690,10 @@ public class JPAContext implements Context {
             rollback();
             return;
         }
-        Badge badge = badgeRepository.findByKey(new CrachaId(game.getId(), badgeName));
-        if (badge == null) {
-            System.out.println("Badge not found.");
-            rollback();
-            return;
-        }
         Query q = em.createNativeQuery("call associarCracha(?, ?, ?)")
                 .setParameter(1, player.getId())
                 .setParameter(2, game.getId().toString())
-                .setParameter(3, badge.getId().getBadgeName());
+                .setParameter(3, badgeName);
         q.executeUpdate();
         commit();
     }
@@ -845,13 +834,57 @@ public class JPAContext implements Context {
         Query q = em.createQuery("SELECT joga.points FROM Joga joga" +
                         " JOIN Partida p ON joga.id.idGame = p.id.gameId AND joga.id.matchNr = p.id.nr " +
                         " LEFT JOIN PartidaNormal pn ON joga.id.idGame = pn.id.matchId.gameId AND joga.id.matchNr = pn.id.matchId.nr" +
-                        " LEFT JOIN PartidaMultijogador pm ON joga.id.idGame = pm.id.matchId.gameId AND joga.id.matchNr = pm.id.matchId.nr AND pm.state = 'Terminada'" +
+                        " LEFT JOIN PartidaMultijogador pm ON joga.id.idGame = pm.id.matchId.gameId AND joga.id.matchNr = pm.id.matchId.nr AND pm.state = 'terminada'" +
                         " WHERE joga.id.idGame = :jogoId AND joga.id.idPlayer = :jogadorId AND p.endDate IS NOT NULL")
                 .setParameter("jogoId", game.getId().toString())
                 .setParameter("jogadorId", player.getId());
-        List<Integer> pointEntries = q.getResultList();
+        List<Integer> entries = (List<Integer>) q.getResultList();
+        if (entries.isEmpty()) {
+            throw new IllegalArgumentException("Player did not play the game");
+        }
         Integer points = 0;
-        for (Integer pointsEntry : pointEntries) {
+        for (Integer entry : entries) {
+            points += entry;
+        }
+        if (points >= badge.getPoints()) {
+            Ganha ganha = new Ganha();
+            ganha.setBadge(badge);
+            ganha.setIdPlayer(player);
+            Set<Ganha> badges = player.getBadges();
+            badges.add(ganha);
+            player.setBadges(badges);
+            em.persist(ganha);
+            em.merge(player);
+        }
+        commit();
+    }
+
+    /**
+     * Does the same as the giveBadgeToPlayer method but partially manual.
+     *
+     * @param username  The player's username.
+     * @param gameName  The game name.
+     * @param badgeName The badge name.
+     */
+    public void giveBadgeToPlayerPartiallyManual(String username, String gameName, String badgeName) {
+        beginTransaction();
+        Game game = gameRepository.findByName(gameName);
+        if (game == null) {
+            throw new IllegalArgumentException("Game does not exist");
+        }
+        Player player = playerRepository.findByUsername(username);
+        if (player == null) {
+            throw new IllegalArgumentException("Player does not exist");
+        }
+        Badge badge = badgeRepository.findByKey(new CrachaId(game.getId(), badgeName));
+        if (badge == null) {
+            throw new IllegalArgumentException("Badge does not exist");
+        }
+        Query q = em.createNativeQuery("call PontosJogoPorJogador(?)")
+                .setParameter(1, game.getId().toString());
+        List<Object[]> pointEntries = (List<Object[]>) q.getResultList();
+        Integer points = 0;
+        for (Integer pointsEntry : pointEntries.stream().map(entry -> (Integer) entry[1]).toList()) {
             points += pointsEntry;
         }
         if (points >= badge.getPoints()) {
@@ -897,10 +930,10 @@ public class JPAContext implements Context {
     public void raisePointsToEarnBadgePessimistic(String badgeName, Alphanumeric gameId) {
         beginTransaction();
         Game g = gameRepository.findByKey(gameId);
-
         if (g == null) {
             throw new IllegalArgumentException("Game does not exist");
         }
+
         Cracha b = em.find(Cracha.class, new CrachaId(gameId, badgeName), LockModeType.PESSIMISTIC_READ);
         em.lock(b, LockModeType.PESSIMISTIC_WRITE);
         if (b == null) {

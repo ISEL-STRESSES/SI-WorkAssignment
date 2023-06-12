@@ -31,6 +31,7 @@ public class Commands {
         commands.put("1g", build1g());
         commands.put("1h1", build1h());
         commands.put("1h2", build1hManually());
+        commands.put("1h3", build1hPartiallyManual());
         commands.put("1i", build1i());
         commands.put("1j", build1j());
         commands.put("1k", build1k());
@@ -165,7 +166,6 @@ public class Commands {
              */
             @Override
             public void act() {
-                //final Alphanumeric gameId = promptGameId("Insert the game identifier to get the total points of all players.");
                 final String gameName = promptGameName("Insert the game name to get the total points of all players.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
@@ -196,9 +196,7 @@ public class Commands {
             @Override
             public void act() {
                 final String badgeName = promptBadgeName("Insert the badge name to associate to a player.");
-                //final Alphanumeric gameId = promptGameId("Insert the game identifier to associate the badge to a player.");4
                 final String gameName = promptGameName("Insert the game name to associate the badge to a player.");
-                //final Integer playerId = promptId("Insert the player id to associate the badge to a player.");
                 final String username = promptUsername("Insert the username to associate the badge to a player.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
@@ -226,7 +224,6 @@ public class Commands {
             @Override
             public void act() {
                 final String chatName = promptChatName("Insert the name of the chat to start.");
-                // final Integer playerId = promptId("Insert the player id to start the chat.");
                 final String username = promptUsername("Insert the username to start the chat.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
@@ -254,9 +251,7 @@ public class Commands {
              */
             @Override
             public void act() {
-                // final Integer chatId = promptId("Insert the id of the chat to join.");
                 final String chatName = promptChatName("Insert the name of the chat to join.");
-                // final Integer playerId = promptId("Insert the player id to join the chat.");
                 final String username = promptUsername("Insert the username to join the chat.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
@@ -283,11 +278,9 @@ public class Commands {
              */
             @Override
             public void act() {
-                // final Integer chatId = promptId("Insert the id of the chat to send a message.");
-                // final Integer playerId = promptId("Insert the player id to send a message to the chat.");
                 final String chatName = promptChatName("Insert the name of the chat to send a message.");
                 final String username = promptUsername("Insert the username to send a message to the chat.");
-                final String messageText = promptLength("Insert the text of the message to send to the chat.", 20);
+                final String messageText = promptChatMessage("Insert the text of the message to send to the chat.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
                     ctx.beginTransaction();
@@ -341,12 +334,39 @@ public class Commands {
                 final String badgeName = promptBadgeName("Insert the badge name to associate to a player.");
                 final String gameName = promptGameName("Insert the game name to associate the badge to a player.");
                 final String username = promptUsername("Insert the username to associate the badge to a player.");
-                // final Alphanumeric gameId = promptGameId("Insert the game identifier to associate the badge to a player.");
-                // final Integer playerId = promptId("Insert the player id to associate the badge to a player.");
                 try (JPAContext ctx = new JPAContext()) {
                     ctx.connect();
                     ctx.beginTransaction();
                     ctx.giveBadgeToPlayerManual(username, gameName, badgeName);
+                    ctx.commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+    /**
+     * Builds the command for the 1h partially manual exercise.
+     *
+     * @return the command for the 1h partially manual exercise.
+     */
+    private static Command build1hPartiallyManual() {
+        return new Command("Associar um cracha a um jogador parcialmente manualmente.") {
+
+            /**
+             * Executes the command of the 1h partially manual exercise.
+             * Gives a badge to a player given the name of the badge and the player id.
+             */
+            @Override
+            public void act() {
+                final String badgeName = promptBadgeName("Insert the badge name to associate to a player.");
+                final String gameName = promptGameName("Insert the game name to associate the badge to a player.");
+                final String username = promptUsername("Insert the username to associate the badge to a player.");
+                try (JPAContext ctx = new JPAContext()) {
+                    ctx.connect();
+                    ctx.beginTransaction();
+                    ctx.giveBadgeToPlayerPartiallyManual(username, gameName, badgeName);
                     ctx.commit();
                 } catch (Exception e) {
                     e.printStackTrace();

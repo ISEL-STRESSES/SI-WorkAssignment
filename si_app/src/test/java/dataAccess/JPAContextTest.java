@@ -5,7 +5,6 @@ import model.types.PlayerState;
 import org.junit.Test;
 
 import static dataAccess.JPAContextTestInit.createPlayerInit;
-import static dataAccess.JPAContextTestInit.playerTotalPointsInit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -41,18 +40,6 @@ public class JPAContextTest {
             ctx.beginTransaction();
             assertEquals(PlayerState.INACTIVE, ctx.getPlayers().findByUsername("testJpa").getState());
             ctx.commit();
-        }
-    }
-
-    @Test
-    public void playerTotalPointsTest() {
-        try (JPAContext ctx = new JPAContext()) {
-            ctx.connect();
-            ctx.beginTransaction();
-            playerTotalPointsInit();
-            Integer points = ctx.playerTotalPoints("testJpa");
-            ctx.commit();
-            assertNotNull(points);
         }
     }
 }

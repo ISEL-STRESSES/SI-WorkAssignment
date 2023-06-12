@@ -140,17 +140,5 @@ public class ReposTest {
         }
     }
 
-// gives compile error cause it cant find the findAll method?????????
-//    @Test
-//    public void playerTotalInfoRepoTest() {
-//        try {
-//            ctx.connect();
-//            assertNotNull(ctx.getPlayerTotalInfo().findAll());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            ctx.close();
-//        }
-//    }
 
 }
