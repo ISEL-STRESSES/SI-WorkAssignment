@@ -136,13 +136,13 @@ $$
         END IF;
         -- expected
         -- counts the points of partidas normais
-        SELECT SUM(COALESCE(joga.pontuacao, 0)) INTO pontos_normal FROM joga
+        SELECT SUM(joga.pontuacao) INTO pontos_normal FROM joga
         JOIN partida_normal pn on joga.id_jogo = pn.id_jogo AND joga.nr_partida = pn.nr
         JOIN partida p ON joga.id_jogo = p.id_jogo AND joga.nr_partida = p.nr
         WHERE joga.id_jogador = jogador_id AND p.data_fim IS NOT NULL;
 
         -- counts the points of partidas multijogador
-        SELECT SUM(COALESCE(joga.pontuacao, 0)) INTO pontos_multi FROM joga
+        SELECT SUM(joga.pontuacao) INTO pontos_multi FROM joga
         JOIN partida_multijogador pm ON joga.id_jogo = pm.id_jogo AND joga.nr_partida = pm.nr
         JOIN partida p ON joga.id_jogo = p.id_jogo AND joga.nr_partida = p.nr
         WHERE joga.id_jogador = jogador_id AND pm.estado ~* '^(terminada)$' AND p.data_fim IS NOT NULL;
@@ -603,34 +603,11 @@ $$;
 
 -- This trigger is called when a match ends and it assigns badges to the players who have played the match if they
 -- have obtained enough points.
--- CREATE OR REPLACE TRIGGER atribuirCrachasMultijogadorTrigger
---     AFTER UPDATE OF estado ON partida_multijogador
---     FOR EACH ROW
---     WHEN (NEW.estado = 'terminada')
---         EXECUTE PROCEDURE atribuirCrachas();
-
 CREATE OR REPLACE TRIGGER atribuirCrachasTrigger
     AFTER UPDATE OF pontuacao ON joga
     FOR EACH ROW
     WHEN (NEW.pontuacao >= 0)
     EXECUTE PROCEDURE atribuirCrachas();
-
--- This function checks if a player has a badge.
--- Not a requirement but useful for testing.
-CREATE OR REPLACE FUNCTION has_badge(p_id_jogador INTEGER, p_nome_cracha VARCHAR, p_id_jogo ALPHANUMERIC)
-    RETURNS BOOLEAN
-    LANGUAGE plpgsql
-AS
-$$
-DECLARE
-    badge_exists BOOLEAN;
-BEGIN
-    SELECT EXISTS (SELECT 1 FROM ganha WHERE id_jogador = p_id_jogador AND nome_cracha = p_nome_cracha AND id_jogo = p_id_jogo)
-    INTO badge_exists;
-
-    RETURN badge_exists;
-END;
-$$;
 
 ------------------------------------------------------------------------------------------------------------------------
 -- (n) Criar os mecanismos necessários para que a execução da instrução DELETE sobre a vista jogadorTotalInfo permita

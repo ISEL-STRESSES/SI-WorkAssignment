@@ -1,11 +1,13 @@
-BEGIN TRANSACTION;
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+-- Integrity Restrictions
+-- Model Restrictions
+-- 1. The partida must be played by jogadores of the same regiao
+DROP TRIGGER checkJogadorPartidaRegiao ON joga;
+DROP FUNCTION checkJogadorPartidaRegiao();
 
--- Partida & Jogador restriction on Regiao
-DROP FUNCTION IF EXISTS checkJogadorPartidaRegiao() CASCADE;
-DROP TRIGGER IF EXISTS checkJogadorPartidaRegiao ON joga;
+------------------------------------------------------------------------------------------------------------------------
+-- 2. The mensagem must be sent by a jogador of the conversa
+DROP TRIGGER checkJogadorMensagemConversa ON mensagem;
+DROP FUNCTION checkJogadorMensagemConversa();
 
--- Mensagem & Jogador restriction on Conversa
-DROP FUNCTION IF EXISTS checkJogadorMensagemConversa() CASCADE;
-DROP TRIGGER IF EXISTS checkJogadorMensagemConversa ON mensagem;
-
-COMMIT;
+COMMIT TRANSACTION;

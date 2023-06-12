@@ -188,14 +188,14 @@ $$
         INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id1, 4, 1);
         INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id2, 3, 1);
         INSERT INTO partida_normal (id_jogo, nr, dificuldade) VALUES (game_id2, 4, 1);
-        INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id1, null);
+        INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id1);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 2, game_id1, 1);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 3, game_id1, 1000);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 4, game_id1, 10000);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id2, 10);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 2, game_id2, 100);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 3, game_id2, 100000);
-        INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 4, game_id2, null);
+        INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 4, game_id2);
         RAISE NOTICE 'Exercise 2e';
         RAISE NOTICE 'Test data created';
         RAISE NOTICE 'Testing sum of points from a specific player across all matches';
@@ -509,7 +509,7 @@ $$
         INSERT INTO partida_multijogador (id_jogo, nr, estado) VALUES (game_id1, 3, match_ended);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id1, 1);
         INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 1, game_id2, 5);
-        INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 3, game_id1, null);
+        INSERT INTO joga (id_jogador, nr_partida, id_jogo, pontuacao) VALUES (player_id1, 3, game_id1);
         RAISE NOTICE 'Exercise 2h';
         RAISE NOTICE 'Test data created';
         RAISE NOTICE 'Testing the attribution of a badges to a player';

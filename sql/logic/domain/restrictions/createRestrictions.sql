@@ -1,4 +1,4 @@
-BEGIN TRANSACTION;
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 -- Model Restrictions
 
 -- 1. The partida must be played by jogadores of the same regiao
@@ -15,12 +15,12 @@ CREATE OR REPLACE FUNCTION checkJogadorPartidaRegiao()
 AS
 $$
     DECLARE
-        regiao_nome VARCHAR(50);
-        jogador_nome_regiao VARCHAR(50);
+        region_name VARCHAR(50);
+        player_region VARCHAR(50);
     BEGIN
-        SELECT partida.nome_regiao INTO regiao_nome FROM partida WHERE partida.id_jogo = NEW.id_jogo AND partida.nr = NEW.nr_partida;
-        SELECT jogador.nome_regiao INTO jogador_nome_regiao FROM jogador WHERE jogador.id = NEW.id_jogador;
-        IF (regiao_nome != jogador_nome_regiao) THEN
+        SELECT partida.nome_regiao INTO region_name FROM partida WHERE partida.id_jogo = NEW.id_jogo AND partida.nr = NEW.nr_partida;
+        SELECT jogador.nome_regiao INTO player_region FROM jogador WHERE jogador.id = NEW.id_jogador;
+        IF (region_name != player_region) THEN
             RAISE EXCEPTION 'O jogador nao pertence a regiao da partida';
         END IF;
         RETURN NEW;
@@ -29,9 +29,8 @@ $$;
 
 -- This trigger calls the function checkJogadorPartidaRegiao() before inserting a new row in the joga table
 CREATE OR REPLACE TRIGGER checkJogadorPartidaRegiao
-    BEFORE INSERT ON joga
-    FOR EACH ROW
-    EXECUTE FUNCTION checkJogadorPartidaRegiao();
+BEFORE INSERT ON joga
+EXECUTE FUNCTION checkJogadorPartidaRegiao();
 
 ------------------------------------------------------------------------------------------------------------------------
 -- 2. The mensagem must be sent by a jogador of the conversa
@@ -59,4 +58,4 @@ CREATE OR REPLACE TRIGGER checkJogadorMensagemConversa
     FOR EACH ROW
     EXECUTE PROCEDURE checkJogadorMensagemConversa();
 
-COMMIT;
+COMMIT TRANSACTION;
