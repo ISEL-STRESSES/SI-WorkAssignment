@@ -4,7 +4,7 @@ import model.entities.game.Game;
 import model.entities.player.Player;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * Represents a player that has purchased a game.
@@ -58,14 +58,14 @@ public interface Purchase {
      *
      * @return the purchase date
      */
-    LocalDate getDate();
+    LocalTime getDate();
 
     /**
      * Setter function for the purchase date
      *
-     * @param date the purchase date
+     * @param localTime the purchase date
      */
-    void setDate(LocalDate date);
+    void setDate(LocalTime localTime);
 
     /**
      * Getter function for the purchase price

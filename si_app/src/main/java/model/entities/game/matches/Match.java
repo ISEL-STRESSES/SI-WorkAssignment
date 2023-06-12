@@ -7,7 +7,7 @@ import model.entities.game.matches.normal.NormalMatch;
 import model.entities.region.Region;
 import model.types.Alphanumeric;
 
-import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Set;
 
 /**
@@ -68,28 +68,28 @@ public interface Match {
      *
      * @return the match start date
      */
-    LocalDate getStartDate();
+    LocalTime getStartDate();
 
     /**
      * Setter function for the match start date
      *
      * @param startDate the match start date
      */
-    void setStartDate(LocalDate startDate);
+    void setStartDate(LocalTime startDate);
 
     /**
      * Getter function for the match end date
      *
      * @return the match end date
      */
-    LocalDate getEndDate();
+    LocalTime getEndDate();
 
     /**
      * Setter function for the match end date
      *
      * @param endDate the match end date
      */
-    void setEndDate(LocalDate endDate);
+    void setEndDate(LocalTime endDate);
 
     /**
      * Getter function for the match region

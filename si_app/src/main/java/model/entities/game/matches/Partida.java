@@ -12,7 +12,7 @@ import model.entities.region.Regiao;
 import model.entities.region.Region;
 import model.types.Alphanumeric;
 
-import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -28,10 +28,10 @@ public class Partida implements Match {
     private PartidaId id;
 
     @Column(name = "data_inicio", nullable = false)
-    private LocalDate startDate;
+    private LocalTime startDate;
 
     @Column(name = "data_fim")
-    private LocalDate endDate;
+    private LocalTime endDate;
 
     @MapsId("gameId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -127,7 +127,7 @@ public class Partida implements Match {
      * @return the match start date
      */
     @Override
-    public LocalDate getStartDate() {
+    public LocalTime getStartDate() {
         return this.startDate;
     }
 
@@ -137,7 +137,7 @@ public class Partida implements Match {
      * @param startDate the match start date
      */
     @Override
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(LocalTime startDate) {
         this.startDate = startDate;
     }
 
@@ -147,7 +147,7 @@ public class Partida implements Match {
      * @return the match end date
      */
     @Override
-    public LocalDate getEndDate() {
+    public LocalTime getEndDate() {
         return this.endDate;
     }
 
@@ -157,7 +157,7 @@ public class Partida implements Match {
      * @param endDate the match end date
      */
     @Override
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalTime endDate) {
         this.endDate = endDate;
     }
 

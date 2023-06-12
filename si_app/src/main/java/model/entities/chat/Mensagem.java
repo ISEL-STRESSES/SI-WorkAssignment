@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import model.entities.player.Jogador;
 import model.entities.player.Player;
 
-import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * This class represents a message entity
@@ -32,7 +32,7 @@ public class Mensagem implements Message {
     private String text;
 
     @Column(name = "data", nullable = false)
-    private LocalDate date;
+    private LocalTime localTime;
 
     /**
      * Default empty constructor
@@ -43,33 +43,33 @@ public class Mensagem implements Message {
     /**
      * Constructor with all attributes
      *
-     * @param id       the message id
-     * @param conversa the chat
-     * @param jogador  the user
-     * @param text     the message
-     * @param date     the message date
+     * @param id        the message id
+     * @param conversa  the chat
+     * @param jogador   the user
+     * @param text      the message
+     * @param localTime the message date
      */
-    public Mensagem(MensagemId id, Conversa conversa, Jogador jogador, String text, LocalDate date) {
+    public Mensagem(MensagemId id, Conversa conversa, Jogador jogador, String text, LocalTime localTime) {
         setId(id);
         setChat(conversa);
         setPlayer(jogador);
         setText(text);
-        setDate(date);
+        setDate(localTime);
     }
 
     /**
      * Constructor with all attributes except the id
      *
-     * @param conversa the chat
-     * @param jogador  the user
-     * @param text     the message
-     * @param date     the message date
+     * @param conversa  the chat
+     * @param jogador   the user
+     * @param text      the message
+     * @param localTime the message date
      */
-    public Mensagem(Conversa conversa, Jogador jogador, String text, LocalDate date) {
+    public Mensagem(Conversa conversa, Jogador jogador, String text, LocalTime localTime) {
         setChat(conversa);
         setPlayer(jogador);
         setText(text);
-        setDate(date);
+        setDate(localTime);
     }
 
     /**
@@ -218,17 +218,17 @@ public class Mensagem implements Message {
      * @return the message date
      */
     @Override
-    public LocalDate getDate() {
-        return this.date;
+    public LocalTime getDate() {
+        return this.localTime;
     }
 
     /**
      * Setter function for the message date
      *
-     * @param date the message date
+     * @param localTime the message date
      */
     @Override
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setDate(LocalTime localTime) {
+        this.localTime = localTime;
     }
 }

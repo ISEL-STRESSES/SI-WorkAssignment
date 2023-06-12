@@ -2,7 +2,7 @@ package model.entities.chat;
 
 import model.entities.player.Player;
 
-import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * Represents a message entity
@@ -111,12 +111,12 @@ public interface Message {
      *
      * @return the message date
      */
-    LocalDate getDate();
+    LocalTime getDate();
 
     /**
      * Setter function for the message date
      *
-     * @param date the message date
+     * @param localTime the message date
      */
-    void setDate(LocalDate date);
+    void setDate(LocalTime localTime);
 }

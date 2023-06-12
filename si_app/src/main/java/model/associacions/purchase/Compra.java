@@ -7,7 +7,7 @@ import model.entities.player.Jogador;
 import model.entities.player.Player;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * This class represents a purchase of a game by a player.
@@ -29,7 +29,7 @@ public class Compra implements Purchase {
     private Jogo idGame;
 
     @Column(name = "data", nullable = false)
-    private LocalDate date;
+    private LocalTime time;
 
     @Column(name = "preco", nullable = false)
     private BigDecimal price;
@@ -100,18 +100,18 @@ public class Compra implements Purchase {
      * @return the purchase date
      */
     @Override
-    public LocalDate getDate() {
-        return date;
+    public LocalTime getDate() {
+        return time;
     }
 
     /**
      * Setter function for the purchase date
      *
-     * @param date the purchase date
+     * @param localTime the purchase date
      */
     @Override
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setDate(LocalTime localTime) {
+        this.time = localTime;
     }
 
     /**
